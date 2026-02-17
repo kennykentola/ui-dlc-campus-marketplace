@@ -26,8 +26,8 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto py-12">
-      <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-2xl shadow-slate-200">
+    <div className="max-w-md mx-auto py-8 md:py-12 px-4 shadow-sm md:shadow-none">
+      <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-2xl shadow-slate-200">
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-blue-700 rounded-2xl flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4">
             U

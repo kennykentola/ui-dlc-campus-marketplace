@@ -74,7 +74,7 @@ const Home: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Hero Section */}
-      <section className="bg-blue-700 rounded-3xl p-8 md:p-12 text-white relative overflow-hidden shadow-2xl shadow-blue-200">
+      <section className="bg-blue-700 rounded-3xl p-6 md:p-12 text-white relative overflow-hidden shadow-2xl shadow-blue-200">
         <div className="relative z-10 max-w-2xl">
           <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
             The UI DLC <br />
@@ -138,7 +138,7 @@ const Home: React.FC = () => {
             Sort by
           </label>
           <select
-            className="bg-white border border-slate-200 rounded-lg py-2 px-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-700/20"
+            className="w-full md:w-auto bg-white border border-slate-200 rounded-lg py-2 px-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-700/20"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
           >

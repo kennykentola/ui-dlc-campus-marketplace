@@ -73,8 +73,8 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
-      <div className="bg-white p-8 md:p-12 rounded-[40px] border border-slate-100 shadow-2xl shadow-slate-200">
+    <div className="max-w-2xl mx-auto py-6 md:py-8 px-4">
+      <div className="bg-white p-6 md:p-12 rounded-[32px] md:rounded-[40px] border border-slate-100 shadow-2xl shadow-slate-200">
         <div className="mb-10 text-center md:text-left">
           <h1 className="text-3xl font-black text-slate-800 tracking-tight">Create Account</h1>
           <p className="text-slate-500 mt-2 font-medium">Join the UI DLC student & staff community.</p>
