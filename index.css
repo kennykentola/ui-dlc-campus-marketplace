@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+/* UI DLC Campus Marketplace - Custom CSS */
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  transition: background-color 0.3s, color 0.3s;
+  line-height: 1.5;
+}
+
+/* Dark mode */
+body.dark {
+  background-color: #0f172a;
+  color: #e2e8f0;
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Custom component styles */
+.btn-primary {
+  @apply bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold border-none cursor-pointer transition-colors hover:bg-blue-800;
+}
+
+.btn-secondary {
+  @apply bg-slate-100 text-slate-900 px-4 py-2 rounded-lg font-semibold border-none cursor-pointer transition-colors hover:bg-slate-200;
+}
+
+/* Form inputs */
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  @apply outline-none ring-2 ring-blue-500;
+}
+
+/* Animations */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400;
+}

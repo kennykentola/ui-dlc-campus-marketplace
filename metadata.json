@@ -1,0 +1,8 @@
+{
+  "name": "UI DLC Campus Marketplace",
+  "description": "A specialized peer-to-peer marketplace for University of Ibadan Distance Learning Centre (UI DLC) students to buy, sell, and exchange goods and services with real-time messaging and admin oversight.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
