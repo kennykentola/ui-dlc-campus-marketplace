@@ -419,32 +419,7 @@ const Messaging: React.FC = () => {
 
       setNewMessage("");
 
-      // Simulate reply (remove this in production)
-      setTimeout(() => setIsTyping(true), 1500);
-      setTimeout(async () => {
-        setIsTyping(false);
-        try {
-          const reply = await databases.createDocument(
-            import.meta.env.VITE_APPWRITE_DATABASE_ID,
-            "messages",
-            ID.unique(),
-            {
-              conversationId: [user.userId, chattingWith.userId]
-                .sort()
-                .join("_"),
-              senderId: chattingWith.userId,
-              receiverId: user.userId,
-              type: "text",
-              text: "I'll be at the faculty building by 2pm. Is that okay?",
-              isRead: true,
-              reactions: JSON.stringify({}),
-            },
-          );
-          setMessages((prev) => [...prev, reply as unknown as Message]);
-        } catch (error) {
-          console.error("Error creating reply:", error);
-        }
-      }, 4000);
+      // Simulated reply removed for production
     } catch (error) {
       console.error("Error sending message:", error);
     }
