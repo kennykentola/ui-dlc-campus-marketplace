@@ -721,8 +721,11 @@ const Messaging: React.FC = () => {
                       return (
                         <div
                           key={msg.$id}
-                          className={`flex ${isMe ? "justify-end" : "justify-start"} animate-fadeIn group`}
+                          className={`flex flex-col ${isMe ? "items-end" : "items-start"} animate-fadeIn group mb-2`}
                         >
+                          <span className="text-[10px] text-slate-500 dark:text-slate-400 px-1 mb-0.5">
+                            {isMe ? "You" : chattingWith?.name.split(" ")[0]}
+                          </span>
                           <div
                             className={`relative max-w-[85%] md:max-w-[65%] px-3 py-2 rounded-lg shadow-sm ${isMe ? "bg-[#dcf8c6] dark:bg-emerald-900/40 rounded-tr-none" : "bg-white dark:bg-slate-800 rounded-tl-none"}`}
                           >
