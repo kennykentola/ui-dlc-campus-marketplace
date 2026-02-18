@@ -540,7 +540,7 @@ const Messaging: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto h-[calc(100vh-140px)] flex bg-[#f0f2f5] dark:bg-slate-950 overflow-hidden shadow-xl relative border border-slate-200 dark:border-slate-800">
+    <div className="max-w-7xl mx-auto h-[calc(100vh-100px)] md:h-[calc(100vh-140px)] flex bg-[#f0f2f5] dark:bg-slate-950 overflow-hidden shadow-xl relative border border-slate-200 dark:border-slate-800">
       <div className={`w-full md:w-[30%] border-r border-slate-200 dark:border-slate-800 flex flex-col bg-white dark:bg-slate-900 h-full ${chattingWith ? "hidden md:flex" : "flex"}`}>
         <div className="h-16 px-4 bg-[#f0f2f5] dark:bg-slate-900 flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
           <img

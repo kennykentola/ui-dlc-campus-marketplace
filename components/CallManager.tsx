@@ -37,7 +37,8 @@ const CallManager: React.FC = () => {
 
             // Incoming Call
             if (response.events.includes('databases.*.collections.*.documents.*.create')) {
-                if (payload.receiverId === user.userId && payload.status === 'ringing') {
+                // Fix: Check if user exists before accessing userId
+                if (user && payload.receiverId === user.userId && payload.status === 'ringing') {
                     setIncomingCall(payload);
                     playRingtone();
                 }
