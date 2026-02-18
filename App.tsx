@@ -276,10 +276,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   return <>{children}</>;
 };
 
+import CallManager from "./components/CallManager"; // Added import
+
 const App: React.FC = () => {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <CallManager /> {/* Mounted CallManager */}
         <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-100 selection:text-blue-900 transition-colors duration-300 overflow-x-hidden">
           <Header />
           <main className="flex-grow container mx-auto px-4 py-8 relative">

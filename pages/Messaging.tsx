@@ -155,11 +155,15 @@ const Messaging: React.FC = () => {
           ...receivedMessages.documents,
         ].map((m: any) => ({
           ...m,
+          createdAt: m.$createdAt,
           reactions:
             typeof m.reactions === "string"
               ? JSON.parse(m.reactions || "{}")
               : m.reactions || {},
         })) as unknown as Message[];
+
+        // Sort messages by creation time to fix "grouped by user" issue
+        allMessages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 
         // Mark as read when focusing a chat
         const messagesToUpdate = allMessages.filter((m: Message) => {
@@ -293,6 +297,11 @@ const Messaging: React.FC = () => {
               productId,
             );
             setContextProduct(foundProduct as unknown as Product);
+            setNewMessage((prev) =>
+              prev.trim() === ""
+                ? `Hi, I'm interested in the ${foundProduct.name}. Is it still available?`
+                : prev
+            );
           } catch (error) {
             console.error("Error loading product:", error);
           }
@@ -532,7 +541,7 @@ const Messaging: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto h-[calc(100vh-140px)] flex bg-[#f0f2f5] dark:bg-slate-950 overflow-hidden shadow-xl relative border border-slate-200 dark:border-slate-800">
-      <div className="w-[30%] border-r border-slate-200 dark:border-slate-800 flex flex-col bg-white dark:bg-slate-900 h-full hidden md:flex">
+      <div className={`w-full md:w-[30%] border-r border-slate-200 dark:border-slate-800 flex flex-col bg-white dark:bg-slate-900 h-full ${chattingWith ? "hidden md:flex" : "flex"}`}>
         <div className="h-16 px-4 bg-[#f0f2f5] dark:bg-slate-900 flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
           <img
             src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "")}&background=1e40af&color=fff`}
@@ -615,7 +624,7 @@ const Messaging: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-grow flex flex-col h-full bg-[#efeae2] dark:bg-slate-950 relative overflow-hidden">
+      <div className={`flex-grow flex flex-col h-full bg-[#efeae2] dark:bg-slate-950 relative overflow-hidden ${!chattingWith ? "hidden md:flex" : "flex"}`}>
         <div
           className="absolute inset-0 opacity-[0.06] dark:opacity-[0.03] pointer-events-none"
           style={{
@@ -629,6 +638,15 @@ const Messaging: React.FC = () => {
           <div className="flex flex-col h-full z-10">
             <div className="h-16 px-4 bg-[#f0f2f5] dark:bg-slate-900 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
               <div className="flex items-center space-x-3 cursor-pointer">
+                <button
+                  onClick={() => {
+                    setChattingWith(null);
+                    navigate("/messages");
+                  }}
+                  className="md:hidden text-slate-500 dark:text-slate-400 mr-1"
+                >
+                  <i className="fa-solid fa-arrow-left text-lg"></i>
+                </button>
                 <img
                   src={`https://ui-avatars.com/api/?name=${encodeURIComponent(chattingWith.name)}&background=random`}
                   className="w-10 h-10 rounded-full"
@@ -657,22 +675,42 @@ const Messaging: React.FC = () => {
                 >
                   <i className="fa-solid fa-ban text-lg"></i>
                 </button>
+
+                {/* Video Call - WhatsApp */}
+                {chattingWith.phoneNumber ? (
+                  <a
+                    href={`https://wa.me/${chattingWith.phoneNumber.replace(/\D/g, '')}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    title="Video Call (WhatsApp)"
+                    className="hover:text-[#25D366] transition-colors"
+                  >
+                    <i className="fa-solid fa-video text-lg"></i>
+                  </a>
+                ) : (
+                  <button
+                    title="No Phone Number Available"
+                    onClick={() => alert("This user has not added a phone number.")}
+                    className="text-slate-300 dark:text-slate-700 cursor-not-allowed"
+                  >
+                    <i className="fa-solid fa-video text-lg"></i>
+                  </button>
+                )}
+
+                {/* Voice Call - In-App */}
                 <button
-                  title="Video Call"
-                  onClick={() =>
-                    alert("Video calls are coming in the next update!")
-                  }
-                >
-                  <i className="fa-solid fa-video text-lg"></i>
-                </button>
-                <button
-                  title="Voice Call"
-                  onClick={() =>
-                    alert("Voice calls are coming in the next update!")
-                  }
+                  onClick={() => {
+                    const event = new CustomEvent('start-app-call', {
+                      detail: { receiverId: chattingWith.userId }
+                    });
+                    window.dispatchEvent(event);
+                  }}
+                  title="Voice Call (In-App)"
+                  className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 >
                   <i className="fa-solid fa-phone text-lg"></i>
                 </button>
+
                 <div className="w-[1px] h-6 bg-slate-300 dark:bg-slate-800 mx-2"></div>
                 <button title="Search Chat">
                   <i className="fa-solid fa-magnifying-glass text-lg"></i>
