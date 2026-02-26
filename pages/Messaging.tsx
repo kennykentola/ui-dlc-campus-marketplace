@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
 import { UserProfile, Message, Product } from "../types";
-import { databases, storage } from "../lib/appwrite";
-import { Query, ID } from "appwrite";
+import { databases, storage } from "../lib/appwrite"; // Helper import
+import { Query, ID } from "appwrite"; // Appwrite classes
 import { sendEmailPlaceholder } from "../services/notification";
 
 /**
@@ -50,7 +50,7 @@ const AudioPlayer: React.FC<{ duration: number; isMe: boolean }> = ({
   }, []);
 
   return (
-    <div className="flex items-center space-x-3 min-w-[200px] py-1">
+    <div className="flex items-center space-x-3 min-w-50 py-1">
       <div className="relative">
         <button
           onClick={togglePlay}
@@ -62,7 +62,7 @@ const AudioPlayer: React.FC<{ duration: number; isMe: boolean }> = ({
         </button>
       </div>
 
-      <div className="flex-grow flex flex-col space-y-1">
+      <div className="grow flex flex-col space-y-1">
         <div
           className="h-1 bg-slate-200/50 dark:bg-slate-700/50 rounded-full relative cursor-pointer overflow-hidden"
           onClick={handleSeek}
@@ -86,7 +86,7 @@ const AudioPlayer: React.FC<{ duration: number; isMe: boolean }> = ({
         </div>
       </div>
 
-      <div className="relative flex-shrink-0">
+      <div className="relative shrink-0">
         <img
           src="https://ui-avatars.com/api/?name=V&background=00a884&color=fff"
           className="w-8 h-8 rounded-full opacity-40"
@@ -123,6 +123,8 @@ const Messaging: React.FC = () => {
   const [recordingTime, setRecordingTime] = useState(0);
   const recordingInterval = useRef<number | null>(null);
   const recognitionRef = useRef<any>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
   const QUICK_EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
 
@@ -163,7 +165,10 @@ const Messaging: React.FC = () => {
         })) as unknown as Message[];
 
         // Sort messages by creation time to fix "grouped by user" issue
-        allMessages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        allMessages.sort(
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+        );
 
         // Mark as read when focusing a chat
         const messagesToUpdate = allMessages.filter((m: Message) => {
@@ -241,9 +246,9 @@ const Messaging: React.FC = () => {
                   : last?.text || "New chat",
               time: last
                 ? new Date(last.createdAt).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
                 : "",
               unread: filteredMessages.filter(
                 (m: Message) => m.senderId === partnerId && !m.isRead,
@@ -300,7 +305,7 @@ const Messaging: React.FC = () => {
             setNewMessage((prev) =>
               prev.trim() === ""
                 ? `Hi, I'm interested in the ${foundProduct.name}. Is it still available?`
-                : prev
+                : prev,
             );
           } catch (error) {
             console.error("Error loading product:", error);
@@ -465,47 +470,103 @@ const Messaging: React.FC = () => {
     }
   };
 
-  const startRecording = () => {
-    setIsRecording(true);
-    setRecordingTime(0);
-    recordingInterval.current = window.setInterval(
-      () => setRecordingTime((prev) => prev + 1),
-      1000,
-    );
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      setRecordingTime(0);
+      recordingInterval.current = window.setInterval(
+        () => setRecordingTime((prev) => prev + 1),
+        1000,
+      );
+    } catch (error) {
+      console.error("Error accessing microphone:", error);
+      alert(
+        "Could not access microphone. Please ensure permissions are granted.",
+      );
+    }
   };
 
   const stopRecording = async (send: boolean) => {
-    setIsRecording(false);
-    if (recordingInterval.current) clearInterval(recordingInterval.current);
-    if (send && user && chattingWith) {
-      const conversationId = [user.userId, chattingWith.userId].sort().join("_");
-      try {
-        const msg = await databases.createDocument(
-          import.meta.env.VITE_APPWRITE_DATABASE_ID,
-          "messages",
-          ID.unique(),
-          {
-            conversationId,
-            senderId: user.userId,
-            receiverId: chattingWith.userId,
-            type: "audio",
-            duration: recordingTime,
-            audioUrl: "#",
-            isRead: false,
-            reactions: JSON.stringify({}),
-          },
-        );
-        setMessages((prev) => [...prev, msg as unknown as Message]);
+    if (!mediaRecorderRef.current) return;
 
-        sendEmailPlaceholder(
-          chattingWith.email,
-          `New Voice Message from ${user.name}`,
-          `Hello ${chattingWith.name.split(" ")[0]},\n\nYou have received a new voice note on the UI DLC Marketplace from ${user.name}.\n\nDuration: 0:${recordingTime.toString().padStart(2, "0")}\n\nLogin to the marketplace to listen.`,
-        );
-      } catch (error) {
-        console.error("Error sending voice message:", error);
-      }
+    mediaRecorderRef.current.stop();
+    mediaRecorderRef.current.stream
+      .getTracks()
+      .forEach((track) => track.stop()); // Stop mic usage
+
+    setIsRecording(false);
+    if (recordingInterval.current) {
+      clearInterval(recordingInterval.current);
+      recordingInterval.current = null;
     }
+
+    // Wait slightly for the final blob to be available
+    setTimeout(async () => {
+      if (send && user && chattingWith && audioChunksRef.current.length > 0) {
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: "audio/webm",
+        });
+        const audioFile = new File(
+          [audioBlob],
+          `voice_note_${Date.now()}.webm`,
+          { type: "audio/webm" },
+        );
+
+        try {
+          // 1. Upload to Storage
+          // Use 'product-images' bucket or a dedicated 'voice-notes' bucket if available.
+          // Assuming 'product-images' for now based on env setup, or fallback to file storage
+          const bucketId =
+            import.meta.env.VITE_APPWRITE_BUCKET_ID || "product-images";
+          const uploadedFile = await storage.createFile(
+            bucketId,
+            ID.unique(),
+            audioFile,
+          );
+
+          // 2. Get View URL
+          const fileUrl = storage.getFileView(bucketId, uploadedFile.$id);
+
+          const conversationId = [user.userId, chattingWith.userId]
+            .sort()
+            .join("_");
+
+          const msg = await databases.createDocument(
+            import.meta.env.VITE_APPWRITE_DATABASE_ID,
+            "messages",
+            ID.unique(),
+            {
+              conversationId,
+              senderId: user.userId,
+              receiverId: chattingWith.userId,
+              type: "audio",
+              duration: recordingTime,
+              audioUrl: fileUrl, // Use the generated URL
+              isRead: false,
+              reactions: JSON.stringify({}),
+            },
+          );
+          setMessages((prev) => [...prev, msg as unknown as Message]);
+
+          // ... notification code ...
+        } catch (error) {
+          console.error("Error sending voice message:", error);
+          alert("Failed to send voice message.");
+        }
+      }
+    }, 200);
   };
 
   const groupMessagesByDate = (msgs: Message[]) => {
@@ -541,7 +602,9 @@ const Messaging: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto h-[calc(100vh-100px)] md:h-[calc(100vh-140px)] flex bg-[#f0f2f5] dark:bg-slate-950 overflow-hidden shadow-xl relative border border-slate-200 dark:border-slate-800">
-      <div className={`w-full md:w-[30%] border-r border-slate-200 dark:border-slate-800 flex flex-col bg-white dark:bg-slate-900 h-full ${chattingWith ? "hidden md:flex" : "flex"}`}>
+      <div
+        className={`w-full md:w-[30%] border-r border-slate-200 dark:border-slate-800 flex flex-col bg-white dark:bg-slate-900 h-full ${chattingWith ? "hidden md:flex" : "flex"}`}
+      >
         <div className="h-16 px-4 bg-[#f0f2f5] dark:bg-slate-900 flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
           <img
             src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "")}&background=1e40af&color=fff`}
@@ -577,7 +640,7 @@ const Messaging: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex-grow overflow-y-auto bg-white dark:bg-slate-900 divide-y divide-slate-50 dark:divide-slate-800/50">
+        <div className="grow overflow-y-auto bg-white dark:bg-slate-900 divide-y divide-slate-50 dark:divide-slate-800/50">
           {conversations
             .filter((c) =>
               c.user.name.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -596,7 +659,7 @@ const Messaging: React.FC = () => {
                   className="w-12 h-12 rounded-full"
                   alt=""
                 />
-                <div className="flex-grow text-left overflow-hidden border-b border-slate-100 dark:border-slate-800 pb-2">
+                <div className="grow text-left overflow-hidden border-b border-slate-100 dark:border-slate-800 pb-2">
                   <div className="flex justify-between items-center mb-0.5">
                     <span className="font-semibold text-slate-800 dark:text-white text-base">
                       {convo.user.name}
@@ -624,7 +687,9 @@ const Messaging: React.FC = () => {
         </div>
       </div>
 
-      <div className={`flex-grow flex flex-col h-full bg-[#efeae2] dark:bg-slate-950 relative overflow-hidden ${!chattingWith ? "hidden md:flex" : "flex"}`}>
+      <div
+        className={`grow flex flex-col h-full bg-[#efeae2] dark:bg-slate-950 relative overflow-hidden ${!chattingWith ? "hidden md:flex" : "flex"}`}
+      >
         <div
           className="absolute inset-0 opacity-[0.06] dark:opacity-[0.03] pointer-events-none"
           style={{
@@ -636,7 +701,7 @@ const Messaging: React.FC = () => {
 
         {chattingWith ? (
           <div className="flex flex-col h-full z-10">
-            <div className="h-16 px-4 bg-[#f0f2f5] dark:bg-slate-900 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
+            <div className="h-16 px-4 bg-[#f0f2f5] dark:bg-slate-900 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 shrink-0">
               <div className="flex items-center space-x-3 cursor-pointer">
                 <button
                   onClick={() => {
@@ -679,7 +744,7 @@ const Messaging: React.FC = () => {
                 {/* Video Call - WhatsApp */}
                 {chattingWith.phoneNumber ? (
                   <a
-                    href={`https://wa.me/${chattingWith.phoneNumber.replace(/\D/g, '')}`}
+                    href={`https://wa.me/${chattingWith.phoneNumber.replace(/\D/g, "")}`}
                     target="_blank"
                     rel="noreferrer"
                     title="Video Call (WhatsApp)"
@@ -690,7 +755,9 @@ const Messaging: React.FC = () => {
                 ) : (
                   <button
                     title="No Phone Number Available"
-                    onClick={() => alert("This user has not added a phone number.")}
+                    onClick={() =>
+                      alert("This user has not added a phone number.")
+                    }
                     className="text-slate-300 dark:text-slate-700 cursor-not-allowed"
                   >
                     <i className="fa-solid fa-video text-lg"></i>
@@ -700,8 +767,8 @@ const Messaging: React.FC = () => {
                 {/* Voice Call - In-App */}
                 <button
                   onClick={() => {
-                    const event = new CustomEvent('start-app-call', {
-                      detail: { receiverId: chattingWith.userId }
+                    const event = new CustomEvent("start-app-call", {
+                      detail: { receiverId: chattingWith.userId },
                     });
                     window.dispatchEvent(event);
                   }}
@@ -711,7 +778,7 @@ const Messaging: React.FC = () => {
                   <i className="fa-solid fa-phone text-lg"></i>
                 </button>
 
-                <div className="w-[1px] h-6 bg-slate-300 dark:bg-slate-800 mx-2"></div>
+                <div className="w-px h-6 bg-slate-300 dark:bg-slate-800 mx-2"></div>
                 <button title="Search Chat">
                   <i className="fa-solid fa-magnifying-glass text-lg"></i>
                 </button>
@@ -728,7 +795,7 @@ const Messaging: React.FC = () => {
                   className="w-10 h-10 rounded object-cover"
                   alt=""
                 />
-                <div className="flex-grow text-left">
+                <div className="grow text-left">
                   <p className="text-[10px] text-[#00a884] font-bold uppercase tracking-widest leading-none mb-1">
                     Inquiry
                   </p>
@@ -744,7 +811,7 @@ const Messaging: React.FC = () => {
 
             <div
               ref={scrollRef}
-              className="flex-grow p-4 md:px-12 overflow-y-auto space-y-4 scroll-smooth"
+              className="grow p-4 md:px-12 overflow-y-auto space-y-4 scroll-smooth"
             >
               {Object.entries(groupMessagesByDate(messages)).map(
                 ([date, msgs]) => (
@@ -777,7 +844,7 @@ const Messaging: React.FC = () => {
                             ></div>
 
                             {msg.type === "text" ? (
-                              <p className="text-[14.5px] text-[#111b21] dark:text-slate-100 break-words pr-8">
+                              <p className="text-[14.5px] text-[#111b21] dark:text-slate-100 wrap-break-word pr-8">
                                 {msg.text}
                               </p>
                             ) : (
@@ -875,7 +942,7 @@ const Messaging: React.FC = () => {
               )}
             </div>
 
-            <div className="px-4 py-2 bg-[#f0f2f5] dark:bg-slate-900 flex items-center space-x-3 flex-shrink-0">
+            <div className="px-4 py-2 bg-[#f0f2f5] dark:bg-slate-900 flex items-center space-x-3 shrink-0">
               {isRecording ? (
                 <div className="w-full flex items-center justify-between bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700">
                   <div className="flex items-center space-x-4">
@@ -912,13 +979,13 @@ const Messaging: React.FC = () => {
 
                   <form
                     onSubmit={handleSendMessage}
-                    className="flex-grow flex items-center space-x-3"
+                    className="grow flex items-center space-x-3"
                   >
-                    <div className="flex-grow relative">
+                    <div className="grow relative">
                       <input
                         type="text"
                         placeholder="Type a message"
-                        className="w-full bg-white dark:bg-slate-800 rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none placeholder:text-slate-400 dark:text-white"
+                        className="w-full bg-white dark:bg-slate-800 rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none placeholder:text-slate-400 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                       />
@@ -934,7 +1001,7 @@ const Messaging: React.FC = () => {
                       </button>
                     </div>
 
-                    <div className="flex-shrink-0">
+                    <div className="shrink-0">
                       {newMessage.trim() ? (
                         <button
                           type="submit"
@@ -959,7 +1026,7 @@ const Messaging: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="flex-grow flex flex-col items-center justify-center p-20 text-center bg-[#f0f2f5] dark:bg-slate-950 h-full z-10">
+          <div className="grow flex flex-col items-center justify-center p-20 text-center bg-[#f0f2f5] dark:bg-slate-950 h-full z-10">
             <div className="w-64 h-64 opacity-40 mb-10">
               <img
                 src="https://static.whatsapp.net/rsrc.php/v3/y6/r/wa669ae5F2j.png"

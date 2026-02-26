@@ -18,9 +18,13 @@ const AdminDashboard: React.FC = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [reports, setReports] = useState<ProductReport[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<"verifications" | "reports" | "listings" | "users">("verifications");
+  const [tab, setTab] = useState<
+    "verifications" | "reports" | "listings" | "users"
+  >("verifications");
   const [filterTerm, setFilterTerm] = useState("");
-  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
+  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(
+    new Set(),
+  );
 
   const toggleProductSelection = (id: string) => {
     const newSelected = new Set(selectedProducts);
@@ -48,17 +52,17 @@ const AdminDashboard: React.FC = () => {
           databases.listDocuments(
             import.meta.env.VITE_APPWRITE_DATABASE_ID,
             import.meta.env.VITE_APPWRITE_PRODUCTS_COLLECTION_ID,
-            [Query.limit(100), Query.orderDesc("$createdAt")]
+            [Query.limit(100), Query.orderDesc("$createdAt")],
           ),
           databases.listDocuments(
             import.meta.env.VITE_APPWRITE_DATABASE_ID,
             import.meta.env.VITE_APPWRITE_PROFILES_COLLECTION_ID,
-            [Query.limit(100)]
+            [Query.limit(100)],
           ),
           databases.listDocuments(
             import.meta.env.VITE_APPWRITE_DATABASE_ID,
             import.meta.env.VITE_APPWRITE_REPORTS_COLLECTION_ID,
-            [Query.limit(100), Query.orderDesc("createdAt")]
+            [Query.limit(100), Query.orderDesc("createdAt")],
           ),
         ]);
 
@@ -78,11 +82,19 @@ const AdminDashboard: React.FC = () => {
   }, [user]);
 
   if (!user || user.role !== UserRole.ADMIN) {
-    return <div className="p-8 text-center text-rose-500 font-bold">Access Denied</div>;
+    return (
+      <div className="p-8 text-center text-rose-500 font-bold">
+        Access Denied
+      </div>
+    );
   }
 
   if (loading) {
-    return <div className="p-8 text-center font-bold text-slate-500">Loading Admin Dashboard...</div>;
+    return (
+      <div className="p-8 text-center font-bold text-slate-500">
+        Loading Admin Dashboard...
+      </div>
+    );
   }
 
   const handleBulkAction = async (status: ProductStatus) => {
@@ -106,12 +118,12 @@ const AdminDashboard: React.FC = () => {
       await Promise.all(updates);
 
       setProducts((prev) =>
-        prev.map((p) =>
-          selectedProducts.has(p.$id) ? { ...p, status } : p,
-        ),
+        prev.map((p) => (selectedProducts.has(p.$id) ? { ...p, status } : p)),
       );
       setSelectedProducts(new Set());
-      alert(`Successfully updated ${selectedProducts.size} items to ${status}.`);
+      alert(
+        `Successfully updated ${selectedProducts.size} items to ${status}.`,
+      );
     } catch (error) {
       console.error("Error performing bulk action:", error);
       alert("Failed to perform bulk action.");
@@ -328,9 +340,9 @@ const AdminDashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-[32px] border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-4xl border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-hidden">
         <div className="p-6 border-b border-slate-50 dark:border-slate-800 flex items-center gap-4">
-          <div className="relative flex-grow">
+          <div className="relative grow">
             <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600"></i>
             <input
               type="text"
@@ -355,7 +367,9 @@ const AdminDashboard: React.FC = () => {
               <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
                 {pendingVerifications
                   .filter((u) =>
-                    (u.name || "").toLowerCase().includes(filterTerm.toLowerCase()),
+                    (u.name || "")
+                      .toLowerCase()
+                      .includes(filterTerm.toLowerCase()),
                   )
                   .map((u) => (
                     <tr
@@ -518,7 +532,9 @@ const AdminDashboard: React.FC = () => {
                 <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
                   {products
                     .filter((p) =>
-                      (p.name || "").toLowerCase().includes(filterTerm.toLowerCase()),
+                      (p.name || "")
+                        .toLowerCase()
+                        .includes(filterTerm.toLowerCase()),
                     )
                     .map((p) => (
                       <tr
@@ -536,7 +552,11 @@ const AdminDashboard: React.FC = () => {
                         <td className="px-4 py-5">
                           <div className="flex items-center space-x-4">
                             <img
-                              src={p.imageUrls && p.imageUrls.length > 0 ? p.imageUrls[0] : "https://placehold.co/100?text=No+Image"}
+                              src={
+                                p.imageUrls && p.imageUrls.length > 0
+                                  ? p.imageUrls[0]
+                                  : "https://placehold.co/100?text=No+Image"
+                              }
                               className="w-12 h-12 rounded-xl object-cover shadow-sm"
                               alt=""
                             />
@@ -554,12 +574,13 @@ const AdminDashboard: React.FC = () => {
                         </td>
                         <td className="px-4 py-5">
                           <span
-                            className={`text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg ${p.status === ProductStatus.APPROVED
-                              ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400"
-                              : p.status === ProductStatus.PENDING
-                                ? "bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400"
-                                : "bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400"
-                              }`}
+                            className={`text-[10px] font-black uppercase tracking-wider px-2 py-1 rounded-lg ${
+                              p.status === ProductStatus.APPROVED
+                                ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400"
+                                : p.status === ProductStatus.PENDING
+                                  ? "bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400"
+                                  : "bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400"
+                            }`}
                           >
                             {p.status}
                           </span>
@@ -569,7 +590,10 @@ const AdminDashboard: React.FC = () => {
                             <>
                               <button
                                 onClick={() =>
-                                  handleUpdateStatus(p.$id, ProductStatus.APPROVED)
+                                  handleUpdateStatus(
+                                    p.$id,
+                                    ProductStatus.APPROVED,
+                                  )
                                 }
                                 className="px-3 py-1.5 bg-emerald-600 text-white text-[9px] font-black rounded-lg shadow-sm hover:bg-emerald-700 transition"
                               >
@@ -577,7 +601,10 @@ const AdminDashboard: React.FC = () => {
                               </button>
                               <button
                                 onClick={() =>
-                                  handleUpdateStatus(p.$id, ProductStatus.REJECTED)
+                                  handleUpdateStatus(
+                                    p.$id,
+                                    ProductStatus.REJECTED,
+                                  )
                                 }
                                 className="px-3 py-1.5 bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400 text-[9px] font-black rounded-lg hover:bg-rose-100 dark:hover:bg-rose-900/40 transition"
                               >
@@ -617,7 +644,9 @@ const AdminDashboard: React.FC = () => {
               <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
                 {users
                   .filter((u) =>
-                    (u.name || "").toLowerCase().includes(filterTerm.toLowerCase()),
+                    (u.name || "")
+                      .toLowerCase()
+                      .includes(filterTerm.toLowerCase()),
                   )
                   .map((u) => (
                     <tr

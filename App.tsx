@@ -26,9 +26,10 @@ import Messaging from "./pages/Messaging";
 // --- Contexts ---
 interface AuthContextType {
   user: UserProfile | null;
-  login: (email: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  register: (data: Partial<UserProfile>) => Promise<void>;
+  // register returns the created profile document so callers can optionally use it
+  register: (data: Partial<UserProfile> & { password: string }) => Promise<any>;
   refreshUser: () => void;
   loading: boolean;
   isDarkMode: boolean;
@@ -161,7 +162,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       // Ensure no active session exists before creating a new one
       try {
-        await account.deleteSession('current');
+        await account.deleteSession("current");
       } catch (e) {
         // Ignore error if no session exists or network error on delete
       }
@@ -285,7 +286,7 @@ const App: React.FC = () => {
         <CallManager /> {/* Mounted CallManager */}
         <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-100 selection:text-blue-900 transition-colors duration-300 overflow-x-hidden">
           <Header />
-          <main className="flex-grow container mx-auto px-4 py-8 relative">
+          <main className="grow container mx-auto px-4 py-8 relative">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
@@ -340,8 +341,6 @@ const App: React.FC = () => {
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </main>
-
-
 
           <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-10 mt-12 transition-colors">
             <div className="container mx-auto px-4">

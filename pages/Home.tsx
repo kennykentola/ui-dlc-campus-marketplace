@@ -85,7 +85,7 @@ const Home: React.FC = () => {
             sell, and connect. From electronics to academic materials.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-grow">
+            <div className="relative grow">
               <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-blue-300"></i>
               <input
                 type="text"

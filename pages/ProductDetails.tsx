@@ -260,7 +260,7 @@ const ProductDetails: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 bg-white dark:bg-slate-900 p-6 md:p-8 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
         <div className="space-y-6">
-          <div className="aspect-[4/3] rounded-[32px] overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 relative group shadow-inner">
+          <div className="aspect-4/3 rounded-4xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 relative group shadow-inner">
             <img
               src={
                 product.imageUrls[activeImageIndex] ||
@@ -327,7 +327,7 @@ const ProductDetails: React.FC = () => {
                 <button
                   key={index}
                   onClick={() => setActiveImageIndex(index)}
-                  className={`flex-shrink-0 w-24 h-24 rounded-2xl overflow-hidden border-4 transition-all ${activeImageIndex === index ? "border-blue-700 scale-105 shadow-xl" : "border-white dark:border-slate-800 hover:border-blue-100 shadow-sm"}`}
+                  className={`shrink-0 w-24 h-24 rounded-2xl overflow-hidden border-4 transition-all ${activeImageIndex === index ? "border-blue-700 scale-105 shadow-xl" : "border-white dark:border-slate-800 hover:border-blue-100 shadow-sm"}`}
                 >
                   <img
                     src={url}
@@ -444,7 +444,7 @@ const ProductDetails: React.FC = () => {
             </p>
           </div>
 
-          <div className="bg-slate-50 dark:bg-slate-800 rounded-[32px] p-8 border border-slate-100 dark:border-slate-700 space-y-8 shadow-sm">
+          <div className="bg-slate-50 dark:bg-slate-800 rounded-4xl p-8 border border-slate-100 dark:border-slate-700 space-y-8 shadow-sm">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <img
@@ -542,8 +542,8 @@ const ProductDetails: React.FC = () => {
 
       {/* Report Modal */}
       {showReportModal && (
-        <div className="fixed inset-0 z-[210] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white dark:bg-slate-900 rounded-[32px] p-8 max-w-sm w-full shadow-2xl space-y-6 text-center border border-slate-100 dark:border-slate-800">
+        <div className="fixed inset-0 z-210 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white dark:bg-slate-900 rounded-4xl p-8 max-w-sm w-full shadow-2xl space-y-6 text-center border border-slate-100 dark:border-slate-800">
             <div className="w-16 h-16 bg-rose-50 dark:bg-rose-900/20 rounded-full flex items-center justify-center mx-auto text-rose-500 mb-2">
               <i className="fa-solid fa-triangle-exclamation text-2xl"></i>
             </div>
@@ -627,7 +627,7 @@ const ProductDetails: React.FC = () => {
 
       {/* Share Modal */}
       {isShareModalOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+        <div className="fixed inset-0 z-200 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
           <div className="bg-white dark:bg-slate-900 w-full max-w-sm rounded-[48px] overflow-hidden shadow-2xl animate-bounceIn border border-white/20 dark:border-slate-800">
             <div className="p-8 border-b border-slate-50 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/50">
               <h3 className="font-black text-slate-900 dark:text-white uppercase tracking-[0.2em] text-[10px]">

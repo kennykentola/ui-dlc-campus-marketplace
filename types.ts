@@ -49,7 +49,8 @@ export interface UserProfile {
   blockedUserIds?: string[]; // Array of user IDs this user has blocked
   sellerStatus: SellerStatus;
   isSuspended?: boolean;
-  notificationSettings?: NotificationSettings;
+  // stored as object or JSON string in some cases
+  notificationSettings?: NotificationSettings | string;
 }
 
 export interface Product {

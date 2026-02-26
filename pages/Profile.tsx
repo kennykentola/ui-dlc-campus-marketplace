@@ -33,7 +33,12 @@ const Profile: React.FC = () => {
   const [docPreview, setDocPreview] = useState<string | null>(null);
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
 
-  const [editForm, setEditForm] = useState<Partial<UserProfile>>({
+  // keep notificationSettings strictly as an object for internal editing
+  type EditableProfile = Omit<Partial<UserProfile>, "notificationSettings"> & {
+    notificationSettings: NotificationSettings;
+  };
+
+  const [editForm, setEditForm] = useState<EditableProfile>({
     name: "",
     department: "",
     level: "",
@@ -82,20 +87,21 @@ const Profile: React.FC = () => {
 
         // Load blocked users
         if (user.blockedUserIds && user.blockedUserIds.length > 0) {
-          const blockedProfiles = [];
+          const blockedProfiles: UserProfile[] = [];
           for (const blockedId of user.blockedUserIds) {
             try {
-              const profile = await databases.getDocument(
+              const profileDoc = await databases.getDocument(
                 import.meta.env.VITE_APPWRITE_DATABASE_ID,
                 import.meta.env.VITE_APPWRITE_PROFILES_COLLECTION_ID,
                 blockedId,
               );
-              blockedProfiles.push(profile);
+              // The Appwrite SDK returns DefaultDocument – cast once when pushing
+              blockedProfiles.push(profileDoc as unknown as UserProfile);
             } catch (error) {
               console.error(`Error loading blocked user ${blockedId}:`, error);
             }
           }
-          setBlockedUsers(blockedProfiles as UserProfile[]);
+          setBlockedUsers(blockedProfiles);
         } else {
           setBlockedUsers([]);
         }
@@ -116,16 +122,20 @@ const Profile: React.FC = () => {
               user.notificationSettings.length > 0
             ) {
               try {
-                return JSON.parse(user.notificationSettings);
+                return JSON.parse(
+                  user.notificationSettings,
+                ) as NotificationSettings;
               } catch (e) {
                 // Invalid JSON, fallback to default
               }
             }
             // Return existing object or default
-            return (
-              (typeof user.notificationSettings === "object"
+            const existing =
+              typeof user.notificationSettings === "object"
                 ? user.notificationSettings
-                : null) || {
+                : null;
+            return (
+              (existing as NotificationSettings) || {
                 emailMessages: true,
                 emailReviews: true,
                 emailVerification: true,
@@ -147,7 +157,6 @@ const Profile: React.FC = () => {
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-
 
     try {
       let finalAvatarUrl = user.avatarUrl;
@@ -194,8 +203,8 @@ const Profile: React.FC = () => {
     setEditForm((prev) => ({
       ...prev,
       notificationSettings: {
-        ...prev.notificationSettings!,
-        [key]: !prev.notificationSettings![key],
+        ...prev.notificationSettings,
+        [key]: !prev.notificationSettings[key],
       },
     }));
   };
@@ -333,7 +342,7 @@ const Profile: React.FC = () => {
             onChange={handleAvatarChange}
           />
         </div>
-        <div className="text-center md:text-left space-y-2 flex-grow">
+        <div className="text-center md:text-left space-y-2 grow">
           <div className="flex items-center justify-center md:justify-start gap-3">
             <span className="inline-block px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest rounded-full">
               {user.role} Account
@@ -415,7 +424,7 @@ const Profile: React.FC = () => {
       </div>
 
       {showDeleteModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-md w-full shadow-2xl space-y-6">
             <h2 className="text-xl font-black text-slate-900 dark:text-white text-center">
               Delete Your Account?
@@ -692,7 +701,7 @@ const Profile: React.FC = () => {
             <div className="flex gap-4 pt-6">
               <button
                 type="submit"
-                className="flex-grow bg-blue-700 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-800 transition transform active:scale-[0.98]"
+                className="grow bg-blue-700 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-800 transition transform active:scale-[0.98]"
               >
                 Save Changes & Preferences
               </button>
@@ -731,7 +740,7 @@ const Profile: React.FC = () => {
         ))}
       </div>
 
-      <div className="min-h-[400px]">
+      <div className="min-h-100">
         {activeTab === "listings" && (
           <div className="space-y-8 animate-fadeIn">
             <div className="flex items-center justify-between">
@@ -768,7 +777,7 @@ const Profile: React.FC = () => {
                 {myReviews.map((review) => (
                   <div
                     key={review.$id}
-                    className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm transition hover:shadow-md transition-colors"
+                    className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-colors"
                   >
                     <div className="flex items-center space-x-2 mb-3">
                       <img
@@ -909,7 +918,7 @@ const Profile: React.FC = () => {
             </div>
 
             {user.sellerStatus === SellerStatus.UNVERIFIED ||
-              user.sellerStatus === SellerStatus.REJECTED ? (
+            user.sellerStatus === SellerStatus.REJECTED ? (
               <div className="bg-white dark:bg-slate-900 p-10 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-xl space-y-8 transition-colors">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex flex-col">
@@ -945,7 +954,7 @@ const Profile: React.FC = () => {
                       UI School ID Card (Front View)
                     </label>
                     <div
-                      className={`relative aspect-[16/9] w-full rounded-3xl border-4 border-dashed transition-all overflow-hidden flex flex-col items-center justify-center ${docPreview ? "border-blue-700 dark:border-blue-500 bg-white dark:bg-slate-800" : "border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-blue-300 dark:hover:border-blue-600"}`}
+                      className={`relative aspect-video w-full rounded-3xl border-4 border-dashed transition-all overflow-hidden flex flex-col items-center justify-center ${docPreview ? "border-blue-700 dark:border-blue-500 bg-white dark:bg-slate-800" : "border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-blue-300 dark:hover:border-blue-600"}`}
                     >
                       {docPreview ? (
                         <>
@@ -1003,7 +1012,7 @@ const Profile: React.FC = () => {
                   <button
                     type="submit"
                     disabled={!docPreview || isUploadingDoc}
-                    className="w-full bg-blue-700 text-white py-5 rounded-[24px] font-black text-sm uppercase tracking-widest shadow-2xl shadow-blue-100 dark:shadow-none hover:bg-blue-800 transition transform active:scale-[0.98] disabled:opacity-50"
+                    className="w-full bg-blue-700 text-white py-5 rounded-3xl font-black text-sm uppercase tracking-widest shadow-2xl shadow-blue-100 dark:shadow-none hover:bg-blue-800 transition transform active:scale-[0.98] disabled:opacity-50"
                   >
                     {isUploadingDoc ? (
                       <>
@@ -1040,7 +1049,9 @@ const Profile: React.FC = () => {
                   <button
                     onClick={async () => {
                       await refreshUser();
-                      alert("Profile refreshed! Check if status changed to Verified.");
+                      alert(
+                        "Profile refreshed! Check if status changed to Verified.",
+                      );
                     }}
                     className="text-[10px] font-bold text-slate-400 dark:text-slate-500 hover:text-blue-600 underline"
                   >

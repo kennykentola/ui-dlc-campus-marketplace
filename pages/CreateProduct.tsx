@@ -63,8 +63,6 @@ const CreateProduct: React.FC = () => {
     }
   }, [id, user, navigate]);
 
-
-
   const isVerified = user?.sellerStatus === SellerStatus.VERIFIED;
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -364,7 +362,7 @@ const CreateProduct: React.FC = () => {
                   className={`w-12 h-6 rounded-full transition-all relative ${formData.isNegotiable ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-700"}`}
                 >
                   <div
-                    className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all shadow-sm ${formData.isNegotiable ? "left-[26px]" : "left-[2px]"}`}
+                    className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all shadow-sm ${formData.isNegotiable ? "left-6.5" : "left-0.5"}`}
                   ></div>
                 </button>
               </div>
@@ -419,7 +417,7 @@ const CreateProduct: React.FC = () => {
                       className={`w-12 h-6 rounded-full transition-all relative ${formData.allowBuyNow ? "bg-blue-700" : "bg-slate-300 dark:bg-slate-700"}`}
                     >
                       <div
-                        className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all shadow-sm ${formData.allowBuyNow ? "left-[26px]" : "left-[2px]"}`}
+                        className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all shadow-sm ${formData.allowBuyNow ? "left-6.5" : "left-0.5"}`}
                       ></div>
                     </button>
                   </div>
@@ -460,7 +458,6 @@ const CreateProduct: React.FC = () => {
               <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">
                 Item Details & Condition
               </label>
-
             </div>
             <textarea
               rows={5}
@@ -475,7 +472,7 @@ const CreateProduct: React.FC = () => {
           </div>
 
           {/* Image Management Section */}
-          <div className="space-y-6 bg-slate-50/50 dark:bg-slate-900/50 p-8 rounded-[32px] border border-slate-100 dark:border-slate-800">
+          <div className="space-y-6 bg-slate-50/50 dark:bg-slate-900/50 p-8 rounded-4xl border border-slate-100 dark:border-slate-800">
             <div className="flex items-center justify-between">
               <div>
                 <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] block">
@@ -500,7 +497,7 @@ const CreateProduct: React.FC = () => {
               {imagePreviews.map((preview, index) => (
                 <div
                   key={index}
-                  className="relative aspect-square rounded-[24px] overflow-hidden border-2 border-white dark:border-slate-800 shadow-xl group"
+                  className="relative aspect-square rounded-3xl overflow-hidden border-2 border-white dark:border-slate-800 shadow-xl group"
                 >
                   <img
                     src={preview}
@@ -560,7 +557,7 @@ const CreateProduct: React.FC = () => {
               ))}
 
               {imagePreviews.length < 5 && (
-                <label className="aspect-square flex flex-col items-center justify-center border-3 border-dashed border-slate-200 dark:border-slate-800 rounded-[24px] bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all cursor-pointer group shadow-sm">
+                <label className="aspect-square flex flex-col items-center justify-center border-3 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all cursor-pointer group shadow-sm">
                   <div className="w-12 h-12 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition duration-300">
                     <i className="fa-solid fa-camera text-slate-300 dark:text-slate-600 text-xl"></i>
                   </div>
@@ -598,7 +595,7 @@ const CreateProduct: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full sm:flex-grow bg-blue-700 text-white py-5 rounded-[28px] font-black text-lg shadow-2xl shadow-blue-200 dark:shadow-none hover:bg-blue-800 transition transform active:scale-[0.98] disabled:opacity-50 uppercase tracking-widest"
+              className="w-full sm:grow bg-blue-700 text-white py-5 rounded-[28px] font-black text-lg shadow-2xl shadow-blue-200 dark:shadow-none hover:bg-blue-800 transition transform active:scale-[0.98] disabled:opacity-50 uppercase tracking-widest"
             >
               {loading ? (
                 <span className="flex items-center justify-center">

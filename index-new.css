@@ -1,9 +1,8 @@
 @reference "tailwindcss";
 
-@tailwind base;
+@import "tailwindcss/preflight";
 
-@tailwind components;
-
+/* components layer was removed in v4, utilities now includes everything */
 @tailwind utilities;
 
 /* UI DLC Campus Marketplace - Custom CSS */
@@ -49,8 +48,8 @@ select {
 }
 
 input:focus,
-textarea:focus,
-select:focus {
+  textarea:focus,
+  select:focus {
   @apply outline-none ring-2 ring-blue-500;
 }
 
@@ -59,7 +58,7 @@ select:focus {
   from {
     transform: rotate(0deg);
   }
-
+  
   to {
     transform: rotate(360deg);
   }
