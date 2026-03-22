@@ -210,6 +210,10 @@ const Messaging: React.FC = () => {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const addEmoji = (emoji: string) => {
+    setNewMessage(prev => prev + emoji);
+  };
+
   return (
     <div className="h-[calc(100vh-140px)] w-[calc(100%-2rem)] max-w-[1500px] mx-auto md:w-[calc(100%-5rem)] flex bg-white overflow-hidden shadow-2xl rounded-[48px] border border-slate-100 animate-fadeIn my-12 relative z-10 transition-all duration-500">
       
@@ -291,7 +295,7 @@ const Messaging: React.FC = () => {
                                    </button>
                                    <div className="grow space-y-2">
                                       <div className={`h-1.5 rounded-full relative ${isMe ? 'bg-white/20' : 'bg-slate-100'}`}>
-                                         <div className={`absolute left-0 top-0 h-full w-1/3 rounded-full ${isMe ? 'bg-teal-400' : 'bg-[#003366]'}`}></div>
+                                         <div className={`absolute left-0 top-0 h-full w-1/3 rounded-full ${isMe ? 'bg-teal-400' : 'bg-[#003360]'}`}></div>
                                       </div>
                                       <div className="flex justify-between text-[9px] font-black uppercase tracking-widest opacity-60">
                                          <span>Voice Asset</span>
@@ -318,8 +322,8 @@ const Messaging: React.FC = () => {
                )}
                <div className="flex items-center gap-6 md:gap-10 grow">
                   <div className="flex gap-6 md:gap-8 text-slate-300 text-2xl md:text-3xl shrink-0">
-                    <i className={`fa-regular fa-face-awesome cursor-pointer ${showEmojiPicker ? "text-teal-600" : "hover:text-[#003366]"} transition-colors`} onClick={() => setShowEmojiPicker(!showEmojiPicker)}></i>
-                    <i className={`fa-solid fa-paperclip cursor-pointer ${uploadingFile ? "animate-spin text-teal-600" : "hover:text-[#003366]"} transition-colors`} onClick={() => fileInputRef.current?.click()}></i>
+                    <i className={`fa-regular fa-face-awesome cursor-pointer ${showEmojiPicker ? "text-teal-600" : "hover:text-[#003360]"} transition-colors`} onClick={() => setShowEmojiPicker(!showEmojiPicker)}></i>
+                    <i className={`fa-solid fa-paperclip cursor-pointer ${uploadingFile ? "animate-spin text-teal-600" : "hover:text-[#003360]"} transition-colors`} onClick={() => fileInputRef.current?.click()}></i>
                     <input type="file" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
                   </div>
                   
@@ -335,7 +339,7 @@ const Messaging: React.FC = () => {
                      ) : (
                         <>
                            <form onSubmit={sendMessage} className="grow flex items-center gap-5">
-                              <input type="text" className="grow bg-slate-50 border border-slate-100 rounded-[32px] px-10 py-6 text-sm font-medium text-slate-900 outline-none focus:bg-white focus:ring-[12px] focus:ring-teal-50 transition-all placeholder:text-slate-200 shadow-sm" placeholder="Document message..." value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
+                              <input type="text" className="grow bg-slate-50 border border-slate-100 rounded-[32px] px-10 py-6 text-sm font-medium text-slate-900 outline-none focus:bg-white focus:ring-12 focus:ring-teal-50 transition-all placeholder:text-slate-200 shadow-sm" placeholder="Document message..." value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
                               <button type="submit" className={`w-16 h-16 md:w-20 md:h-20 flex items-center justify-center rounded-[28px] md:rounded-[36px] shadow-2xl transition-all ${newMessage.trim() ? "bg-[#003366] text-white scale-105" : "bg-slate-50 text-slate-200"}`}>
                                 <i className="fa-solid fa-paper-plane text-xl md:text-2xl"></i>
                               </button>
@@ -361,12 +365,6 @@ const Messaging: React.FC = () => {
       </div>
     </div>
   );
-};
-
-const formatDuration = (seconds: number) => {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
 export default Messaging;
