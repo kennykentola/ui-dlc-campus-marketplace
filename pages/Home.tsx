@@ -1,172 +1,317 @@
-import React, { useState, useEffect } from "react";
-import { Product, ProductStatus } from "../types";
-import { CATEGORIES } from "../constants";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../App";
+import { Product, UserRole } from "../types";
 import { databases } from "../lib/appwrite";
-import { Query } from "appwrite";
 import ProductCard from "../components/ProductCard";
+import { CATEGORIES } from "../constants";
 
 const Home: React.FC = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const [showSwapsOnly, setShowSwapsOnly] = useState(false);
-  const [sortBy, setSortBy] = useState<"newest" | "price_low" | "price_high">(
-    "newest",
-  );
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
-    const loadProducts = async () => {
+    const fetchProducts = async () => {
       try {
+        setLoading(true);
         const response = await databases.listDocuments(
           import.meta.env.VITE_APPWRITE_DATABASE_ID,
           "products",
-          [Query.equal("status", ProductStatus.APPROVED)],
         );
-        const approvedProducts = response.documents as unknown as Product[];
-        setProducts(approvedProducts);
-        setFilteredProducts(approvedProducts);
+        setProducts(response.documents as Product[]);
       } catch (error) {
-        console.error("Error loading products:", error);
-        setProducts([]);
-        setFilteredProducts([]);
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
       }
     };
-    loadProducts();
+
+    fetchProducts();
   }, []);
 
-  useEffect(() => {
-    let result = products;
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "All" || product.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
-    if (selectedCategory !== "All") {
-      result = result.filter((p) => p.category === selectedCategory);
-    }
-
-    if (showSwapsOnly) {
-      result = result.filter(
-        (p) => p.transactionType === "exchange" || p.transactionType === "both",
-      );
-    }
-
-    if (search) {
-      const term = search.toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.name.toLowerCase().includes(term) ||
-          p.description.toLowerCase().includes(term),
-      );
-    }
-
-    if (sortBy === "newest") {
-      result = [...result].sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      );
-    } else if (sortBy === "price_low") {
-      result = [...result].sort((a, b) => a.price - b.price);
-    } else if (sortBy === "price_high") {
-      result = [...result].sort((a, b) => b.price - a.price);
-    }
-
-    setFilteredProducts(result);
-  }, [search, selectedCategory, products, sortBy, showSwapsOnly]);
+  const featuredProducts = filteredProducts.slice(0, 3);
 
   return (
-    <div className="space-y-8">
-      {/* Hero Section */}
-      <section className="bg-blue-700 rounded-3xl p-6 md:p-12 text-white relative overflow-hidden shadow-2xl shadow-blue-200">
-        <div className="relative z-10 max-w-2xl">
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
-            The UI DLC <br />
-            <span className="text-yellow-400">Student Marketplace</span>
-          </h1>
-          <p className="mt-4 text-blue-100 text-lg">
-            A trusted platform for UI Distance Learning Centre students to buy,
-            sell, and connect. From electronics to academic materials.
-          </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-4">
-            <div className="relative grow">
-              <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-blue-300"></i>
-              <input
-                type="text"
-                placeholder="Search for books, laptops, services..."
-                className="w-full bg-blue-800/50 border border-blue-600 rounded-xl py-4 pl-12 pr-4 text-white placeholder:text-blue-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
+    <div className="relative min-h-screen overflow-x-hidden bg-[#f7fafc] pb-32 pt-28 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-linear-to-b from-teal-50 via-white to-transparent dark:from-slate-900 dark:via-slate-950 dark:to-transparent" />
+      <div className="pointer-events-none absolute left-0 top-24 h-72 w-72 rounded-full bg-[#003366]/5 blur-3xl dark:bg-[#003366]/15" />
+      <div className="pointer-events-none absolute right-0 top-40 h-80 w-80 rounded-full bg-[#14b8a6]/10 blur-3xl dark:bg-[#14b8a6]/10" />
+
+      <div className="container relative mx-auto max-w-7xl space-y-16 px-4 sm:px-6 lg:px-8">
+        <section className="grid items-center gap-12 rounded-[40px] border border-slate-200/80 bg-white/90 p-8 shadow-[0_32px_90px_-48px_rgba(15,23,42,0.32)] backdrop-blur-sm md:p-12 lg:grid-cols-[1.2fr_0.8fr] dark:border-slate-800 dark:bg-slate-900/85">
+          <div className="space-y-8">
+            <div className="inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.22em] text-teal-800 dark:border-teal-900/50 dark:bg-teal-950/40 dark:text-teal-300">
+              UI DLC marketplace
+            </div>
+
+            <div className="space-y-4">
+              <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-slate-950 md:text-6xl dark:text-white">
+                Buy and sell campus essentials with clarity and trust.
+              </h1>
+              <p className="max-w-2xl text-base leading-8 text-slate-600 md:text-lg dark:text-slate-300">
+                A simple marketplace for University of Ibadan DLC students to
+                discover materials, connect with sellers, and manage
+                conversations in one place.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link
+                to={user ? "/sell" : "/register"}
+                className="inline-flex items-center justify-center rounded-2xl bg-[#003366] px-6 py-4 text-sm font-medium text-white shadow-lg shadow-blue-900/10 transition hover:brightness-110 active:scale-[0.98]"
+              >
+                {user ? "List an item" : "Create account"}
+              </Link>
+              <Link
+                to="/messages"
+                className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-4 text-sm font-medium text-slate-700 transition hover:border-teal-200 hover:text-teal-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-teal-900/50 dark:hover:text-teal-300"
+              >
+                Open chat
+              </Link>
+              {user?.role === UserRole.ADMIN && (
+                <Link
+                  to="/admin"
+                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 px-6 py-4 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                >
+                  Admin dashboard
+                </Link>
+              )}
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-[1fr_auto]">
+              <label className="relative block">
+                <span className="mb-2 block text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">
+                  Search products
+                </span>
+                <i className="fa-solid fa-magnifying-glass pointer-events-none absolute left-5 top-[3.35rem] -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search by product name"
+                  className="w-full rounded-[24px] border border-slate-200 bg-slate-50 py-4 pl-12 pr-4 text-base text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-teal-300 focus:bg-white focus:ring-4 focus:ring-teal-100 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-teal-800 dark:focus:ring-teal-950"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </label>
+
+              <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-900">
+                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">
+                  Available now
+                </p>
+                <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+                  {products.length}
+                </p>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                  products listed by students
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none hidden lg:block">
-          <i className="fa-solid fa-shop text-[300px] -rotate-12 translate-x-20 translate-y-20"></i>
-        </div>
-      </section>
 
-      {/* Categories & Filter Bar */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 py-2 border-b border-slate-200">
-        <div className="flex flex-col w-full lg:w-auto gap-4">
-          <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="grid gap-4">
+            <div className="relative overflow-hidden rounded-[32px] border border-slate-200 bg-linear-to-br from-slate-50 via-white to-teal-50 p-6 shadow-[0_28px_70px_-44px_rgba(15,23,42,0.38)] dark:border-slate-800 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900">
+              <div className="pointer-events-none absolute -right-10 top-8 h-40 w-40 rounded-full bg-teal-100/70 blur-3xl dark:bg-teal-900/20" />
+              <div className="relative">
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-400">
+                      Marketplace preview
+                    </p>
+                    <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+                      Built for fast campus exchange
+                    </h2>
+                  </div>
+                  <span className="rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-medium text-teal-700 dark:border-teal-900/50 dark:bg-teal-950/40 dark:text-teal-300">
+                    Student to student
+                  </span>
+                </div>
+
+                <img
+                  src="/hero_marketplace_illustration_1774195137608.png"
+                  alt="Marketplace illustration"
+                  className="mx-auto w-full max-w-[520px] drop-shadow-[0_24px_40px_rgba(0,51,102,0.18)]"
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-[28px] border border-slate-200 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-950">
+                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">
+                  Clear discovery
+                </p>
+                <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">
+                  Search and category filters reduce friction before users open a conversation.
+                </p>
+              </div>
+
+              <div className="rounded-[28px] bg-linear-to-br from-[#003366] to-[#0f766e] p-5 text-white shadow-[0_32px_80px_-36px_rgba(0,51,102,0.55)]">
+                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-white/70">
+                  Quick start
+                </p>
+                <p className="mt-3 text-sm leading-7 text-white/85">
+                  Use a clear title, fair price, and one strong image for better trust and conversion.
+                </p>
+                <button
+                  onClick={() => navigate(user ? "/sell" : "/login")}
+                  className="mt-4 inline-flex items-center justify-center rounded-2xl bg-white px-4 py-3 text-sm font-medium text-[#003366] transition hover:bg-slate-100 active:scale-[0.98]"
+                >
+                  {user ? "Create listing" : "Sign in to start"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-8">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="space-y-3">
+              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-teal-700 dark:text-teal-300">
+                Browse marketplace
+              </p>
+              <h2 className="text-3xl font-bold tracking-tight text-slate-950 md:text-4xl dark:text-white">
+                Find what you need faster.
+              </h2>
+              <p className="max-w-2xl text-sm leading-7 text-slate-600 dark:text-slate-300">
+                Categories and search are kept close to the product grid so
+                users can refine results without losing context.
+              </p>
+            </div>
+
+            <div className="rounded-[24px] border border-slate-200 bg-white px-5 py-4 text-sm text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+              Showing{" "}
+              <span className="font-semibold text-slate-900 dark:text-white">
+                {filteredProducts.length}
+              </span>{" "}
+              result{filteredProducts.length === 1 ? "" : "s"}
+            </div>
+          </div>
+
+          <div className="flex gap-3 overflow-x-auto rounded-[28px] border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
             <button
               onClick={() => setSelectedCategory("All")}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${selectedCategory === "All" ? "bg-blue-700 text-white" : "bg-white text-slate-600 hover:bg-slate-100"}`}
+              className={`whitespace-nowrap rounded-2xl px-5 py-3 text-sm font-medium transition ${
+                selectedCategory === "All"
+                  ? "bg-[#003366] text-white"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+              }`}
             >
-              All Items
+              All
             </button>
-            {CATEGORIES.map((cat) => (
+            {CATEGORIES.map((category) => (
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition ${selectedCategory === cat ? "bg-blue-700 text-white" : "bg-white text-slate-600 hover:bg-slate-100"}`}
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`whitespace-nowrap rounded-2xl px-5 py-3 text-sm font-medium transition ${
+                  selectedCategory === category
+                    ? "bg-teal-600 text-white"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+                }`}
               >
-                {cat}
+                {category}
               </button>
             ))}
           </div>
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => setShowSwapsOnly(!showSwapsOnly)}
-              className={`flex items-center space-x-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest border transition-all ${showSwapsOnly ? "bg-amber-500 text-white border-amber-400 shadow-md" : "bg-white text-slate-400 border-slate-200 hover:border-amber-300 hover:text-amber-500"}`}
-            >
-              <i className="fa-solid fa-rotate ${showSwapsOnly ? 'animate-spin-slow' : ''}"></i>
-              <span>Exchange Available</span>
-            </button>
-          </div>
-        </div>
+        </section>
 
-        <div className="flex items-center space-x-3 self-end lg:self-auto">
-          <label className="text-xs font-bold uppercase text-slate-400">
-            Sort by
-          </label>
-          <select
-            className="w-full md:w-auto bg-white border border-slate-200 rounded-lg py-2 px-3 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-700/20"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
-          >
-            <option value="newest">Newest First</option>
-            <option value="price_low">Price: Low to High</option>
-            <option value="price_high">Price: High to Low</option>
-          </select>
-        </div>
+        {featuredProducts.length > 0 && !loading && !searchTerm && selectedCategory === "All" && (
+          <section className="space-y-6">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-teal-700 dark:text-teal-300">
+                  Featured picks
+                </p>
+                <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 dark:text-white">
+                  Strong listings with high visibility.
+                </h2>
+              </div>
+            </div>
+            <div className="grid gap-6 lg:grid-cols-3">
+              {featuredProducts.map((product) => (
+                <div
+                  key={product.$id}
+                  className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">
+                        {product.category}
+                      </p>
+                      <h3 className="mt-2 text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+                        {product.name}
+                      </h3>
+                    </div>
+                    <span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-medium text-teal-700 dark:bg-teal-950/40 dark:text-teal-300">
+                      Featured
+                    </span>
+                  </div>
+                  <p className="mt-6 text-3xl font-bold tracking-tight text-[#003366] dark:text-teal-300">
+                    ₦{product.price.toLocaleString()}
+                  </p>
+                  <Link
+                    to={`/product/${product.$id}`}
+                    className="mt-6 inline-flex items-center text-sm font-medium text-teal-700 transition hover:text-[#003366] dark:text-teal-300 dark:hover:text-white"
+                  >
+                    View product
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <section className="space-y-8">
+          {loading ? (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+              {[...Array(8)].map((_, index) => (
+                <div
+                  key={index}
+                  className="aspect-[0.88] animate-pulse rounded-[32px] border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900"
+                />
+              ))}
+            </div>
+          ) : filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.$id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-[36px] border border-dashed border-slate-300 bg-white px-6 py-20 text-center dark:border-slate-700 dark:bg-slate-900">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500">
+                <i className="fa-solid fa-box-open text-xl"></i>
+              </div>
+              <h3 className="mt-6 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+                No products match this filter.
+              </h3>
+              <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-slate-500 dark:text-slate-400">
+                Try a different keyword or switch categories to explore more
+                items in the marketplace.
+              </p>
+              <button
+                onClick={() => {
+                  setSearchTerm("");
+                  setSelectedCategory("All");
+                }}
+                className="mt-6 inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-teal-200 hover:text-teal-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-teal-900/50 dark:hover:text-teal-300"
+              >
+                Reset filters
+              </button>
+            </div>
+          )}
+        </section>
       </div>
-
-      {/* Product Grid */}
-      {filteredProducts.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.$id} product={product} />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-20">
-          <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300 text-3xl">
-            <i className="fa-solid fa-box-open"></i>
-          </div>
-          <h3 className="text-xl font-bold text-slate-800">No items found</h3>
-          <p className="text-slate-500 mt-2">
-            Try adjusting your filters or search keywords.
-          </p>
-        </div>
-      )}
     </div>
   );
 };

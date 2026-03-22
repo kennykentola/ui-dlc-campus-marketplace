@@ -23,9 +23,8 @@ const CallManager: React.FC = () => {
 
     const peerConnection = useRef<RTCPeerConnection | null>(null);
     const localStream = useRef<MediaStream | null>(null);
-    const unsubscribe = useRef<() => void | null>(null);
+    const unsubscribe = useRef<(() => void | null)>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
-    const ringtoneRef = useRef<HTMLAudioElement | null>(null);
 
     // Initialize Realtime Subscription
     useEffect(() => {
@@ -37,14 +36,13 @@ const CallManager: React.FC = () => {
 
             // Incoming Call
             if (response.events.includes('databases.*.collections.*.documents.*.create')) {
-                // Fix: Check if user exists before accessing userId
                 if (user && payload.receiverId === user.userId && payload.status === 'ringing') {
                     setIncomingCall(payload);
-                    playRingtone();
+                    setCallStatus('ringing');
                 }
             }
 
-            // Call Answered
+            // Call Action Updates
             if (response.events.includes('databases.*.collections.*.documents.*.update')) {
                 if (activeCall && payload.$id === activeCall.$id) {
                     if (payload.type === 'answer' && payload.sdp && peerConnection.current) {
@@ -54,7 +52,6 @@ const CallManager: React.FC = () => {
                         endCall(false);
                     }
                     if (payload.candidates && payload.candidates.length > 0 && peerConnection.current) {
-                        // Add new candidates
                         payload.candidates.forEach((c: string) => {
                             peerConnection.current?.addIceCandidate(JSON.parse(c)).catch(console.error);
                         });
@@ -68,18 +65,11 @@ const CallManager: React.FC = () => {
         };
     }, [user, activeCall]);
 
-    const playRingtone = () => {
-        // Simple oscillator ringtone could be used, or an audio file
-        // For now, visual ringing only to avoid requiring assets
-        setCallStatus('ringing');
-    };
-
     const startCall = async (receiverId: string) => {
         setCallStatus('calling');
         const pc = new RTCPeerConnection(rtcConfig);
         peerConnection.current = pc;
 
-        // Get Local Stream
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
             localStream.current = stream;
@@ -91,7 +81,6 @@ const CallManager: React.FC = () => {
             return;
         }
 
-        // Handle Remote Stream
         pc.ontrack = (event) => {
             setRemoteStream(event.streams[0]);
             if (audioRef.current) {
@@ -99,11 +88,9 @@ const CallManager: React.FC = () => {
             }
         };
 
-        // Create Offer
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
 
-        // Gather ICE Candidates
         const candidates: string[] = [];
         pc.onicecandidate = (event) => {
             if (event.candidate) {
@@ -111,10 +98,8 @@ const CallManager: React.FC = () => {
             }
         };
 
-        // Wait a birot for candidates to gather (simple trick for one-shot offer)
         await new Promise(r => setTimeout(r, 1000));
 
-        // Create Call Document
         const callDoc = await databases.createDocument(
             DATABASE_ID,
             CALLS_COLLECTION_ID,
@@ -139,12 +124,10 @@ const CallManager: React.FC = () => {
         const pc = new RTCPeerConnection(rtcConfig);
         peerConnection.current = pc;
 
-        // Get Local Stream
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
         localStream.current = stream;
         stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
-        // Handle Remote Stream
         pc.ontrack = (event) => {
             setRemoteStream(event.streams[0]);
             if (audioRef.current) {
@@ -152,35 +135,17 @@ const CallManager: React.FC = () => {
             }
         };
 
-        // Set Remote Description (Offer)
         const remoteDesc = JSON.parse(incomingCall.sdp);
         await pc.setRemoteDescription(new RTCSessionDescription(remoteDesc));
 
-        // Add Remote Candidates
         if (incomingCall.candidates) {
             incomingCall.candidates.forEach((c: string) => {
                 pc.addIceCandidate(JSON.parse(c)).catch(console.error);
             });
         }
 
-        // Create Answer
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
-
-        // Gather Answer Candidates
-        pc.onicecandidate = async (event) => {
-            if (event.candidate) {
-                // In a real app, send these incrementally. Here we rely on the initial batch or updates.
-                // For simplicity in this demo, we might skip incremental updates from answerer back to caller
-                // unless we implement a separate update mechanism.
-                // But typically we should update the document.
-                /* 
-                await databases.updateDocument(DATABASE_ID, CALLS_COLLECTION_ID, incomingCall.$id, {
-                    candidates: [JSON.stringify(event.candidate)] // Append logic needed in backend or array management
-                });
-                */
-            }
-        };
 
         await databases.updateDocument(
             DATABASE_ID,
@@ -228,7 +193,6 @@ const CallManager: React.FC = () => {
         setRemoteStream(null);
     };
 
-    // Global "Start Call" event listener
     useEffect(() => {
         const handleStartCall = (e: CustomEvent) => {
             const { receiverId } = e.detail;
@@ -238,65 +202,99 @@ const CallManager: React.FC = () => {
         return () => window.removeEventListener('start-app-call' as any, handleStartCall as any);
     }, []);
 
-    // Audio Element
     useEffect(() => {
         if (audioRef.current && remoteStream) {
-            audioRef.current.srcObject = remoteStream;
             audioRef.current.play().catch(console.error);
         }
     }, [remoteStream]);
 
-
     if (callStatus === 'idle' && !incomingCall) return null;
 
     return (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/80 backdrop-blur-md animate-fadeIn">
+        <div className="fixed inset-0 z-1000 flex items-center justify-center p-4 overflow-hidden animate-fadeIn">
+            {/* Dynamic Backdrop */}
+            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-2xl transition-all duration-1000"></div>
+            
+            {/* Animated Background Elements */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-green rounded-full blur-[120px] animate-pulse"></div>
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-slate-800 rounded-full blur-[120px] animate-pulse delay-700"></div>
+            </div>
+
             <audio ref={audioRef} autoPlay />
 
-            <div className="bg-white dark:bg-slate-800 rounded-[40px] p-8 w-full max-w-sm shadow-2xl flex flex-col items-center space-y-8 animate-bounceIn border border-white/10">
-                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-slate-100 dark:border-slate-700 shadow-xl relative">
-                    <img
-                        src={`https://ui-avatars.com/api/?name=${incomingCall ? "Caller" : "Calling..."}&background=0D8ABC&color=fff&size=256`}
-                        alt="Avatar"
-                        className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/10 animate-pulse"></div>
+            <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[60px] p-12 shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col items-center space-y-12 animate-bounceIn overflow-hidden group">
+                
+                {/* Visual Radar / Pulse Effect */}
+                <div className="relative flex items-center justify-center">
+                    <div className="absolute w-48 h-48 bg-brand-green/20 rounded-full animate-ping duration-3000"></div>
+                    <div className="absolute w-64 h-64 bg-brand-green/10 rounded-full animate-ping duration-4000 delay-500"></div>
+                    
+                    <div className="relative w-40 h-40 rounded-[40px] overflow-hidden border-4 border-white dark:border-slate-800 shadow-xl transform transition-transform duration-700">
+                        <img
+                            src={`https://ui-avatars.com/api/?name=${incomingCall ? "INCOMING" : (callStatus === 'connected' ? "ACTIVE" : "CALLING")}&background=00a884&color=fff&size=512&bold=true`}
+                            alt="Avatar"
+                            className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-linear-to-t from-slate-900/40 to-transparent"></div>
+                    </div>
+                    
+                    {/* Status Badge */}
+                    <div className="absolute -bottom-2 px-4 py-1.5 bg-brand-green text-white rounded-full text-[8px] font-black uppercase tracking-widest shadow-lg border-2 border-white dark:border-slate-800 z-10 transition-all duration-500">
+                        {callStatus.toUpperCase()}
+                    </div>
                 </div>
 
-                <div className="text-center space-y-2">
-                    <h2 className="text-2xl font-black text-slate-900 dark:text-white">
-                        {incomingCall ? "Incoming Call..." : (callStatus === 'connected' ? "Connected" : "Calling...")}
-                    </h2>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium">
-                        {incomingCall ? "Someone is calling you" : (callStatus === 'connected' ? "00:24" : "Waiting for response...")}
-                    </p>
+                <div className="text-center space-y-4 relative z-10">
+                    <div className="flex flex-col items-center gap-1">
+                        <span className="text-[10px] font-black text-brand-green uppercase tracking-widest">Voice Call</span>
+                        <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tight leading-none">
+                            {incomingCall ? "Incoming Call" : (callStatus === 'connected' ? "Call Connected" : "Calling...")}
+                        </h2>
+                    </div>
+                    
+                    <div className="flex items-center justify-center gap-3">
+                        <div className="w-1.5 h-1.5 bg-brand-green rounded-full animate-pulse"></div>
+                        <p className="text-slate-400 dark:text-slate-500 text-[11px] font-bold uppercase tracking-widest">
+                            {incomingCall ? "New Voice Connection" : (callStatus === 'connected' ? "Secure Link Active" : "Connecting...")}
+                        </p>
+                    </div>
                 </div>
 
-                <div className="flex items-center space-x-6 w-full justify-center">
+                <div className="flex items-center justify-center gap-8 w-full relative z-10">
                     {incomingCall ? (
                         <>
                             <button
                                 onClick={() => { setIncomingCall(null); setCallStatus('idle'); }}
-                                className="w-16 h-16 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-lg hover:bg-rose-600 active:scale-95 transition"
+                                className="w-20 h-20 rounded-[30px] bg-rose-50 dark:bg-rose-500/10 text-rose-500 flex items-center justify-center shadow-md hover:bg-rose-500 hover:text-white transition-all active:scale-90 border-2 border-rose-500/20"
+                                title="Decline"
                             >
                                 <i className="fa-solid fa-phone-slash text-2xl"></i>
                             </button>
                             <button
                                 onClick={answerCall}
-                                className="w-16 h-16 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg hover:bg-emerald-600 active:scale-95 transition animate-bounce p-4"
+                                className="w-24 h-24 rounded-[35px] bg-brand-green text-white flex items-center justify-center shadow-lg hover:rotate-10 hover:scale-105 transition-all active:scale-90 animate-pulse border-4 border-white dark:border-slate-800"
+                                title="Accept"
                             >
-                                <i className="fa-solid fa-phone text-2xl"></i>
+                                <i className="fa-solid fa-phone text-3xl"></i>
                             </button>
                         </>
                     ) : (
-                        <button
-                            onClick={() => endCall(true)}
-                            className="w-20 h-20 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-xl hover:bg-rose-600 active:scale-95 transition"
-                        >
-                            <i className="fa-solid fa-phone-slash text-3xl"></i>
-                        </button>
+                        <div className="flex flex-col items-center gap-6">
+                            <button
+                                onClick={() => endCall(true)}
+                                className="w-20 h-20 rounded-[30px] bg-rose-500 text-white flex items-center justify-center shadow-lg hover:scale-110 active:scale-90 border-4 border-white dark:border-slate-800"
+                                title="End Call"
+                            >
+                                <i className="fa-solid fa-phone-slash text-2xl"></i>
+                            </button>
+                            <span className="text-[8px] font-black text-rose-500 uppercase tracking-widest opacity-50">End Call</span>
+                        </div>
                     )}
                 </div>
+                
+                {/* Bottom Graphic */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-brand-green/30 to-transparent"></div>
             </div>
         </div>
     );

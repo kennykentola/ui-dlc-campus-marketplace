@@ -18,6 +18,29 @@ export enum SellerStatus {
   REJECTED = 'rejected'
 }
 
+export enum DeliveryMethod {
+  MEETUP = 'Physical Meetup',
+  PICKUP = 'Campus Pickup',
+  HOSTEL = 'Hostel Drop-off',
+  DIGITAL = 'Digital Delivery'
+}
+
+export enum ListingType {
+  NORMAL = 'Normal Asset',
+  COURSE_MATERIAL = 'Course Material',
+  EXAM_PREP = 'Exam Prep',
+  TEXTBOOK = 'Textbook'
+}
+
+export enum TransactionStatus {
+  INITIATED = 'initiated',
+  PAYMENT_SENT = 'payment_sent',
+  PAYMENT_CONFIRMED = 'payment_confirmed',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+  DISPUTED = 'disputed'
+}
+
 export type TransactionType = 'sale' | 'exchange' | 'both';
 
 export interface NotificationSettings {
@@ -40,6 +63,9 @@ export interface UserProfile {
   updatedAt: string;
   averageRating?: number;
   totalReviews?: number;
+  completionRate?: number; // New metric
+  responseTime?: string;    // New metric (e.g. "2 hours")
+  lastActive?: string;
   phoneNumber?: string;
   bankName?: string;
   accountNumber?: string;
@@ -49,7 +75,6 @@ export interface UserProfile {
   blockedUserIds?: string[]; // Array of user IDs this user has blocked
   sellerStatus: SellerStatus;
   isSuspended?: boolean;
-  // stored as object or JSON string in some cases
   notificationSettings?: NotificationSettings | string;
 }
 
@@ -71,6 +96,38 @@ export interface Product {
   exchangeTerms?: string;
   buyNowPrice?: number;
   isNegotiable?: boolean;
+  // New features
+  listingType?: ListingType;
+  deliveryMethods?: DeliveryMethod[];
+  viewCount?: number;
+}
+
+export interface Transaction {
+  $id: string;
+  productId: string;
+  productName: string;
+  productImage?: string;
+  sellerId: string;
+  sellerName: string;
+  buyerId: string;
+  buyerName: string;
+  amount: number;
+  status: TransactionStatus;
+  paymentProofUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+  disputeReason?: string;
+}
+
+export interface BuyerRequest {
+  $id: string;
+  userId: string;
+  userName: string;
+  itemNeeded: string;
+  description: string;
+  budget?: number;
+  createdAt: string;
+  isFulfilled: boolean;
 }
 
 export interface ProductReport {
@@ -82,6 +139,7 @@ export interface ProductReport {
   reason: string;
   description: string;
   createdAt: string;
+  status?: 'pending' | 'resolved' | 'dismissed';
 }
 
 export interface Review {
@@ -94,6 +152,7 @@ export interface Review {
   rating: number;
   comment: string;
   createdAt: string;
+  transactionId?: string; // Verification link
 }
 
 export interface Message {
@@ -103,11 +162,13 @@ export interface Message {
   receiverId: string;
   text?: string;
   audioUrl?: string;
+  fileUrl?: string;
+  fileName?: string;
   duration?: number;
-  type: 'text' | 'audio';
+  type: 'text' | 'audio' | 'file';
   createdAt: string;
   isRead?: boolean;
-  reactions?: { [emoji: string]: string[] }; // emoji -> array of userIds
+  reactions?: { [emoji: string]: string[] };
 }
 
 export interface Conversation {

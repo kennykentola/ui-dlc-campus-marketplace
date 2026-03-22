@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, createContext, useContext } from "react";
 import {
   BrowserRouter,
@@ -19,16 +20,20 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import CreateProduct from "./pages/CreateProduct";
 import ProductDetails from "./pages/ProductDetails";
+import SellerDetails from "./pages/SellerDetails";
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
 import Messaging from "./pages/Messaging";
+import Checkout from "./pages/Checkout";
+import Requests from "./pages/Requests";
+import Transactions from "./pages/Transactions";
+import Dispute from "./pages/Dispute";
 
 // --- Contexts ---
 interface AuthContextType {
   user: UserProfile | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  // register returns the created profile document so callers can optionally use it
   register: (data: Partial<UserProfile> & { password: string }) => Promise<any>;
   refreshUser: () => void;
   loading: boolean;
@@ -84,17 +89,15 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         );
       } catch (docError: any) {
         if (docError.code === 404) {
-          console.warn("Profile missing on refresh. Recreating...");
           profile = await createUserProfile({
             userId: userAccount.$id,
             name: userAccount.name,
             email: userAccount.email,
-            matricNumber: "UPDATE_REQUIRED", // Placeholder to satisfy schema
+            matricNumber: "UPDATE_REQUIRED",
             department: "Computer Science",
             level: "100",
             role: UserRole.STUDENT,
             sellerStatus: SellerStatus.UNVERIFIED,
-
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           });
@@ -104,8 +107,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
       setUser(profile as unknown as UserProfile);
       localStorage.setItem("current_user", JSON.stringify(profile));
-    } catch (error) {
-      console.error("Error refreshing user:", error);
+    } catch (error: any) {
+      if (error.code !== 401) {
+        console.error("Error refreshing user:", error);
+      }
       setUser(null);
       localStorage.removeItem("current_user");
     }
@@ -134,7 +139,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const initAuth = async () => {
-      await refreshUser();
+      if (localStorage.getItem("current_user")) {
+        await refreshUser();
+      }
       setLoading(false);
     };
     initAuth();
@@ -142,7 +149,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     calculateUnread();
-    const interval = setInterval(calculateUnread, 3000); // Polling for unread messages
+    const interval = setInterval(calculateUnread, 3000); 
     return () => clearInterval(interval);
   }, [user]);
 
@@ -160,12 +167,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = async (email: string, password: string) => {
     try {
-      // Ensure no active session exists before creating a new one
       try {
         await account.deleteSession("current");
-      } catch (e) {
-        // Ignore error if no session exists or network error on delete
-      }
+      } catch (e) {}
 
       await account.createEmailPasswordSession(email, password);
       const userAccount = await account.get();
@@ -178,18 +182,15 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         );
       } catch (docError: any) {
         if (docError.code === 404) {
-          console.warn("Profile missing for existing account. recreating...");
-          // Fallback: Create a profile if it doesn't exist (Self-healing)
           profile = await createUserProfile({
             userId: userAccount.$id,
             name: userAccount.name,
             email: userAccount.email,
-            matricNumber: "UPDATE_REQUIRED", // Placeholder to satisfy schema
+            matricNumber: "UPDATE_REQUIRED",
             department: "Computer Science",
             level: "100",
-            role: UserRole.STUDENT, // Default role
+            role: UserRole.STUDENT,
             sellerStatus: SellerStatus.UNVERIFIED,
-
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           });
@@ -268,8 +269,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { user, loading } = useAuth();
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen font-black text-slate-300 uppercase tracking-widest">
-        Initialising...
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-[#14b8a6] border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-xs font-bold text-[#003366] uppercase tracking-widest">Loading Hub...</span>
+        </div>
       </div>
     );
   if (!user) return <Navigate to="/login" />;
@@ -277,21 +281,58 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   return <>{children}</>;
 };
 
-import CallManager from "./components/CallManager"; // Added import
+import CallManager from "./components/CallManager";
 
 const App: React.FC = () => {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <CallManager /> {/* Mounted CallManager */}
-        <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-100 selection:text-blue-900 transition-colors duration-300 overflow-x-hidden">
+        <CallManager />
+        <div className="min-h-screen flex flex-col bg-transparent dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-teal-100 transition-colors duration-300 overflow-x-hidden">
           <Header />
-          <main className="grow container mx-auto px-4 py-8 relative">
+          <main className="grow container mx-auto px-4 py-8 relative mt-16">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/product/:id" element={<ProductDetails />} />
+              <Route path="/seller/:id" element={<SellerDetails />} />
+              
+              <Route
+                path="/checkout/:id"
+                element={
+                  <ProtectedRoute>
+                    <Checkout />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/transactions"
+                element={
+                  <ProtectedRoute>
+                    <Transactions />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/requests"
+                element={
+                  <ProtectedRoute>
+                    <Requests />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/dispute/:id"
+                element={
+                  <ProtectedRoute>
+                    <Dispute />
+                  </ProtectedRoute>
+                }
+              />
 
               <Route
                 path="/sell"
@@ -342,30 +383,38 @@ const App: React.FC = () => {
             </Routes>
           </main>
 
-          <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-10 mt-12 transition-colors">
-            <div className="container mx-auto px-4">
-              <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-700 text-white rounded-xl flex items-center justify-center font-black">
-                    U
-                  </div>
-                  <div>
-                    <p className="font-black text-slate-900 dark:text-white leading-none">
-                      UI DLC Marketplace
-                    </p>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-widest">
-                      Student Peer-to-Peer Hub
-                    </p>
+          <footer className="bg-slate-950 border-t border-slate-900 py-20 mt-32 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-[#14b8a6] to-transparent opacity-30"></div>
+            
+            <div className="container mx-auto px-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div className="space-y-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-[#003366] rounded-2xl flex items-center justify-center shadow-lg shadow-teal-900/40">
+                       <img src="/logo.png" className="h-6 filter brightness-0 invert" alt="Logo" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-black text-white leading-none uppercase tracking-tighter">
+                        UI DLC <span className="text-[#14b8a6]">Hub.</span>
+                      </p>
+                      <p className="text-[#14b8a6] text-[10px] font-black uppercase tracking-[0.2em] mt-2">Certified Scholar Marketplace</p>
+                    </div>
                   </div>
                 </div>
-                <div className="text-center md:text-right">
-                  <p className="text-slate-500 text-sm font-medium">
-                    © {new Date().getFullYear()} University of Ibadan Distance
-                    Learning Centre.
+
+                <div className="text-left md:text-right space-y-4">
+                  <p className="text-slate-400 text-xs font-bold leading-relaxed max-w-sm ml-auto">
+                    A dedicated platform for University of Ibadan Distance Learning Centre students to buy, sell, and sync securely.
                   </p>
-                  <p className="text-slate-400 text-[10px] font-bold mt-1 uppercase tracking-tighter">
-                    Designed for Campus Safety & Trust
-                  </p>
+                  <div className="pt-4 border-t border-slate-900 flex flex-col md:flex-row justify-end items-center gap-6">
+                    <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">
+                      © {new Date().getFullYear()} UI DLC Community Platform
+                    </p>
+                    <div className="flex gap-4 text-slate-400">
+                       <i className="fa-brands fa-whatsapp hover:text-[#14b8a6] cursor-pointer transition-colors"></i>
+                       <i className="fa-brands fa-instagram hover:text-[#14b8a6] cursor-pointer transition-colors"></i>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

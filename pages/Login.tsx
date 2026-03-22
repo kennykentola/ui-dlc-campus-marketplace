@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
@@ -19,102 +20,98 @@ const Login: React.FC = () => {
       await login(email, password);
       navigate("/");
     } catch (err: any) {
-      setError(err.message || "Login failed. Please check your credentials.");
+      setError(err.message || "Credential verification failed. Please audit your data.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto py-8 md:py-12 px-4 shadow-sm md:shadow-none">
-      <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-100 shadow-2xl shadow-slate-200">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-blue-700 rounded-2xl flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4">
-            U
-          </div>
-          <h1 className="text-2xl font-black text-slate-800">Welcome Back</h1>
-          <p className="text-slate-500 text-sm mt-1">
-            Sign in to the UI DLC Marketplace
-          </p>
+    <div className="min-h-screen flex items-center justify-center p-6 bg-white relative overflow-hidden pt-32 pb-40">
+      {/* Vibrant Background Blobs */}
+      <div className="gradient-blob blob-blue opacity-5"></div>
+      <div className="gradient-blob blob-gold opacity-10"></div>
+
+      <div className="w-full max-w-md bg-white p-10 md:p-14 rounded-[40px] border border-slate-100 shadow-[0_40px_100px_-20px_rgba(0,51,102,0.1)] space-y-10 animate-slideUp relative z-10">
+        
+        <div className="text-center space-y-4">
+           <div className="w-16 h-16 bg-[#003366] rounded-[24px] flex items-center justify-center mx-auto shadow-xl shadow-blue-900/10 mb-6 group hover:scale-110 transition-transform duration-500">
+              <img src="/logo.png" className="h-8 filter brightness-0 invert" alt="Logo" />
+           </div>
+           <h1 className="text-4xl font-black text-[#003366] uppercase tracking-tighter leading-none">
+              Port <span className="text-[#14b8a6]">Login.</span>
+           </h1>
+           <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] italic">
+              Registry Access Protocol
+           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl text-sm font-medium">
-            <i className="fa-solid fa-triangle-exclamation mr-2"></i>
+          <div className="p-5 bg-rose-50 text-rose-600 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-rose-100 flex items-center gap-4 animate-fadeIn">
+            <i className="fa-solid fa-circle-exclamation text-lg"></i>
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-              Email Address
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">
+              Scholarly Email (UI DLC)
             </label>
-            <input
-              type="email"
-              required
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:bg-white transition"
-              placeholder="e.g. name@dlc.ui.edu.ng"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            <div className="relative group">
+               <i className="fa-solid fa-envelope absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-[#14b8a6] transition-colors"></i>
+               <input
+                 type="email"
+                 required
+                 className="w-full bg-slate-50 border border-slate-50 rounded-2xl pl-14 pr-6 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-300"
+                 placeholder="name@dlc.ui.edu.ng"
+                 value={email}
+                 onChange={(e) => setEmail(e.target.value)}
+               />
+            </div>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                Password
-              </label>
-              <button
-                type="button"
-                onClick={() => alert("Password reset functionality coming soon!")}
-                className="text-xs font-bold text-blue-700 hover:underline"
-              >
-                Forgot?
-              </button>
-            </div>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                required
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-700/20 focus:bg-white transition"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-              >
-                <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`}></i>
-              </button>
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">
+              Security Key
+            </label>
+            <div className="relative group">
+               <i className="fa-solid fa-lock absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-[#14b8a6] transition-colors"></i>
+               <input
+                 type={showPassword ? "text" : "password"}
+                 required
+                 className="w-full bg-slate-50 border border-slate-50 rounded-2xl pl-14 pr-16 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-300"
+                 placeholder="••••••••"
+                 value={password}
+                 onChange={(e) => setPassword(e.target.value)}
+               />
+               <button
+                 type="button"
+                 onClick={() => setShowPassword(!showPassword)}
+                 className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 hover:text-[#14b8a6] transition-colors"
+               >
+                 <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"} text-xs`}></i>
+               </button>
             </div>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-700 text-white py-4 rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-800 transition transform active:scale-[0.98] disabled:opacity-50"
+            className="w-full bg-[#003366] text-white py-6 rounded-2xl font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-blue-900/10 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
           >
-            {loading ? (
-              <i className="fa-solid fa-circle-notch fa-spin"></i>
-            ) : (
-              "Sign In"
-            )}
+            {loading ? "Verifying..." : "Initialize Session"}
+            <i className="fa-solid fa-arrow-right text-[10px]"></i>
           </button>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-slate-50 text-center">
-          <p className="text-slate-500 text-sm">
-            Don't have an account?{" "}
-            <Link
-              to="/register"
-              className="text-blue-700 font-bold hover:underline"
-            >
-              Create Account
-            </Link>
-          </p>
+        <div className="pt-8 border-t border-slate-50 text-center">
+           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">
+              New Hub Member?{" "}
+              <Link to="/register" className="text-[#14b8a6] hover:underline underline-offset-4 ml-2">
+                Create Registry Account
+              </Link>
+           </p>
         </div>
       </div>
     </div>

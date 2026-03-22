@@ -1,105 +1,15 @@
+
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
 import { UserProfile, Message, Product } from "../types";
-import { databases, storage } from "../lib/appwrite"; // Helper import
-import { Query, ID } from "appwrite"; // Appwrite classes
-import { sendEmailPlaceholder } from "../services/notification";
+import { databases, storage } from "../lib/appwrite";
+import { Query, ID } from "appwrite";
 
-/**
- * WhatsApp-style Voice Note Player
- */
-const AudioPlayer: React.FC<{ duration: number; isMe: boolean }> = ({
-  duration,
-  isMe,
-}) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const timerRef = useRef<number | null>(null);
-
-  const togglePlay = () => {
-    if (isPlaying) {
-      if (timerRef.current) clearInterval(timerRef.current);
-      setIsPlaying(false);
-    } else {
-      setIsPlaying(true);
-      timerRef.current = window.setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 100) {
-            if (timerRef.current) clearInterval(timerRef.current);
-            setIsPlaying(false);
-            return 100;
-          }
-          return prev + 100 / (duration || 5) / 10;
-        });
-      }, 100);
-    }
-  };
-
-  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const pct = (x / rect.width) * 100;
-    setProgress(pct);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, []);
-
-  return (
-    <div className="flex items-center space-x-3 min-w-50 py-1">
-      <div className="relative">
-        <button
-          onClick={togglePlay}
-          className="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
-        >
-          <i
-            className={`fa-solid ${isPlaying ? "fa-pause" : "fa-play"} text-lg`}
-          ></i>
-        </button>
-      </div>
-
-      <div className="grow flex flex-col space-y-1">
-        <div
-          className="h-1 bg-slate-200/50 dark:bg-slate-700/50 rounded-full relative cursor-pointer overflow-hidden"
-          onClick={handleSeek}
-        >
-          <div
-            className="h-full bg-[#00a884] rounded-full transition-all duration-100"
-            style={{ width: `${progress}%` }}
-          ></div>
-          <div
-            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-[#00a884] rounded-full shadow-sm"
-            style={{ left: `calc(${progress}% - 6px)` }}
-          ></div>
-        </div>
-        <div className="flex justify-between items-center text-[10px] text-slate-500">
-          <span>
-            {isPlaying
-              ? "0:0" + Math.floor(progress / 10)
-              : "0:" + duration.toString().padStart(2, "0")}
-          </span>
-          <i className="fa-solid fa-microphone text-[8px]"></i>
-        </div>
-      </div>
-
-      <div className="relative shrink-0">
-        <img
-          src="https://ui-avatars.com/api/?name=V&background=00a884&color=fff"
-          className="w-8 h-8 rounded-full opacity-40"
-          alt=""
-        />
-        <i className="fa-solid fa-microphone absolute -bottom-1 -right-1 text-[8px] text-slate-400 bg-white dark:bg-slate-800 rounded-full p-0.5"></i>
-      </div>
-    </div>
-  );
-};
+const POPULAR_EMOJIS = ["😊", "👍", "❤️", "😂", "🔥", "🤝", "📚", "🙏", "🙌", "🎓", "💸", "✅", "📍", "👀", "✨"];
 
 const Messaging: React.FC = () => {
-  const { user, refreshUser } = useAuth();
+  const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -107,28 +17,32 @@ const Messaging: React.FC = () => {
   const [newMessage, setNewMessage] = useState("");
   const [chattingWith, setChattingWith] = useState<UserProfile | null>(null);
   const [contextProduct, setContextProduct] = useState<Product | null>(null);
-  const [conversations, setConversations] = useState<
-    { user: UserProfile; lastMsg: string; time: string; unread: number }[]
-  >([]);
-
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const [showEmojiPickerFor, setShowEmojiPickerFor] = useState<string | null>(
-    null,
-  );
-
+  const [conversations, setConversations] = useState<{ user: UserProfile; lastMsg: string; time: string; unread: number }[]>([]);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [isRecording, setIsRecording] = useState(false);
-  const [isTranscribing, setIsTranscribing] = useState(false);
-  const [recordingTime, setRecordingTime] = useState(0);
-  const recordingInterval = useRef<number | null>(null);
-  const recognitionRef = useRef<any>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const QUICK_EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "🙏"];
+  const activeConversationId =
+    user && chattingWith
+      ? [user.userId, chattingWith.userId].sort().join("_")
+      : null;
 
-  // Load chats and partners
+  // Hybrid Content Parser
+  const parseMessageContent = (m: Message) => {
+    if (m.text?.startsWith("FILE_XP_PROTOCOL:")) {
+      try {
+        const data = JSON.parse(m.text.replace("FILE_XP_PROTOCOL:", ""));
+        return { type: 'file' as const, fileUrl: data.url, fileName: data.name, text: "" };
+      } catch (e) { return { type: m.type, text: m.text }; }
+    }
+    if (m.type === 'file' && (m as any).fileUrl) {
+      return { type: 'file' as const, fileUrl: (m as any).fileUrl, fileName: (m as any).fileName || "Shared Attachment", text: "" };
+    }
+    return { type: m.type, text: m.text, fileUrl: m.fileUrl, fileName: m.fileName };
+  };
+
   useEffect(() => {
     const loadData = async () => {
       const params = new URLSearchParams(location.search);
@@ -136,915 +50,220 @@ const Messaging: React.FC = () => {
       const productId = params.get("product");
 
       if (!user) return;
-
       try {
-        // Load all messages for the user
-        const [sentMessages, receivedMessages] = await Promise.all([
-          databases.listDocuments(
-            import.meta.env.VITE_APPWRITE_DATABASE_ID,
-            "messages",
-            [Query.equal("senderId", user.userId)],
-          ),
-          databases.listDocuments(
-            import.meta.env.VITE_APPWRITE_DATABASE_ID,
-            "messages",
-            [Query.equal("receiverId", user.userId)],
-          ),
+        const [sent, received] = await Promise.all([
+          databases.listDocuments(import.meta.env.VITE_APPWRITE_DATABASE_ID, "messages", [Query.equal("senderId", user.userId), Query.limit(100)]),
+          databases.listDocuments(import.meta.env.VITE_APPWRITE_DATABASE_ID, "messages", [Query.equal("receiverId", user.userId), Query.limit(100)]),
         ]);
 
-        const allMessages = [
-          ...sentMessages.documents,
-          ...receivedMessages.documents,
-        ].map((m: any) => ({
-          ...m,
-          createdAt: m.$createdAt,
-          reactions:
-            typeof m.reactions === "string"
-              ? JSON.parse(m.reactions || "{}")
-              : m.reactions || {},
+        const all = [...sent.documents, ...received.documents].map((m: any) => ({
+          ...m, createdAt: m.$createdAt,
         })) as unknown as Message[];
+        all.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        setMessages(all);
 
-        // Sort messages by creation time to fix "grouped by user" issue
-        allMessages.sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-        );
-
-        // Mark as read when focusing a chat
-        const messagesToUpdate = allMessages.filter((m: Message) => {
-          return (
-            m.senderId !== user.userId &&
-            chattingWith &&
-            m.senderId === chattingWith.userId &&
-            !m.isRead
-          );
+        const partners = new Set<string>();
+        all.forEach(m => {
+          const pid = m.senderId === user.userId ? m.receiverId : m.senderId;
+          if (pid !== user.userId) partners.add(pid);
         });
+        if (sellerId && sellerId !== user.userId) partners.add(sellerId);
 
-        // Update read status in database
-        for (const msg of messagesToUpdate) {
-          await databases.updateDocument(
-            import.meta.env.VITE_APPWRITE_DATABASE_ID,
-            "messages",
-            msg.$id,
-            { isRead: true },
-          );
-        }
-
-        // Filter out messages from blocked users
-        const filteredMessages = allMessages.filter((m: Message) => {
-          if (user.blockedUserIds?.includes(m.senderId)) return false;
-          return true;
-        });
-
-        setMessages(filteredMessages);
-
-        // Get unique chat partners
-        const chatPartners = new Set<string>();
-        filteredMessages.forEach((m: Message) => {
-          const partnerId =
-            m.senderId === user.userId ? m.receiverId : m.senderId;
-          if (
-            partnerId &&
-            partnerId !== user.userId &&
-            !user.blockedUserIds?.includes(partnerId)
-          ) {
-            chatPartners.add(partnerId);
-          }
-        });
-
-        if (
-          sellerId &&
-          sellerId !== user.userId &&
-          !user.blockedUserIds?.includes(sellerId)
-        )
-          chatPartners.add(sellerId);
-
-        // Load profiles for chat partners
         const convos: any[] = [];
-        for (const partnerId of chatPartners) {
-          try {
-            const profile = await databases.getDocument(
-              import.meta.env.VITE_APPWRITE_DATABASE_ID,
-              "profiles",
-              partnerId,
-            );
-            const thread = filteredMessages.filter(
-              (m: Message) =>
-                (m.senderId === partnerId && m.receiverId === user.userId) ||
-                (m.senderId === user.userId && m.receiverId === partnerId),
-            );
-            const last = thread.sort(
-              (a, b) =>
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime(),
-            )[0];
-            convos.push({
-              user: profile,
-              lastMsg:
-                last?.type === "audio"
-                  ? "🎤 Voice message"
-                  : last?.text || "New chat",
-              time: last
-                ? new Date(last.createdAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
-                : "",
-              unread: filteredMessages.filter(
-                (m: Message) => m.senderId === partnerId && !m.isRead,
-              ).length,
-            });
-          } catch (error) {
-            console.warn(`Error loading profile for ${partnerId}:`, error);
-            // Add placeholder for missing user
-            convos.push({
-              user: {
-                userId: partnerId,
-                name: "Unknown User",
-                email: "",
-                avatarUrl: `https://ui-avatars.com/api/?name=Unknown&background=random`,
-              } as UserProfile,
-              lastMsg: "Chat Error",
-              time: "",
-              unread: 0,
-            });
-          }
+        for (const pid of partners) {
+           try {
+             const profile = await databases.getDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "profiles", pid);
+             const thread = all.filter(m => (m.senderId === pid && m.receiverId === user.userId) || (m.senderId === user.userId && m.receiverId === pid));
+             const last = thread[thread.length - 1];
+             const parsedLast = last ? parseMessageContent(last) : null;
+             
+             convos.push({
+               user: profile,
+               lastMsg: parsedLast?.type === 'file' ? `📁 ${parsedLast.fileName}` : (parsedLast?.text || 'No messages yet'),
+               time: last ? new Date(last.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
+               unread: thread.filter(m => m.senderId === pid && !m.isRead).length
+             });
+           } catch (e) {}
         }
-        setConversations(convos.sort((a, b) => b.unread - a.unread));
+        setConversations(convos);
 
-        // Load chatting with user
-        if (sellerId) {
-          try {
-            const found = await databases.getDocument(
-              import.meta.env.VITE_APPWRITE_DATABASE_ID,
-              "profiles",
-              sellerId,
-            );
-            setChattingWith(found as unknown as UserProfile);
-          } catch (error) {
-            console.error("Error loading chatting user:", error);
-            // Fallback for current chat user
-            setChattingWith({
-              userId: sellerId,
-              name: "Unknown User",
-              email: "",
-              avatarUrl: `https://ui-avatars.com/api/?name=Unknown&background=random`,
-            } as UserProfile);
-          }
+        if (sellerId && sellerId !== chattingWith?.userId) {
+           try {
+              const found = await databases.getDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "profiles", sellerId);
+              setChattingWith(found as any);
+           } catch (e) {
+              setChattingWith({ name: "Hub Support", userId: "admin", isVerified: true } as any);
+           }
         }
-
-        // Load context product
         if (productId) {
-          try {
-            const foundProduct = await databases.getDocument(
-              import.meta.env.VITE_APPWRITE_DATABASE_ID,
-              "products",
-              productId,
-            );
-            setContextProduct(foundProduct as unknown as Product);
-            setNewMessage((prev) =>
-              prev.trim() === ""
-                ? `Hi, I'm interested in the ${foundProduct.name}. Is it still available?`
-                : prev,
-            );
-          } catch (error) {
-            console.error("Error loading product:", error);
-          }
+           try {
+              const p = await databases.getDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "products", productId);
+              setContextProduct(p as any);
+           } catch (e) {}
         }
-      } catch (error) {
-        console.error("Error loading messaging data:", error);
-      }
+      } catch (err) { console.error(err); }
     };
-
     loadData();
-  }, [location, user, chattingWith]);
-
-  const scrollToBottom = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  };
+  }, [location, user, chattingWith?.userId]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, chattingWith, isTyping]);
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [messages, chattingWith]);
 
-  const toggleBlockUser = async () => {
-    if (!user || !chattingWith) return;
-    if (
-      window.confirm(
-        `Are you sure you want to block ${chattingWith.name}? You will no longer see their messages.`,
-      )
-    ) {
-      try {
-        const blocked = user.blockedUserIds || [];
-        await databases.updateDocument(
-          import.meta.env.VITE_APPWRITE_DATABASE_ID,
-          "profiles",
-          user.userId,
-          {
-            blockedUserIds: [...new Set([...blocked, chattingWith.userId])],
-          },
-        );
-        refreshUser();
-        setChattingWith(null);
-        navigate("/messages");
-      } catch (error) {
-        console.error("Error blocking user:", error);
-      }
-    }
-  };
-
-  const toggleTranscription = () => {
-    if (isTranscribing) {
-      recognitionRef.current?.stop();
-      setIsTranscribing(false);
-    } else {
-      const SpeechRecognition =
-        (window as any).SpeechRecognition ||
-        (window as any).webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        alert(
-          "Speech recognition not supported in this browser. Please use Chrome or Safari.",
-        );
-        return;
-      }
-
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      recognition.lang = "en-NG";
-
-      recognition.onstart = () => {
-        setIsTranscribing(true);
-      };
-
-      recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript;
-        if (transcript) {
-          setNewMessage((prev) =>
-            prev.trim() ? `${prev.trim()} ${transcript}` : transcript,
-          );
-        }
-        setIsTranscribing(false);
-      };
-
-      recognition.onerror = (event: any) => {
-        console.error("Speech Recognition Error", event.error);
-        setIsTranscribing(false);
-      };
-
-      recognition.onend = () => {
-        setIsTranscribing(false);
-      };
-
-      recognition.start();
-      recognitionRef.current = recognition;
-    }
-  };
-
-  const handleSendMessage = async (e?: React.FormEvent) => {
+  const sendMessage = async (e?: React.FormEvent, data: any = {}) => {
     if (e) e.preventDefault();
-    if (!newMessage.trim() || !user || !chattingWith) return;
-
+    if ((!newMessage.trim() && !data.fileUrl) || !user || !chattingWith) return;
+    
     try {
-      const msg = await databases.createDocument(
-        import.meta.env.VITE_APPWRITE_DATABASE_ID,
-        "messages",
-        ID.unique(),
-        {
-          conversationId: [user.userId, chattingWith.userId].sort().join("_"),
-          senderId: user.userId,
-          receiverId: chattingWith.userId,
-          type: "text",
-          text: newMessage,
-          isRead: false,
-          reactions: JSON.stringify({}),
-        },
-      );
+      const protocolContent = data.fileUrl 
+        ? `FILE_XP_PROTOCOL:${JSON.stringify({ url: data.fileUrl, name: data.fileName })}`
+        : newMessage;
 
-      setMessages((prev) => [...prev, msg as unknown as Message]);
-
-      sendEmailPlaceholder(
-        chattingWith.email,
-        `New Message from ${user.name}`,
-        `Hello ${chattingWith.name.split(" ")[0]},\n\nYou have received a new message on the UI DLC Marketplace from ${user.name}.\n\nMessage preview: "${newMessage.substring(0, 50)}${newMessage.length > 50 ? "..." : ""}"\n\nLogin to the marketplace to reply.`,
-      );
-
-      setNewMessage("");
-
-      // Simulated reply removed for production
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  };
-
-  const handleReaction = async (messageId: string, emoji: string) => {
-    if (!user) return;
-    try {
-      const message = messages.find((m) => m.$id === messageId);
-      if (!message) return;
-
-      const reactions = { ...(message.reactions || {}) };
-      const users = reactions[emoji] ? [...reactions[emoji]] : [];
-      if (users.includes(user.userId)) {
-        reactions[emoji] = users.filter((uid) => uid !== user.userId);
-        if (reactions[emoji].length === 0) delete reactions[emoji];
-      } else {
-        reactions[emoji] = [...users, user.userId];
-      }
-
-      await databases.updateDocument(
-        import.meta.env.VITE_APPWRITE_DATABASE_ID,
-        "messages",
-        messageId,
-        { reactions: JSON.stringify(reactions) },
-      );
-
-      setMessages((prev) =>
-        prev.map((m) => (m.$id === messageId ? { ...m, reactions } : m)),
-      );
-      setShowEmojiPickerFor(null);
-    } catch (error) {
-      console.error("Error updating reaction:", error);
-    }
-  };
-
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = [];
-
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
-        }
+      const payload: any = {
+        conversationId: activeConversationId,
+        senderId: user.userId,
+        receiverId: chattingWith.userId,
+        type: data.fileUrl ? 'file' : 'text',
+        text: protocolContent,
+        isRead: false
       };
 
-      mediaRecorder.start();
-      setIsRecording(true);
-      setRecordingTime(0);
-      recordingInterval.current = window.setInterval(
-        () => setRecordingTime((prev) => prev + 1),
-        1000,
-      );
+      const msg = await databases.createDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "messages", ID.unique(), payload);
+      setMessages(prev => [...prev, msg as any]);
+      setNewMessage("");
+      setShowEmojiPicker(false);
+    } catch (err) { 
+      console.error(err);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user || !chattingWith) return;
+    setUploadingFile(true);
+    try {
+      const uploadedFile = await storage.createFile(import.meta.env.VITE_APPWRITE_BUCKET_ID, ID.unique(), file);
+      const url = storage.getFileView(import.meta.env.VITE_APPWRITE_BUCKET_ID, uploadedFile.$id).toString();
+      await sendMessage(undefined, { fileUrl: url, fileName: file.name });
     } catch (error) {
-      console.error("Error accessing microphone:", error);
-      alert(
-        "Could not access microphone. Please ensure permissions are granted.",
-      );
+       console.error("Upload Error", error);
+       alert("Asset attachment failed.");
+    } finally {
+      setUploadingFile(false);
     }
   };
 
-  const stopRecording = async (send: boolean) => {
-    if (!mediaRecorderRef.current) return;
-
-    mediaRecorderRef.current.stop();
-    mediaRecorderRef.current.stream
-      .getTracks()
-      .forEach((track) => track.stop()); // Stop mic usage
-
-    setIsRecording(false);
-    if (recordingInterval.current) {
-      clearInterval(recordingInterval.current);
-      recordingInterval.current = null;
-    }
-
-    // Wait slightly for the final blob to be available
-    setTimeout(async () => {
-      if (send && user && chattingWith && audioChunksRef.current.length > 0) {
-        const audioBlob = new Blob(audioChunksRef.current, {
-          type: "audio/webm",
-        });
-        const audioFile = new File(
-          [audioBlob],
-          `voice_note_${Date.now()}.webm`,
-          { type: "audio/webm" },
-        );
-
-        try {
-          // 1. Upload to Storage
-          // Use 'product-images' bucket or a dedicated 'voice-notes' bucket if available.
-          // Assuming 'product-images' for now based on env setup, or fallback to file storage
-          const bucketId =
-            import.meta.env.VITE_APPWRITE_BUCKET_ID || "product-images";
-          const uploadedFile = await storage.createFile(
-            bucketId,
-            ID.unique(),
-            audioFile,
-          );
-
-          // 2. Get View URL
-          const fileUrl = storage.getFileView(bucketId, uploadedFile.$id);
-
-          const conversationId = [user.userId, chattingWith.userId]
-            .sort()
-            .join("_");
-
-          const msg = await databases.createDocument(
-            import.meta.env.VITE_APPWRITE_DATABASE_ID,
-            "messages",
-            ID.unique(),
-            {
-              conversationId,
-              senderId: user.userId,
-              receiverId: chattingWith.userId,
-              type: "audio",
-              duration: recordingTime,
-              audioUrl: fileUrl, // Use the generated URL
-              isRead: false,
-              reactions: JSON.stringify({}),
-            },
-          );
-          setMessages((prev) => [...prev, msg as unknown as Message]);
-
-          // ... notification code ...
-        } catch (error) {
-          console.error("Error sending voice message:", error);
-          alert("Failed to send voice message.");
-        }
-      }
-    }, 200);
-  };
-
-  const groupMessagesByDate = (msgs: Message[]) => {
-    const groups: { [key: string]: Message[] } = {};
-    const today = new Date().toLocaleDateString([], {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-    const yesterdayDate = new Date();
-    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-    const yesterday = yesterdayDate.toLocaleDateString([], {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    });
-
-    msgs.forEach((m) => {
-      const date = new Date(m.createdAt).toLocaleDateString([], {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      });
-      let label = date;
-      if (date === today) label = "TODAY";
-      else if (date === yesterday) label = "YESTERDAY";
-
-      if (!groups[label]) groups[label] = [];
-      groups[label].push(m);
-    });
-    return groups;
+  const addEmoji = (emoji: string) => {
+    setNewMessage(prev => prev + emoji);
   };
 
   return (
-    <div className="max-w-7xl mx-auto h-[calc(100vh-100px)] md:h-[calc(100vh-140px)] flex bg-[#f0f2f5] dark:bg-slate-950 overflow-hidden shadow-xl relative border border-slate-200 dark:border-slate-800">
-      <div
-        className={`w-full md:w-[30%] border-r border-slate-200 dark:border-slate-800 flex flex-col bg-white dark:bg-slate-900 h-full ${chattingWith ? "hidden md:flex" : "flex"}`}
-      >
-        <div className="h-16 px-4 bg-[#f0f2f5] dark:bg-slate-900 flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
-          <img
-            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || "")}&background=1e40af&color=fff`}
-            className="w-10 h-10 rounded-full"
-            alt=""
-          />
-          <div className="flex items-center space-x-6 text-[#54656f] dark:text-slate-400">
-            <button title="Communities">
-              <i className="fa-solid fa-users text-lg"></i>
-            </button>
-            <button title="Status">
-              <i className="fa-solid fa-circle-notch text-lg"></i>
-            </button>
-            <button title="New Chat">
-              <i className="fa-solid fa-message text-lg"></i>
-            </button>
-            <button title="Menu">
-              <i className="fa-solid fa-ellipsis-vertical text-lg"></i>
-            </button>
-          </div>
+    <div className="h-[calc(100vh-140px)] w-[calc(100%-2rem)] max-w-[1500px] mx-auto md:w-[calc(100%-5rem)] flex bg-white overflow-hidden shadow-2xl rounded-[40px] border border-slate-100 animate-fadeIn my-12 relative z-10">
+      
+      {/* Sidebar Terminal */}
+      <div className={`w-full md:w-1/3 lg:w-[450px] bg-slate-50 border-r border-slate-100 flex flex-col h-full ${chattingWith ? "hidden md:flex" : "flex"}`}>
+        <div className="h-24 px-8 flex items-center justify-between border-b border-slate-100 bg-white">
+           <h2 className="text-2xl font-black text-[#003366] uppercase tracking-tighter">Campus <span className="text-teal-600">Chat.</span></h2>
         </div>
-
-        <div className="p-3 bg-white dark:bg-slate-900">
-          <div className="relative">
-            <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-600 text-sm"></i>
-            <input
-              type="text"
-              placeholder="Search or start new chat"
-              className="w-full bg-[#f0f2f5] dark:bg-slate-800 rounded-lg py-1.5 pl-10 pr-4 text-sm focus:outline-none dark:text-white"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="grow overflow-y-auto bg-white dark:bg-slate-900 divide-y divide-slate-50 dark:divide-slate-800/50">
-          {conversations
-            .filter((c) =>
-              c.user.name.toLowerCase().includes(searchTerm.toLowerCase()),
-            )
-            .map((convo, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  setChattingWith(convo.user);
-                  navigate(`/messages?seller=${convo.user.userId}`);
-                }}
-                className={`w-full h-18 px-4 py-3 flex items-center space-x-4 transition-colors hover:bg-[#f5f6f6] dark:hover:bg-slate-800 ${chattingWith?.userId === convo.user.userId ? "bg-[#f0f2f5] dark:bg-slate-800" : ""}`}
-              >
-                <img
-                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(convo.user.name)}&background=random`}
-                  className="w-12 h-12 rounded-full"
-                  alt=""
-                />
-                <div className="grow text-left overflow-hidden border-b border-slate-100 dark:border-slate-800 pb-2">
-                  <div className="flex justify-between items-center mb-0.5">
-                    <span className="font-semibold text-slate-800 dark:text-white text-base">
-                      {convo.user.name}
-                    </span>
-                    <span
-                      className={`text-[11px] tabular-nums ${convo.unread > 0 ? "text-[#00a884] font-bold" : "text-slate-400"}`}
-                    >
-                      {convo.time}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <p className="text-sm truncate text-slate-500 dark:text-slate-400 max-w-[85%]">
-                      {convo.lastMsg}
-                    </p>
-                    {convo.unread > 0 &&
-                      chattingWith?.userId !== convo.user.userId && (
-                        <span className="bg-[#00a884] text-white text-[11px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
-                          {convo.unread}
-                        </span>
-                      )}
-                  </div>
+        <div className="grow overflow-y-auto bg-white no-scrollbar">
+          {conversations.map((c, i) => (
+            <button key={i} onClick={() => { setChattingWith(c.user); navigate(`/messages?seller=${c.user.userId}`); }} className={`w-full h-24 px-8 flex items-center gap-5 border-b border-slate-50 ${chattingWith?.userId === c.user.userId ? "bg-teal-50/50" : "hover:bg-slate-50"}`}>
+              <img src={c.user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.user.name)}&background=003366&color=fff`} className="w-14 h-14 rounded-3xl shrink-0 shadow-lg border-2 border-white" alt="Av" />
+              <div className="grow text-left overflow-hidden">
+                <div className="flex justify-between items-center mb-1">
+                   <p className="text-[14px] font-black text-[#003366] uppercase tracking-tight truncate">{c.user.name}</p>
+                   <span className="text-[9px] font-black text-slate-300 uppercase">{c.time}</span>
                 </div>
-              </button>
-            ))}
+                <p className="text-[12px] text-slate-400 font-medium italic truncate leading-relaxed">{c.lastMsg}</p>
+              </div>
+            </button>
+          ))}
         </div>
       </div>
 
-      <div
-        className={`grow flex flex-col h-full bg-[#efeae2] dark:bg-slate-950 relative overflow-hidden ${!chattingWith ? "hidden md:flex" : "flex"}`}
-      >
-        <div
-          className="absolute inset-0 opacity-[0.06] dark:opacity-[0.03] pointer-events-none"
-          style={{
-            backgroundImage:
-              "url(https://i.pinimg.com/originals/ab/ab/60/abab600fbc38c205acc25104732aa4ca.jpg)",
-            backgroundSize: "400px",
-          }}
-        ></div>
-
+      {/* Main Distributed Stream */}
+      <div className={`grow flex flex-col h-full bg-white relative ${!chattingWith ? "hidden md:flex" : "flex"}`}>
         {chattingWith ? (
-          <div className="flex flex-col h-full z-10">
-            <div className="h-16 px-4 bg-[#f0f2f5] dark:bg-slate-900 flex items-center justify-between border-b border-slate-200 dark:border-slate-800 shrink-0">
-              <div className="flex items-center space-x-3 cursor-pointer">
-                <button
-                  onClick={() => {
-                    setChattingWith(null);
-                    navigate("/messages");
-                  }}
-                  className="md:hidden text-slate-500 dark:text-slate-400 mr-1"
-                >
-                  <i className="fa-solid fa-arrow-left text-lg"></i>
-                </button>
-                <img
-                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(chattingWith.name)}&background=random`}
-                  className="w-10 h-10 rounded-full"
-                  alt=""
-                />
-                <div>
-                  <p className="font-semibold text-slate-800 dark:text-white leading-none">
-                    {chattingWith.name}
-                  </p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-                    {isTyping ? (
-                      <span className="text-[#00a884] font-bold">
-                        typing...
-                      </span>
-                    ) : (
-                      "online"
-                    )}
-                  </p>
+          <>
+            <div className="h-24 px-6 md:px-10 flex items-center justify-between bg-white border-b border-slate-100 z-10 shrink-0">
+              <div className="flex items-center gap-4">
+                <button onClick={() => setChattingWith(null)} className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 text-[#003366]"><i className="fa-solid fa-arrow-left"></i></button>
+                <img src={chattingWith.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(chattingWith.name)}&background=003366&color=fff`} className="w-12 h-12 md:w-14 md:h-14 rounded-3xl shadow-lg border-2 border-white" alt="Av" />
+                <div className="overflow-hidden">
+                   <h3 className="text-[15px] md:text-[17px] font-black text-[#003366] uppercase tracking-tighter truncate">{chattingWith.name}</h3>
+                   <span className="text-[9px] font-black text-teal-600 uppercase tracking-widest italic flex items-center gap-1">
+                     <span className="w-1 h-1 bg-teal-500 rounded-full animate-pulse"></span>
+                     Audited
+                   </span>
                 </div>
-              </div>
-              <div className="flex items-center space-x-6 text-[#54656f] dark:text-slate-400">
-                <button
-                  onClick={toggleBlockUser}
-                  className="text-rose-500 hover:text-rose-700"
-                  title="Block User"
-                >
-                  <i className="fa-solid fa-ban text-lg"></i>
-                </button>
-
-                {/* Video Call - WhatsApp */}
-                {chattingWith.phoneNumber ? (
-                  <a
-                    href={`https://wa.me/${chattingWith.phoneNumber.replace(/\D/g, "")}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    title="Video Call (WhatsApp)"
-                    className="hover:text-[#25D366] transition-colors"
-                  >
-                    <i className="fa-solid fa-video text-lg"></i>
-                  </a>
-                ) : (
-                  <button
-                    title="No Phone Number Available"
-                    onClick={() =>
-                      alert("This user has not added a phone number.")
-                    }
-                    className="text-slate-300 dark:text-slate-700 cursor-not-allowed"
-                  >
-                    <i className="fa-solid fa-video text-lg"></i>
-                  </button>
-                )}
-
-                {/* Voice Call - In-App */}
-                <button
-                  onClick={() => {
-                    const event = new CustomEvent("start-app-call", {
-                      detail: { receiverId: chattingWith.userId },
-                    });
-                    window.dispatchEvent(event);
-                  }}
-                  title="Voice Call (In-App)"
-                  className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                >
-                  <i className="fa-solid fa-phone text-lg"></i>
-                </button>
-
-                <div className="w-px h-6 bg-slate-300 dark:bg-slate-800 mx-2"></div>
-                <button title="Search Chat">
-                  <i className="fa-solid fa-magnifying-glass text-lg"></i>
-                </button>
-                <button title="More Options">
-                  <i className="fa-solid fa-ellipsis-vertical text-lg"></i>
-                </button>
               </div>
             </div>
 
-            {contextProduct && (
-              <div className="mx-12 my-3 bg-white dark:bg-slate-900 p-2 rounded-lg border-l-4 border-l-[#00a884] shadow-sm flex items-center space-x-3 transition-all">
-                <img
-                  src={contextProduct.imageUrls[0]}
-                  className="w-10 h-10 rounded object-cover"
-                  alt=""
-                />
-                <div className="grow text-left">
-                  <p className="text-[10px] text-[#00a884] font-bold uppercase tracking-widest leading-none mb-1">
-                    Inquiry
-                  </p>
-                  <p className="text-xs font-bold text-slate-800 dark:text-white truncate">
-                    {contextProduct.name}
-                  </p>
-                </div>
-                <p className="text-xs font-black text-slate-900 dark:text-white pr-2">
-                  ₦{contextProduct.price.toLocaleString()}
-                </p>
-              </div>
-            )}
-
-            <div
-              ref={scrollRef}
-              className="grow p-4 md:px-12 overflow-y-auto space-y-4 scroll-smooth"
-            >
-              {Object.entries(groupMessagesByDate(messages)).map(
-                ([date, msgs]) => (
-                  <div key={date} className="space-y-4">
-                    <div className="flex justify-center my-6">
-                      <span className="px-3 py-1.5 bg-white dark:bg-slate-800 text-[11px] font-semibold text-slate-500 dark:text-slate-400 rounded-lg shadow-sm uppercase tracking-wider">
-                        {date}
-                      </span>
-                    </div>
-                    {msgs.map((msg) => {
-                      const isMe = msg.senderId === user?.userId;
-                      return (
-                        <div
-                          key={msg.$id}
-                          className={`flex flex-col ${isMe ? "items-end" : "items-start"} animate-fadeIn group mb-2`}
-                        >
-                          <span className="text-[10px] text-slate-500 dark:text-slate-400 px-1 mb-0.5">
-                            {isMe ? "You" : chattingWith?.name.split(" ")[0]}
-                          </span>
-                          <div
-                            className={`relative max-w-[85%] md:max-w-[65%] px-3 py-2 rounded-lg shadow-sm ${isMe ? "bg-[#dcf8c6] dark:bg-emerald-900/40 rounded-tr-none" : "bg-white dark:bg-slate-800 rounded-tl-none"}`}
-                          >
-                            <div
-                              className={`absolute top-0 w-2 h-3 ${isMe ? "-right-2 bg-[#dcf8c6] dark:bg-emerald-900/40" : "-left-2 bg-white dark:bg-slate-800"}`}
-                              style={{
-                                clipPath: isMe
-                                  ? "polygon(0 0, 0 100%, 100% 0)"
-                                  : "polygon(100% 0, 100% 100%, 0 0)",
-                              }}
-                            ></div>
-
-                            {msg.type === "text" ? (
-                              <p className="text-[14.5px] text-[#111b21] dark:text-slate-100 wrap-break-word pr-8">
-                                {msg.text}
-                              </p>
-                            ) : (
-                              <AudioPlayer
-                                duration={msg.duration || 5}
-                                isMe={isMe}
-                              />
-                            )}
-
-                            <button
-                              onClick={() =>
-                                setShowEmojiPickerFor(
-                                  showEmojiPickerFor === msg.$id
-                                    ? null
-                                    : msg.$id,
-                                )
-                              }
-                              className={`absolute top-1/2 -translate-y-1/2 ${isMe ? "-left-10" : "-right-10"} opacity-0 group-hover:opacity-100 transition-all text-slate-400 dark:text-slate-600 hover:text-slate-600 dark:hover:text-slate-400 p-2`}
-                            >
-                              <i className="fa-regular fa-face-smile"></i>
-                            </button>
-
-                            {showEmojiPickerFor === msg.$id && (
-                              <div
-                                className={`absolute -top-12 ${isMe ? "right-0" : "left-0"} bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-1 rounded-full shadow-2xl flex gap-1 z-50 animate-bounceIn`}
-                              >
-                                {QUICK_EMOJIS.map((e) => (
-                                  <button
-                                    key={e}
-                                    onClick={() => handleReaction(msg.$id, e)}
-                                    className="w-8 h-8 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-full transition-transform active:scale-150 transform"
-                                  >
-                                    {e}
-                                  </button>
-                                ))}
-                              </div>
-                            )}
-
-                            {msg.reactions &&
-                              Object.entries(msg.reactions).length > 0 && (
-                                <div
-                                  className={`absolute -bottom-3 ${isMe ? "left-2" : "right-2"} flex gap-0.5 z-20`}
-                                >
-                                  {Object.entries(msg.reactions).map(
-                                    ([emoji, uids]) => (
-                                      <button
-                                        key={emoji}
-                                        onClick={() =>
-                                          handleReaction(msg.$id, emoji)
-                                        }
-                                        className="bg-white dark:bg-slate-700 border border-slate-100 dark:border-slate-600 px-1.5 py-0.5 rounded-full text-[10px] shadow-sm flex items-center gap-1 transition-transform hover:scale-110"
-                                      >
-                                        {emoji}{" "}
-                                        <span className="text-[9px] text-slate-500 dark:text-slate-400">
-                                          {uids.length}
-                                        </span>
-                                      </button>
-                                    ),
+            <div ref={scrollRef} className="grow px-4 md:px-10 py-10 space-y-6 overflow-y-auto no-scrollbar relative w-full overflow-x-hidden">
+               <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")`, backgroundRepeat: 'repeat', backgroundSize: '350px' }}></div>
+               <div className="relative z-10 flex flex-col gap-6 w-full">
+                 {messages.filter(m => !activeConversationId || m.conversationId === activeConversationId).map((m: any, i) => {
+                   const isMe = m.senderId === user?.userId;
+                   const parsed = parseMessageContent(m);
+                   return (
+                     <div key={i} className={`flex w-full ${isMe ? "justify-end" : "justify-start"}`}>
+                       <div className={`max-w-[85%] md:max-w-[70%] space-y-2 flex flex-col ${isMe ? "items-end" : "items-start"}`}>
+                          <div className={`px-5 py-3 md:px-6 md:py-4 rounded-[24px] md:rounded-[28px] text-[14px] font-medium leading-relaxed border wrap-break-word w-full ${isMe ? "bg-[#003366] text-white rounded-tr-none border-[#003366] shadow-sm ml-auto text-right" : "bg-white text-slate-900 rounded-tl-none border-slate-100 shadow-sm mr-auto text-left"}`}>
+                            {parsed.type === 'file' ? (
+                               <div className="space-y-3">
+                                  {parsed.fileName?.toLowerCase().match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                                     <div className="w-full h-auto min-h-[100px] bg-slate-100/10 rounded-xl overflow-hidden shadow-inner">
+                                        <img 
+                                          src={parsed.fileUrl} 
+                                          className="w-full h-auto object-contain max-h-[300px] block" 
+                                          alt="Shared Asset" 
+                                          onError={(e) => {
+                                            (e.target as HTMLImageElement).src = "https://via.placeholder.com/300x200?text=Asset+Permission+Required";
+                                          }}
+                                        />
+                                     </div>
+                                  ) : (
+                                     <a href={parsed.fileUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-black/10 rounded-xl hover:bg-black/20 transition-all">
+                                        <i className="fa-solid fa-file-circle-check text-xl"></i>
+                                        <span className="text-[10px] font-black uppercase tracking-widest truncate max-w-[150px]">{parsed.fileName || "Download Attachment"}</span>
+                                     </a>
                                   )}
-                                </div>
-                              )}
-
-                            <div
-                              className={`flex items-center justify-end mt-1 space-x-1 ${msg.type === "audio" ? "mt-2" : ""}`}
-                            >
-                              {msg.type === "audio" && (
-                                <i className="fa-solid fa-microphone text-[9px] text-slate-400 mr-0.5"></i>
-                              )}
-                              <span className="text-[10px] text-slate-500 dark:text-slate-400 tabular-nums">
-                                {new Date(msg.createdAt).toLocaleTimeString(
-                                  [],
-                                  { hour: "2-digit", minute: "2-digit" },
-                                )}
-                              </span>
-                              {isMe && (
-                                <span
-                                  className={
-                                    msg.isRead
-                                      ? "text-[#53bdeb]"
-                                      : "text-slate-400 dark:text-slate-600"
-                                  }
-                                >
-                                  <i
-                                    className={`fa-solid ${msg.isRead ? "fa-check-double" : "fa-check-double"} text-[11px]`}
-                                  ></i>
-                                </span>
-                              )}
-                            </div>
+                               </div>
+                            ) : parsed.text}
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ),
-              )}
+                          <p className={`text-[8px] md:text-[9px] font-black uppercase tracking-widest text-slate-300 italic px-2`}>{new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                       </div>
+                     </div>
+                   );
+                 })}
+               </div>
             </div>
 
-            <div className="px-4 py-2 bg-[#f0f2f5] dark:bg-slate-900 flex items-center space-x-3 shrink-0">
-              {isRecording ? (
-                <div className="w-full flex items-center justify-between bg-white dark:bg-slate-800 px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700">
-                  <div className="flex items-center space-x-4">
-                    <i className="fa-solid fa-microphone text-rose-500 animate-pulse"></i>
-                    <span className="text-sm font-semibold tabular-nums text-slate-600 dark:text-slate-400">
-                      0:{recordingTime.toString().padStart(2, "0")}
-                    </span>
+            <div className="relative bg-white border-t border-slate-100 p-4 md:p-8 shrink-0">
+               {showEmojiPicker && (
+                  <div className="absolute bottom-full mb-4 left-4 p-4 bg-white rounded-[24px] shadow-2xl border border-slate-100 grid grid-cols-5 gap-2 w-[220px] z-50 animate-slideUp">
+                     {POPULAR_EMOJIS.map(emoji => <button key={emoji} onClick={() => addEmoji(emoji)} className="w-8 h-8 md:w-10 md:h-10 text-lg hover:scale-125 transition-transform flex items-center justify-center">{emoji}</button>)}
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <button
-                      onClick={() => stopRecording(false)}
-                      className="text-slate-400 font-bold text-xs uppercase hover:text-rose-500"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={() => stopRecording(true)}
-                      className="w-10 h-10 bg-[#00a884] text-white rounded-full flex items-center justify-center shadow-md"
-                    >
-                      <i className="fa-solid fa-paper-plane text-xs"></i>
-                    </button>
+               )}
+               <div className="flex items-center gap-4 md:gap-8 grow px-2 md:px-0">
+                  <div className="flex gap-4 md:gap-5 text-slate-300 text-xl md:text-2xl shrink-0 rounded-[24px] border border-slate-100 bg-slate-50 px-4 py-3 shadow-sm">
+                    <i className={`fa-regular fa-face-smile cursor-pointer ${showEmojiPicker ? "text-teal-600" : "hover:text-[#003366]"}`} onClick={() => setShowEmojiPicker(!showEmojiPicker)}></i>
+                    <i className={`fa-solid fa-paperclip cursor-pointer ${uploadingFile ? "animate-spin text-teal-600" : "hover:text-[#003366]"}`} onClick={() => fileInputRef.current?.click()}></i>
+                    <input type="file" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
                   </div>
-                </div>
-              ) : (
-                <>
-                  <div className="flex space-x-4 text-[#54656f] dark:text-slate-400">
-                    <button>
-                      <i className="fa-regular fa-face-smile text-2xl"></i>
-                    </button>
-                    <button>
-                      <i className="fa-solid fa-plus text-xl"></i>
-                    </button>
-                  </div>
-
-                  <form
-                    onSubmit={handleSendMessage}
-                    className="grow flex items-center space-x-3"
-                  >
-                    <div className="grow relative">
-                      <input
-                        type="text"
-                        placeholder="Type a message"
-                        className="w-full bg-white dark:bg-slate-800 rounded-lg px-4 py-2.5 pr-10 text-sm focus:outline-none placeholder:text-slate-400 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                      />
-                      <button
-                        type="button"
-                        onClick={toggleTranscription}
-                        className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 transition-colors ${isTranscribing ? "text-rose-500" : "text-slate-400 hover:text-blue-600 dark:hover:text-blue-400"}`}
-                        title="Voice-to-Text"
-                      >
-                        <i
-                          className={`fa-solid ${isTranscribing ? "fa-circle-dot animate-pulse" : "fa-microphone-lines"}`}
-                        ></i>
-                      </button>
-                    </div>
-
-                    <div className="shrink-0">
-                      {newMessage.trim() ? (
-                        <button
-                          type="submit"
-                          className="w-12 h-12 bg-[#00a884] text-white rounded-full flex items-center justify-center shadow-sm transition active:scale-95"
-                        >
-                          <i className="fa-solid fa-paper-plane text-lg"></i>
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onMouseDown={startRecording}
-                          onTouchStart={startRecording}
-                          className="w-12 h-12 text-[#54656f] dark:text-slate-400 rounded-full flex items-center justify-center transition active:scale-95"
-                        >
-                          <i className="fa-solid fa-microphone text-2xl"></i>
-                        </button>
-                      )}
-                    </div>
+                  <form onSubmit={(e) => sendMessage(e)} className="grow flex items-center gap-3 md:gap-4">
+                     <input type="text" className="grow bg-slate-50 border border-slate-100 rounded-[28px] md:rounded-[32px] px-5 py-4 md:px-8 md:py-5 text-sm font-medium text-slate-900 outline-none focus:bg-white focus:ring-4 focus:ring-teal-100 transition-all placeholder:text-slate-300 shadow-sm" placeholder="Message..." value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
+                     <button type="submit" className={`w-12 h-12 md:w-16 md:h-16 flex items-center justify-center rounded-[20px] md:rounded-[24px] shadow-2xl transition-all ${newMessage.trim() ? "bg-[#003366] text-white" : "bg-slate-50 text-slate-200"}`}>
+                       <i className="fa-solid fa-paper-plane text-base md:text-xl"></i>
+                     </button>
                   </form>
-                </>
-              )}
+               </div>
             </div>
-          </div>
+          </>
         ) : (
-          <div className="grow flex flex-col items-center justify-center p-20 text-center bg-[#f0f2f5] dark:bg-slate-950 h-full z-10">
-            <div className="w-64 h-64 opacity-40 mb-10">
-              <img
-                src="https://static.whatsapp.net/rsrc.php/v3/y6/r/wa669ae5F2j.png"
-                className="w-full grayscale"
-                alt="WhatsApp Desktop"
-              />
-            </div>
-            <h3 className="text-3xl font-light text-slate-800 dark:text-white mb-4">
-              UI DLC Marketplace Web
-            </h3>
-            <p className="text-slate-500 dark:text-slate-400 text-sm max-w-md font-medium leading-relaxed">
-              Send and receive messages with students and sellers on the DLC
-              campus. Safe deals start with a conversation.
-            </p>
-            <div className="mt-20 flex items-center text-slate-400 dark:text-slate-600 text-xs">
-              <i className="fa-solid fa-lock mr-2"></i>
-              End-to-end encrypted
-            </div>
+          <div className="grow flex flex-col items-center justify-center p-12 text-center bg-slate-50/20">
+             <i className="fa-solid fa-comment-dots text-7xl md:text-8xl text-slate-100 mb-8"></i>
+             <h2 className="text-3xl font-black text-[#003366] uppercase tracking-tighter">Hub Terminal.</h2>
           </div>
         )}
       </div>
