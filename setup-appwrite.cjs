@@ -1,5 +1,5 @@
 
-const { Client, Databases } = require('node-appwrite');
+const { Client, Databases, Permission, Role } = require('node-appwrite');
 require('dotenv').config();
 
 const client = new Client();
@@ -34,11 +34,27 @@ async function setupDatabase() {
        console.log('Registry Hub deployment successful.');
     }
 
-    // Create collections with Industrial Schema
+    // High-Trust Permission Sets
+    const standardPerms = [
+      Permission.read(Role.any()),
+      Permission.create(Role.users()),
+      Permission.update(Role.users()),
+      Permission.delete(Role.users()),
+    ];
+
+    const privatePerms = [
+      Permission.read(Role.users()),
+      Permission.create(Role.users()),
+      Permission.update(Role.users()),
+      Permission.delete(Role.users()),
+    ];
+
+    // Create collections with Industrial Schema and Permissions
     const collections = [
       {
         id: 'profiles',
         name: 'User Profiles',
+        permissions: standardPerms,
         attributes: [
           { key: 'userId', type: 'string', required: true, size: 255 },
           { key: 'name', type: 'string', required: true, size: 255 },
@@ -69,6 +85,7 @@ async function setupDatabase() {
       {
         id: 'products',
         name: 'Product Listings',
+        permissions: standardPerms,
         attributes: [
           { key: 'name', type: 'string', required: true, size: 255 },
           { key: 'description', type: 'string', required: true, size: 2000 },
@@ -88,6 +105,7 @@ async function setupDatabase() {
       {
         id: 'transactions',
         name: 'Transactions',
+        permissions: privatePerms,
         attributes: [
           { key: 'productId', type: 'string', required: true, size: 255 },
           { key: 'productName', type: 'string', required: true, size: 255 },
@@ -106,6 +124,7 @@ async function setupDatabase() {
       {
         id: 'requests',
         name: 'Buyer Requests',
+        permissions: standardPerms,
         attributes: [
           { key: 'userId', type: 'string', required: true, size: 255 },
           { key: 'userName', type: 'string', required: true, size: 255 },
@@ -119,20 +138,39 @@ async function setupDatabase() {
       {
         id: 'messages',
         name: 'User Messages',
+        permissions: privatePerms,
         attributes: [
           { key: 'conversationId', type: 'string', required: true, size: 255 },
           { key: 'senderId', type: 'string', required: true, size: 255 },
           { key: 'receiverId', type: 'string', required: true, size: 255 },
           { key: 'text', type: 'string', required: false, size: 1000 },
           { key: 'audioUrl', type: 'string', required: false, size: 500 },
+          { key: 'fileUrl', type: 'string', required: false, size: 500 },
+          { key: 'fileName', type: 'string', required: false, size: 500 },
+          { key: 'duration', type: 'integer', required: false },
           { key: 'type', type: 'string', required: true, size: 50 },
           { key: 'isRead', type: 'boolean', required: false },
           { key: 'createdAt', type: 'datetime', required: false }
         ]
       },
       {
+        id: 'calls',
+        name: 'Voice Calls',
+        permissions: privatePerms,
+        attributes: [
+          { key: 'callerId', type: 'string', required: true, size: 255 },
+          { key: 'receiverId', type: 'string', required: true, size: 255 },
+          { key: 'status', type: 'string', required: true, size: 100 },
+          { key: 'sdp', type: 'string', required: false, size: 10000 },
+          { key: 'type', type: 'string', required: false, size: 50 },
+          { key: 'candidates', type: 'string', required: false, size: 5000, array: true },
+          { key: 'createdAt', type: 'datetime', required: false }
+        ]
+      },
+      {
         id: 'reviews',
         name: 'Product Reviews',
+        permissions: standardPerms,
         attributes: [
           { key: 'productId', type: 'string', required: true, size: 255 },
           { key: 'sellerId', type: 'string', required: true, size: 255 },
@@ -146,6 +184,7 @@ async function setupDatabase() {
       {
         id: 'reports',
         name: 'User Reports',
+        permissions: privatePerms,
         attributes: [
           { key: 'reporterId', type: 'string', required: true, size: 255 },
           { key: 'reporterName', type: 'string', required: true, size: 255 },
@@ -163,10 +202,12 @@ async function setupDatabase() {
       console.log(`Auditing Institutional Node: ${collection.name}...`);
       try {
         await databases.getCollection(dbId, collection.id);
+        console.log(`Node exists. Synchronizing Permissions for ${collection.id}...`);
+        await databases.updateCollection(dbId, collection.id, collection.name, collection.permissions);
       } catch (error) {
         if (error.code === 404) {
           console.log(`Node missing. Deploying collection: ${collection.name}`);
-          await databases.createCollection(dbId, collection.id, collection.name);
+          await databases.createCollection(dbId, collection.id, collection.name, collection.permissions);
         } else {
           throw error;
         }
@@ -193,7 +234,7 @@ async function setupDatabase() {
       }
     }
 
-    console.log('Institutional Database Protocol finalized with Zero Vulnerabilities.');
+    console.log('Institutional Database Protocol finalized with Open Permission Gates.');
   } catch (error) {
     console.error('Critical Fail during Registry Auditing:', error);
   }
