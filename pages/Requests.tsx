@@ -124,9 +124,9 @@ const Requests: React.FC = () => {
 
       {/* Deploy Request Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-100 flex items-center justify-center p-6 animate-fadeIn">
-           <div className="absolute inset-0 bg-[#003366]/60 backdrop-blur-xl" onClick={() => setShowModal(false)}></div>
-           <div className="bg-white w-full max-w-xl rounded-[48px] p-10 md:p-14 shadow-2xl relative z-10 animate-slideUp">
+        <div className="fixed inset-0 z-[100] flex items-start justify-center p-6 overflow-y-auto no-scrollbar scroll-smooth animate-fadeIn">
+           <div className="fixed inset-0 bg-[#003366]/60 backdrop-blur-xl" onClick={() => setShowModal(false)}></div>
+           <div className="relative my-auto bg-white w-full max-w-xl rounded-[48px] p-10 md:p-14 shadow-2xl z-10 animate-slideUp">
               <div className="space-y-4 mb-12">
                  <h2 className="text-3xl font-black text-[#003366] uppercase tracking-tighter leading-none">Deploy Requirement.</h2>
                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.3em] italic">Noticeboard Transmission Protocol</p>

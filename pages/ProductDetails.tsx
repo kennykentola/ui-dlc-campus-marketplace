@@ -179,9 +179,14 @@ const ProductDetails: React.FC = () => {
                        <h1 className="text-5xl font-black text-[#003366] tracking-tighter uppercase leading-[0.95]">{product.name}</h1>
                        <div className="flex items-center gap-6">
                           <div className="flex gap-1 text-teal-500">
-                             {[...Array(5)].map((_, i) => <i key={i} className={`fa-solid fa-star text-[10px] ${i < 4 ? 'opacity-100' : 'opacity-20'}`}></i>)}
+                             {[...Array(5)].map((_, i) => {
+                                const avgRating = reviews.length > 0 ? reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length : 5;
+                                return <i key={i} className={`fa-solid fa-star text-[10px] ${i < Math.round(avgRating) ? 'opacity-100' : 'opacity-20'}`}></i>;
+                             })}
                           </div>
-                          <span className="text-[10px] font-black uppercase text-slate-300 tracking-widest italic leading-none">Authenticity Verified</span>
+                          <span className="text-[10px] font-black uppercase text-[#003366] tracking-widest leading-none">
+                             {reviews.length > 0 ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1) : "5.0"} Hub Rating ({reviews.length})
+                          </span>
                        </div>
                     </div>
                     
