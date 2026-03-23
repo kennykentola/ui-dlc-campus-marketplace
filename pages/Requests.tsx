@@ -124,7 +124,7 @@ const Requests: React.FC = () => {
 
       {/* Deploy Request Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center p-6 overflow-y-auto no-scrollbar scroll-smooth animate-fadeIn">
+        <div className="fixed inset-0 z-100 flex items-start justify-center p-6 overflow-y-auto no-scrollbar scroll-smooth animate-fadeIn">
            <div className="fixed inset-0 bg-[#003366]/60 backdrop-blur-xl" onClick={() => setShowModal(false)}></div>
            <div className="relative my-auto bg-white w-full max-w-xl rounded-[48px] p-10 md:p-14 shadow-2xl z-10 animate-slideUp">
               <div className="space-y-4 mb-12">
