@@ -139,9 +139,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const initAuth = async () => {
-      if (localStorage.getItem("current_user")) {
-        await refreshUser();
-      }
+      // Always attempt to synchronize with an existing browser session
+      await refreshUser();
       setLoading(false);
     };
     initAuth();
@@ -169,9 +168,23 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       try {
         await account.deleteSession("current");
-      } catch (e) {}
+      } catch (deleteError: any) {
+        if (deleteError.code !== 401) {
+          console.error("Error clearing current session:", deleteError);
+        }
+      }
 
-      await account.createEmailPasswordSession(email, password);
+      try {
+        await account.createEmailPasswordSession(email, password);
+      } catch (loginError: any) {
+        // Handle "session already exists" correctly
+        const isSessionActive = loginError.message?.includes("session is active") || loginError.code === 409;
+        if (!isSessionActive) {
+          throw loginError;
+        }
+        // If session exists, we proceed without error
+      }
+
       const userAccount = await account.get();
       let profile;
       try {
@@ -187,10 +200,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             name: userAccount.name,
             email: userAccount.email,
             matricNumber: "UPDATE_REQUIRED",
-            department: "Computer Science",
+            department: "Hub Associate",
             level: "100",
             role: UserRole.STUDENT,
             sellerStatus: SellerStatus.UNVERIFIED,
+            blockedUserIds: [],
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           });
@@ -200,23 +214,38 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
       setUser(profile as unknown as UserProfile);
       localStorage.setItem("current_user", JSON.stringify(profile));
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
+      const missingAccountScope = error.message?.includes('missing scopes') && error.message?.includes('account');
+      if (
+        error.code === 401 ||
+        error.message?.includes("Invalid credentials") ||
+        error.message?.includes("missing scopes")
+      ) {
+        if (missingAccountScope) {
+          throw new Error("Login session was not created. Check your Appwrite platform URL, clear browser storage, and try again.");
+        }
+        throw new Error("Invalid email or password.");
+      }
       throw error;
     }
   };
 
   const register = async (
-    data: Partial<UserProfile> & { password: string },
+    data: any, // Using any for flexible sanitation
   ) => {
     try {
-      const { password, ...profileData } = data;
+      // 1. Establish Scholarly Account
       const userAccount = await account.create(
         ID.unique(),
-        data.email!,
-        password,
+        data.email,
+        data.password,
         data.name,
       );
+
+      // 2. Sanitize Scholarly Profile (Remove ephemeral attributes)
+      const { password, confirmPassword, adminCode, ...profileData } = data;
+
       const userProfile = await createUserProfile({
         ...profileData,
         userId: userAccount.$id,
@@ -226,6 +255,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
+
+      // 3. Auto-Login Synchronizer
+      await login(data.email, data.password);
+
       return userProfile;
     } catch (error) {
       console.error("Registration error:", error);
@@ -233,9 +266,17 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("current_user");
+  const logout = async () => {
+    try {
+      await account.deleteSession("current");
+    } catch (error: any) {
+      if (error.code !== 401) {
+        console.error("Logout error:", error);
+      }
+    } finally {
+      setUser(null);
+      localStorage.removeItem("current_user");
+    }
   };
 
   return (
@@ -390,8 +431,8 @@ const App: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                 <div className="space-y-6">
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-[#003366] rounded-2xl flex items-center justify-center shadow-lg shadow-teal-900/40">
-                       <img src="/logo.png" className="h-6 filter brightness-0 invert" alt="Logo" />
+                    <div className="w-16 h-16 bg-white rounded-[24px] flex items-center justify-center shadow-2xl">
+                      <img src="/logo.png" className="h-8" alt="Logo" />
                     </div>
                     <div>
                       <p className="text-2xl font-black text-white leading-none uppercase tracking-tighter">

@@ -35,8 +35,8 @@ const Login: React.FC = () => {
       <div className="w-full max-w-md bg-white p-10 md:p-14 rounded-[40px] border border-slate-100 shadow-[0_40px_100px_-20px_rgba(0,51,102,0.1)] space-y-10 animate-slideUp relative z-10">
         
         <div className="text-center space-y-4">
-           <div className="w-16 h-16 bg-[#003366] rounded-[24px] flex items-center justify-center mx-auto shadow-xl shadow-blue-900/10 mb-6 group hover:scale-110 transition-transform duration-500">
-              <img src="/logo.png" className="h-8 filter brightness-0 invert" alt="Logo" />
+           <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center shadow-xl border border-slate-50">
+              <img src="/logo.png" className="h-10" alt="Logo" />
            </div>
            <h1 className="text-4xl font-black text-[#003366] uppercase tracking-tighter leading-none">
               <span className="text-[#14b8a6]">Login</span>
@@ -63,6 +63,7 @@ const Login: React.FC = () => {
                <input
                  type="email"
                  required
+                 autoComplete="email"
                  className="w-full bg-slate-50 border border-slate-50 rounded-2xl pl-14 pr-6 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-300"
                  placeholder="name@dlc.ui.edu.ng"
                  value={email}
@@ -80,6 +81,7 @@ const Login: React.FC = () => {
                <input
                  type={showPassword ? "text" : "password"}
                  required
+                 autoComplete="current-password"
                  className="w-full bg-slate-50 border border-slate-50 rounded-2xl pl-14 pr-16 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-300"
                  placeholder="••••••••"
                  value={password}

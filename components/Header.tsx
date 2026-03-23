@@ -42,7 +42,7 @@ const Header: React.FC = () => {
         <div className="flex items-center shrink-0">
            <Link to="/" className="flex items-center gap-4 group lg:mr-10">
               <div className="w-11 h-11 bg-linear-to-br from-[#003366] to-[#0f766e] rounded-2xl flex items-center justify-center shadow-lg shadow-teal-900/20 group-hover:scale-105 transition-transform duration-500">
-                 <img src="/logo.png" className="h-6 w-auto filter brightness-0 invert" alt="Logo" />
+                 <img src="/logo.png" className="h-6 w-auto" alt="Logo" />
               </div>
               <div className="hidden sm:block">
                  <h1 className="text-xl font-black text-[#003366] tracking-[0.08em] uppercase leading-none">
@@ -117,7 +117,7 @@ const Header: React.FC = () => {
             <div className="flex items-center justify-between mb-12">
                <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-[#003366] rounded-xl flex items-center justify-center shadow-lg">
-                     <img src="/logo.png" className="h-6 filter brightness-0 invert" alt="Logo" />
+                     <img src="/logo.png" className="h-6" alt="Logo" />
                   </div>
                   <span className="font-black text-[#003366] uppercase text-[10px] tracking-[0.3em]">Hub Primary</span>
                </div>

@@ -16,6 +16,7 @@ const AdminDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [updatingSellerId, setUpdatingSellerId] = useState<string | null>(null);
   const [resolvingReportId, setResolvingReportId] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
 
   const fetchAdminData = async () => {
     try {
@@ -133,6 +134,70 @@ const AdminDashboard: React.FC = () => {
               </div>
          ) : (
             <div className="relative z-10 space-y-12">
+               {selectedUser && (
+                  <div className="fixed inset-0 z-[120] flex items-center justify-center p-6">
+                     <div className="absolute inset-0 bg-[#003366]/40 backdrop-blur-md" onClick={() => setSelectedUser(null)}></div>
+                     <div className="relative z-10 w-full max-w-3xl rounded-[40px] border border-slate-100 bg-white p-8 md:p-10 shadow-2xl">
+                        <div className="flex items-start justify-between gap-6">
+                           <div className="flex items-center gap-5">
+                              <img
+                                src={selectedUser.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedUser.name)}&background=003366&color=fff`}
+                                className="h-20 w-20 rounded-[28px] object-cover shadow-lg"
+                                alt={selectedUser.name}
+                              />
+                              <div>
+                                 <h3 className="text-2xl font-black uppercase tracking-tight text-[#003366]">{selectedUser.name}</h3>
+                                 <p className="mt-1 text-sm text-slate-500">{selectedUser.email}</p>
+                                 <p className="mt-2 text-[10px] font-black uppercase tracking-widest text-teal-600">{selectedUser.role}</p>
+                              </div>
+                           </div>
+                           <button onClick={() => setSelectedUser(null)} className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-50 text-slate-500 hover:text-rose-500 transition-colors">
+                              <i className="fa-solid fa-xmark"></i>
+                           </button>
+                        </div>
+
+                        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+                           <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Department</p>
+                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.department || "Not provided"}</p>
+                           </div>
+                           <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Level</p>
+                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.level || "Not provided"}</p>
+                           </div>
+                           <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Matric Number</p>
+                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.matricNumber || "Not provided"}</p>
+                           </div>
+                           <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Seller Status</p>
+                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.sellerStatus}</p>
+                           </div>
+                           <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Phone Number</p>
+                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.phoneNumber || "Not provided"}</p>
+                           </div>
+                           <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Fintech Handle</p>
+                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.fintechHandles || "Not provided"}</p>
+                           </div>
+                           <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Bank Name</p>
+                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.bankName || "Not provided"}</p>
+                           </div>
+                           <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Account Number</p>
+                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.accountNumber || "Not provided"}</p>
+                           </div>
+                           <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5 md:col-span-2">
+                              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Account Name</p>
+                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.accountName || "Not provided"}</p>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               )}
+
                {activeTab === 'products' && (
                   <div className="space-y-12">
                      <div className="flex items-end justify-between border-b-2 border-slate-50 pb-8">
@@ -215,6 +280,12 @@ const AdminDashboard: React.FC = () => {
                                  </div>
                                  
                                  <div className="grid grid-cols-2 gap-3">
+                                    <button
+                                      onClick={() => setSelectedUser(u)}
+                                      className="col-span-2 py-4 bg-slate-50 border border-slate-200 text-[#003366] rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-white transition-all"
+                                    >
+                                       View Details
+                                    </button>
                                     <button
                                       onClick={() => handleSellerStatusUpdate(u, SellerStatus.VERIFIED)}
                                       disabled={u.sellerStatus === SellerStatus.VERIFIED || updatingSellerId === u.userId}

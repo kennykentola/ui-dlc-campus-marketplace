@@ -106,8 +106,8 @@ const CreateProduct: React.FC = () => {
             Cancel Protocol
          </button>
          <div className="flex items-center gap-4">
-            <div className="w-8 h-8 bg-[#003366] rounded-xl flex items-center justify-center">
-               <img src="/logo.png" className="h-5 filter brightness-0 invert" alt="Logo" />
+            <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center border border-slate-50 shadow-sm">
+               <img src="/logo.png" className="h-5" alt="Logo" />
             </div>
             <h1 className="text-xl font-black text-[#003366] tracking-tighter uppercase leading-none">Sell / Exchange.</h1>
          </div>

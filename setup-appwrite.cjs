@@ -75,7 +75,7 @@ async function setupDatabase() {
           { key: 'favorites', type: 'string', required: false, size: 255, array: true },
           { key: 'completionRate', type: 'integer', required: false },
           { key: 'responseTime', type: 'string', required: false, size: 100 },
-          { key: 'blockedUserIds', type: 'string', required: false, array: true },
+          { key: 'blockedUserIds', type: 'string', required: false, size: 255, array: true },
           { key: 'notificationSettings', type: 'string', required: false, size: 1000 },
           { key: 'verificationDocumentUrl', type: 'string', required: false, size: 2000 },
           { key: 'createdAt', type: 'datetime', required: false },

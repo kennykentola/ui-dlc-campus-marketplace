@@ -20,6 +20,9 @@ const Register: React.FC = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -34,7 +37,7 @@ const Register: React.FC = () => {
     try {
       const role = formData.adminCode === "UIDLC_ADMIN_2024" ? UserRole.ADMIN : UserRole.STUDENT;
       await register({ ...formData, role });
-      navigate("/login");
+      navigate("/"); // Auto-login handles the session
     } catch (err: any) {
       setError(err.message || "Register failed. That account may already exist.");
     } finally {
@@ -49,6 +52,9 @@ const Register: React.FC = () => {
       <div className="gradient-blob blob-gold opacity-10"></div>
 
       <div className="w-full max-w-3xl bg-white p-10 md:p-14 rounded-[40px] border border-slate-100 shadow-[0_40px_100px_-20px_rgba(0,51,102,0.1)] space-y-12 animate-slideUp relative z-10">
+        <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center shadow-xl border border-slate-50 mx-auto mb-6 group hover:scale-110 transition-transform">
+           <img src="/logo.png" className="h-10" alt="Logo" />
+        </div>
         
         <div className="text-center space-y-4">
            <h1 className="text-4xl font-black text-[#003366] uppercase tracking-tighter leading-none">
@@ -74,7 +80,7 @@ const Register: React.FC = () => {
             </div>
             <div className="space-y-3">
               <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Student Email</label>
-              <input name="email" type="email" required className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" placeholder="student@dlc.ui.edu.ng" value={formData.email} onChange={handleChange} />
+              <input name="email" type="email" autoComplete="email" required className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" placeholder="student@dlc.ui.edu.ng" value={formData.email} onChange={handleChange} />
             </div>
             <div className="space-y-3">
               <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Department</label>
@@ -86,11 +92,39 @@ const Register: React.FC = () => {
             </div>
             <div className="space-y-3">
               <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Password</label>
-              <input name="password" type="password" required className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" placeholder="••••••••" value={formData.password} onChange={handleChange} />
+              <div className="relative group">
+                <input 
+                  name="password" 
+                  type={showPassword ? "text" : "password"} 
+                  required
+                  autoComplete="new-password"
+                  className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 pr-14 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" 
+                  placeholder="••••••••" 
+                  value={formData.password} 
+                  onChange={handleChange} 
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-[#14b8a6] transition-colors">
+                   <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"} text-xs`}></i>
+                </button>
+              </div>
             </div>
             <div className="space-y-3">
               <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Confirm Password</label>
-              <input name="confirmPassword" type="password" required className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" placeholder="••••••••" value={formData.confirmPassword} onChange={handleChange} />
+              <div className="relative group">
+                <input 
+                  name="confirmPassword" 
+                  type={showConfirmPassword ? "text" : "password"} 
+                  required
+                  autoComplete="new-password"
+                  className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 pr-14 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" 
+                  placeholder="••••••••" 
+                  value={formData.confirmPassword} 
+                  onChange={handleChange} 
+                />
+                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-[#14b8a6] transition-colors">
+                   <i className={`fa-solid ${showConfirmPassword ? "fa-eye-slash" : "fa-eye"} text-xs`}></i>
+                </button>
+              </div>
             </div>
           </div>
 
