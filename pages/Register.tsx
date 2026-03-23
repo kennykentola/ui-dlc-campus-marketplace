@@ -27,7 +27,7 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      return setError("Security keys do not match. Protocol aborted.");
+      return setError("Passwords do not match.");
     }
     setLoading(true);
     setError("");
@@ -36,7 +36,7 @@ const Register: React.FC = () => {
       await register({ ...formData, role });
       navigate("/login");
     } catch (err: any) {
-      setError(err.message || "Registry protocol failed. Unique identity may already exist.");
+      setError(err.message || "Register failed. That account may already exist.");
     } finally {
       setLoading(false);
     }
@@ -52,10 +52,10 @@ const Register: React.FC = () => {
         
         <div className="text-center space-y-4">
            <h1 className="text-4xl font-black text-[#003366] uppercase tracking-tighter leading-none">
-              Hub <span className="text-[#14b8a6]">Registry.</span>
+              <span className="text-[#14b8a6]">Register</span>
            </h1>
-           <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] italic">
-              Student Identity Initialization
+           <p className="text-slate-400 text-[11px] font-medium">
+              Create your account
            </p>
         </div>
 
@@ -85,17 +85,17 @@ const Register: React.FC = () => {
               <input name="matricNumber" required className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" placeholder="DLC/21/XXXX" value={formData.matricNumber} onChange={handleChange} />
             </div>
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Security Key</label>
+              <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Password</label>
               <input name="password" type="password" required className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" placeholder="••••••••" value={formData.password} onChange={handleChange} />
             </div>
             <div className="space-y-3">
-              <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Confirm Security Key</label>
+              <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Confirm Password</label>
               <input name="confirmPassword" type="password" required className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" placeholder="••••••••" value={formData.confirmPassword} onChange={handleChange} />
             </div>
           </div>
 
           <div className="space-y-3">
-            <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Admin Validation Code (Optional)</label>
+              <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Admin Code (Optional)</label>
             <input name="adminCode" className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" placeholder="••••••••" value={formData.adminCode} onChange={handleChange} />
           </div>
 
@@ -104,16 +104,16 @@ const Register: React.FC = () => {
             disabled={loading}
             className="w-full bg-[#003366] text-white py-6 rounded-2xl font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-blue-900/10 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
           >
-            {loading ? "Registering Identity..." : "Finalize Registry Protocol"}
+            {loading ? "Registering..." : "Register"}
             <i className="fa-solid fa-user-plus text-[10px]"></i>
           </button>
         </form>
 
         <div className="pt-8 border-t border-slate-50 text-center">
-           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">
-              Already Registered?{" "}
+           <p className="text-[11px] font-medium text-slate-500 leading-relaxed">
+              Already have an account?{" "}
               <Link to="/login" className="text-[#14b8a6] hover:underline underline-offset-4 ml-2">
-                Initiate Login Protocol
+                login
               </Link>
            </p>
         </div>

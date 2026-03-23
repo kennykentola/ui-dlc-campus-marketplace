@@ -65,7 +65,7 @@ const CreateProduct: React.FC = () => {
           ID.unique(),
           img
         );
-        const url = storage.getFilePreview(import.meta.env.VITE_APPWRITE_BUCKET_ID, file.$id).toString();
+        const url = storage.getFileView(import.meta.env.VITE_APPWRITE_BUCKET_ID, file.$id).toString();
         imageUrls.push(url);
       }
 
@@ -109,7 +109,7 @@ const CreateProduct: React.FC = () => {
             <div className="w-8 h-8 bg-[#003366] rounded-xl flex items-center justify-center">
                <img src="/logo.png" className="h-5 filter brightness-0 invert" alt="Logo" />
             </div>
-            <h1 className="text-xl font-black text-[#003366] tracking-tighter uppercase leading-none">Export Asset Portal.</h1>
+            <h1 className="text-xl font-black text-[#003366] tracking-tighter uppercase leading-none">Sell / Exchange.</h1>
          </div>
          <div className="w-24"></div>
       </header>
@@ -117,16 +117,16 @@ const CreateProduct: React.FC = () => {
       <main className="container mx-auto px-6 max-w-3xl mt-44 space-y-24 animate-slideUp">
          <section className="space-y-16">
             <div className="space-y-3">
-               <h2 className="text-4xl font-black text-[#003366] uppercase tracking-tighter leading-none border-l-4 border-teal-600 pl-8">Listing Protocol.</h2>
-               <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[0.4em] italic pl-8">UI DLC Hub - Asset Distribution Node</p>
+               <h2 className="text-4xl font-black text-[#003366] uppercase tracking-tighter leading-none border-l-4 border-teal-600 pl-8">Sell, Lend or Exchange an Item.</h2>
+               <p className="text-[11px] text-slate-500 font-medium leading-relaxed pl-8 max-w-2xl">Use this page to post any item you want to sell, lend out, or exchange with another UI DLC student.</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-24">
                {/* 01: Visual Evidence */}
                <div className="space-y-10">
                   <div className="flex items-center justify-between border-b border-slate-50 pb-6 mb-10">
-                     <h3 className="text-sm font-black text-[#003366] uppercase tracking-widest">01 Evidence Protocol</h3>
-                     <span className="text-[9px] font-black text-teal-600 uppercase tracking-[0.3em] italic">Visual Documentation Required</span>
+                     <h3 className="text-sm font-black text-[#003366] uppercase tracking-widest">01 Add Photos</h3>
+                     <span className="text-[9px] font-black text-teal-600 uppercase tracking-[0.3em] italic">Upload clear photos of the item</span>
                   </div>
                   
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -140,7 +140,7 @@ const CreateProduct: React.FC = () => {
                      ))}
                      <label className="aspect-square rounded-[32px] border-2 border-dashed border-slate-200 bg-slate-50 flex flex-col items-center justify-center text-slate-300 hover:bg-slate-50 hover:border-teal-600/50 hover:text-teal-600 transition-all cursor-pointer group">
                         <i className="fa-solid fa-plus text-2xl mb-3 group-hover:rotate-90 transition-transform duration-500"></i>
-                        <span className="text-[9px] font-black uppercase tracking-widest">Add Evidence</span>
+                        <span className="text-[9px] font-black uppercase tracking-widest">Add Photos</span>
                         <input type="file" multiple accept="image/*" onChange={handleImageChange} className="hidden" />
                      </label>
                   </div>
@@ -150,10 +150,10 @@ const CreateProduct: React.FC = () => {
                <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
                   <div className="space-y-12">
                      <div className="space-y-4">
-                        <p className="text-[10px] font-black text-[#003366]/40 uppercase tracking-widest">Asset Nomenclature</p>
+                        <p className="text-[10px] font-black text-[#003366]/40 uppercase tracking-widest">Item Name</p>
                         <input 
                            type="text" 
-                           placeholder="e.g. GST 202 Handout"
+                           placeholder="e.g. GST 202 Handout, Laptop Bag, Textbook"
                            className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-[#003366] outline-none focus:bg-white focus:border-teal-600 transition-all shadow-sm"
                            value={name} onChange={(e) => setName(e.target.value)} required
                         />
@@ -170,7 +170,7 @@ const CreateProduct: React.FC = () => {
                      </div>
 
                      <div className="space-y-4">
-                        <p className="text-[10px] font-black text-[#003366]/40 uppercase tracking-widest">Category Registry</p>
+                        <p className="text-[10px] font-black text-[#003366]/40 uppercase tracking-widest">Category</p>
                         <div className="grid grid-cols-2 gap-2">
                            {CATEGORIES.map(c => (
                              <button key={c} type="button" onClick={() => setCategory(c)} className={`px-4 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all border ${category === c ? 'bg-[#003366] text-white border-[#003366] shadow-lg shadow-blue-900/10' : 'bg-white text-slate-400 border-slate-100 hover:bg-slate-50'}`}>{c}</button>
@@ -181,9 +181,9 @@ const CreateProduct: React.FC = () => {
 
                   <div className="space-y-12">
                      <div className="space-y-4">
-                        <p className="text-[10px] font-black text-[#003366]/40 uppercase tracking-widest">Description Terminal</p>
+                        <p className="text-[10px] font-black text-[#003366]/40 uppercase tracking-widest">Item Description</p>
                         <textarea 
-                           placeholder="Usage history, academic value, condition..."
+                           placeholder="Describe the item, its condition, and any important details."
                            className="w-full h-[285px] bg-slate-50 border border-slate-100 rounded-[32px] px-6 py-5 text-sm font-medium text-slate-800 outline-none focus:bg-white focus:border-teal-600 transition-all shadow-sm resize-none leading-relaxed"
                            value={description} onChange={(e) => setDescription(e.target.value)} required
                         />
@@ -197,13 +197,13 @@ const CreateProduct: React.FC = () => {
                      <div className="space-y-6">
                         <div className="flex items-center gap-3 mb-4">
                            <i className="fa-solid fa-graduation-cap text-teal-600"></i>
-                           <h3 className="text-[10px] font-black uppercase tracking-widest text-[#003366]">Academic Verification</h3>
+                           <h3 className="text-[10px] font-black uppercase tracking-widest text-[#003366]">Item Type</h3>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                            {Object.values(ListingType).map(t => (
                               <button key={t} type="button" onClick={() => setListingType(t)} className={`px-5 py-6 rounded-[24px] text-[10px] font-black uppercase tracking-widest transition-all border flex flex-col items-center justify-center gap-2 ${listingType === t ? 'bg-[#14b8a6] text-white border-[#14b8a6] shadow-xl shadow-teal-500/10' : 'bg-slate-50 text-slate-500 border-slate-100'}`}>
                                  <i className={`fa-solid ${t === ListingType.COURSE_MATERIAL ? 'fa-book' : t === ListingType.EXAM_PREP ? 'fa-file-shield' : t === ListingType.TEXTBOOK ? 'fa-bookmark' : 'fa-box-open'} text-lg`}></i>
-                                 {t}
+                                 {t === ListingType.NORMAL ? 'Regular Item' : t}
                               </button>
                            ))}
                         </div>
@@ -212,13 +212,13 @@ const CreateProduct: React.FC = () => {
                      <div className="space-y-6">
                         <div className="flex items-center gap-3 mb-4">
                            <i className="fa-solid fa-truck-fast text-teal-600"></i>
-                           <h3 className="text-[10px] font-black uppercase tracking-widest text-[#003366]">Delivery Protocol</h3>
+                           <h3 className="text-[10px] font-black uppercase tracking-widest text-[#003366]">How will the buyer get it?</h3>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                            {Object.values(DeliveryMethod).map(m => (
                               <button key={m} type="button" onClick={() => toggleDelivery(m)} className={`px-5 py-6 rounded-[24px] text-[10px] font-black uppercase tracking-widest transition-all border flex flex-col items-center justify-center gap-2 ${selectedDeliveries.includes(m) ? 'bg-[#003366] text-white border-[#003366] shadow-xl shadow-blue-900/10' : 'bg-slate-50 text-slate-500 border-slate-100'}`}>
                                  <i className={`fa-solid ${m === DeliveryMethod.MEETUP ? 'fa-people-arrows' : m === DeliveryMethod.PICKUP ? 'fa-building-columns' : m === DeliveryMethod.HOSTEL ? 'fa-bed' : 'fa-cloud-arrow-down'} text-lg`}></i>
-                                 {m}
+                                 {m === DeliveryMethod.MEETUP ? 'Meet in Person' : m === DeliveryMethod.PICKUP ? 'Campus Pickup' : m === DeliveryMethod.HOSTEL ? 'Hostel Drop-off' : 'Digital Delivery'}
                                  {selectedDeliveries.includes(m) && <i className="fa-solid fa-circle-check absolute top-2 right-2 text-[10px]"></i>}
                               </button>
                            ))}
@@ -231,16 +231,16 @@ const CreateProduct: React.FC = () => {
                   <div className="space-y-2 max-w-sm">
                      <div className="flex items-center gap-3 text-teal-600">
                         <i className="fa-solid fa-shield-check"></i>
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Validated Asset Hub Transmission</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Before you post</span>
                      </div>
-                     <p className="text-[9px] text-slate-400 font-medium italic">By initiating, you confirm this asset complies with UI DLC academic integrity standards.</p>
+                     <p className="text-[9px] text-slate-400 font-medium italic">Make sure the item details are correct. Only post items that belong to you and are allowed on the platform.</p>
                   </div>
                   <button 
                      type="submit" 
                      disabled={loading}
                      className="grow max-w-md py-6 bg-[#003366] text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-blue-900/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
                    >
-                     {loading ? "Initializing..." : "Initiate Export Protocol"}
+                     {loading ? "Posting..." : "Post Item"}
                      <i className="fa-solid fa-paper-plane text-[10px]"></i>
                   </button>
                </div>

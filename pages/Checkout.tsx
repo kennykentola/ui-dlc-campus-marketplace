@@ -48,7 +48,7 @@ const Checkout: React.FC = () => {
     setUploading(true);
     try {
       const file = await storage.createFile(import.meta.env.VITE_APPWRITE_BUCKET_ID, ID.unique(), receipt);
-      const url = storage.getFilePreview(import.meta.env.VITE_APPWRITE_BUCKET_ID, file.$id).toString();
+      const url = storage.getFileView(import.meta.env.VITE_APPWRITE_BUCKET_ID, file.$id).toString();
       setReceiptUrl(url);
 
       // Create Transaction Record

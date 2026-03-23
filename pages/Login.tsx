@@ -20,7 +20,7 @@ const Login: React.FC = () => {
       await login(email, password);
       navigate("/");
     } catch (err: any) {
-      setError(err.message || "Credential verification failed. Please audit your data.");
+      setError(err.message || "Login failed. Please check your details and try again.");
     } finally {
       setLoading(false);
     }
@@ -39,10 +39,10 @@ const Login: React.FC = () => {
               <img src="/logo.png" className="h-8 filter brightness-0 invert" alt="Logo" />
            </div>
            <h1 className="text-4xl font-black text-[#003366] uppercase tracking-tighter leading-none">
-              Port <span className="text-[#14b8a6]">Login.</span>
+              <span className="text-[#14b8a6]">Login</span>
            </h1>
-           <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] italic">
-              Registry Access Protocol
+           <p className="text-slate-400 text-[11px] font-medium">
+              Login to your account
            </p>
         </div>
 
@@ -56,7 +56,7 @@ const Login: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="space-y-3">
             <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">
-              Scholarly Email (UI DLC)
+              Student Email
             </label>
             <div className="relative group">
                <i className="fa-solid fa-envelope absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-[#14b8a6] transition-colors"></i>
@@ -73,7 +73,7 @@ const Login: React.FC = () => {
 
           <div className="space-y-3">
             <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">
-              Security Key
+              Password
             </label>
             <div className="relative group">
                <i className="fa-solid fa-lock absolute left-6 top-1/2 -translate-y-1/2 text-slate-200 group-focus-within:text-[#14b8a6] transition-colors"></i>
@@ -100,16 +100,16 @@ const Login: React.FC = () => {
             disabled={loading}
             className="w-full bg-[#003366] text-white py-6 rounded-2xl font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-blue-900/10 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
           >
-            {loading ? "Verifying..." : "Initialize Session"}
+            {loading ? "Logging in..." : "Login"}
             <i className="fa-solid fa-arrow-right text-[10px]"></i>
           </button>
         </form>
 
         <div className="pt-8 border-t border-slate-50 text-center">
-           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">
-              New Hub Member?{" "}
+           <p className="text-[11px] font-medium text-slate-500 leading-relaxed">
+              If you don't have an account,{" "}
               <Link to="/register" className="text-[#14b8a6] hover:underline underline-offset-4 ml-2">
-                Create Registry Account
+                register
               </Link>
            </p>
         </div>

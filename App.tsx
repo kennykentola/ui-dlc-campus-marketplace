@@ -397,7 +397,7 @@ const App: React.FC = () => {
                       <p className="text-2xl font-black text-white leading-none uppercase tracking-tighter">
                         UI DLC <span className="text-[#14b8a6]">Hub.</span>
                       </p>
-                      <p className="text-[#14b8a6] text-[10px] font-black uppercase tracking-[0.2em] mt-2">Certified Scholar Marketplace</p>
+                      <p className="text-[#14b8a6] text-[10px] font-black uppercase tracking-[0.2em] mt-2">Certified Student Marketplace</p>
                     </div>
                   </div>
                 </div>
