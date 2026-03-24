@@ -362,8 +362,21 @@ const Profile: React.FC = () => {
                                  <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest mt-1 italic">Status: <span className="text-teal-600">{tx.status}</span></p>
                               </div>
                            </div>
-                           <Link to="/transactions" className="w-10 h-10 flex items-center justify-center text-slate-200 hover:text-teal-600 transition-colors"><i className="fa-solid fa-chevron-right"></i></Link>
-                        </div>
+                            <div className="flex items-center gap-3">
+                               {tx.paymentProofUrl && (
+                                  <a 
+                                    href={tx.paymentProofUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 hover:text-teal-600 transition-all border border-slate-100 dark:border-slate-800 shadow-sm"
+                                    title="View Payment Evidence"
+                                  >
+                                     <i className="fa-solid fa-file-invoice text-lg"></i>
+                                  </a>
+                               )}
+                               <Link to="/transactions" className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-200 hover:text-teal-600 transition-colors border border-slate-100 dark:border-slate-800"><i className="fa-solid fa-chevron-right"></i></Link>
+                            </div>
+                         </div>
                      ))}
                   </div>
                ) : (

@@ -22,7 +22,17 @@ export enum DeliveryMethod {
   MEETUP = 'Physical Meetup',
   PICKUP = 'Campus Pickup',
   HOSTEL = 'Hostel Drop-off',
-  DIGITAL = 'Digital Delivery'
+  DIGITAL = 'Digital Delivery',
+  COURIER_HUB = 'Shared Hub Delivery'
+}
+
+export enum LearningHub {
+  IBADAN = 'Ibadan Hub (DLC)',
+  LAGOS = 'Lagos Hub (Ikorodu)',
+  ABUJA = 'Abuja Hub',
+  PORT_HARCOURT = 'Port Harcourt Hub',
+  ENUGU = 'Enugu Hub',
+  ONLINE = 'Online (Digital Only)'
 }
 
 export enum ListingType {
@@ -41,7 +51,7 @@ export enum TransactionStatus {
   DISPUTED = 'disputed'
 }
 
-export type TransactionType = 'sale' | 'exchange' | 'both';
+export type TransactionType = 'sale' | 'exchange' | 'both' | 'knowledge_barter';
 
 export interface NotificationSettings {
   emailMessages: boolean;
@@ -100,6 +110,9 @@ export interface Product {
   listingType?: ListingType;
   deliveryMethods?: DeliveryMethod[];
   viewCount?: number;
+  learningHub?: LearningHub;
+  isExamWeekSafe?: boolean;
+  isSharedLogistics?: boolean;
 }
 
 export interface Transaction {

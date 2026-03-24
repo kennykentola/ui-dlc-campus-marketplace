@@ -14,6 +14,28 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete }) => {
 
   return (
     <div className="shop-card flex flex-col group relative animate-fadeIn bg-white shadow-sm hover:shadow-2xl transition-all duration-500 rounded-xl overflow-hidden">
+      {/* DLC Metadata Nodes */}
+      <div className="absolute top-4 left-4 z-30 flex flex-wrap gap-2 max-w-[calc(100%-100px)]">
+         {product.learningHub && (
+           <span className="bg-white/90 backdrop-blur-sm dark:bg-slate-900/90 border border-slate-100 dark:border-slate-800 rounded-lg px-3 py-1.5 text-[8px] font-black text-[#003366] dark:text-teal-400 uppercase tracking-widest shadow-sm flex items-center gap-1.5">
+              <i className="fa-solid fa-location-dot"></i>
+              {product.learningHub.split(' ')[0]}
+           </span>
+         )}
+         {product.isExamWeekSafe && (
+           <span className="bg-indigo-500 text-white rounded-lg px-3 py-1.5 text-[8px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 flex items-center gap-1.5">
+              <i className="fa-solid fa-calendar-check"></i>
+              Exam Ready
+           </span>
+         )}
+         {product.isSharedLogistics && (
+           <span className="bg-orange-500 text-white rounded-lg px-3 py-1.5 text-[8px] font-black uppercase tracking-widest shadow-lg shadow-orange-500/20 flex items-center gap-1.5">
+              <i className="fa-solid fa-truck-fast"></i>
+              Shared
+           </span>
+         )}
+      </div>
+
       {/* Portfolio Tool Hub - Favorite & Rapid Contact */}
       <div className="absolute top-4 right-4 z-30 flex flex-col gap-2">
          {onDelete ? (

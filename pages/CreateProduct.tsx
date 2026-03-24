@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
-import { SellerStatus, ListingType, DeliveryMethod, TransactionType } from "../types";
+import { SellerStatus, ListingType, DeliveryMethod, TransactionType, LearningHub } from "../types";
 import { databases, storage } from "../lib/appwrite";
 import { ID } from "appwrite";
 import { CATEGORIES } from "../constants";
@@ -24,6 +24,9 @@ const CreateProduct: React.FC = () => {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isNegotiable, setIsNegotiable] = useState(true);
   const [exchangeTerms, setExchangeTerms] = useState("");
+  const [learningHub, setLearningHub] = useState<LearningHub>(LearningHub.IBADAN);
+  const [isExamWeekSafe, setIsExamWeekSafe] = useState(false);
+  const [isSharedLogistics, setIsSharedLogistics] = useState(false);
 
   useEffect(() => {
     if (!user) navigate("/login");
@@ -94,6 +97,9 @@ const CreateProduct: React.FC = () => {
           deliveryMethods: selectedDeliveries,
           isNegotiable,
           exchangeTerms,
+          learningHub,
+          isExamWeekSafe,
+          isSharedLogistics,
           isFlagged: false
         }
       );
@@ -160,8 +166,8 @@ const CreateProduct: React.FC = () => {
 
               <div className="space-y-4">
                 <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-1">Transaction Type</label>
-                <div className="flex bg-slate-50 dark:bg-slate-800 rounded-2xl p-1.5 border border-slate-200 dark:border-slate-700 shadow-sm">
-                  {['sale', 'exchange', 'both'].map((type) => (
+                <div className="flex bg-slate-50 dark:bg-slate-800 rounded-2xl p-1.5 border border-slate-200 dark:border-slate-700 shadow-sm flex-wrap gap-1">
+                  {['sale', 'exchange', 'both', 'knowledge_barter'].map((type) => (
                     <button
                       key={type}
                       type="button"
@@ -172,10 +178,51 @@ const CreateProduct: React.FC = () => {
                           : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
                       }`}
                     >
-                      {type}
+                      {type.replace('_', ' ')}
                     </button>
                   ))}
                 </div>
+              </div>
+            </div>
+
+            {/* DLC Learning Hub Node Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-1">Learning Hub (Primary Base)</label>
+                <div className="relative">
+                  <select
+                    required
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 font-bold text-slate-700 dark:text-white focus:outline-none focus:ring-4 focus:ring-blue-700/10 transition cursor-pointer appearance-none shadow-sm"
+                    value={learningHub}
+                    onChange={(e) => setLearningHub(e.target.value as LearningHub)}
+                  >
+                    {Object.values(LearningHub).map(hub => (
+                      <option key={hub} value={hub}>{hub}</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <i className="fa-solid fa-location-dot"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 h-full items-end">
+                <button
+                  type="button"
+                  onClick={() => setIsExamWeekSafe(!isExamWeekSafe)}
+                  className={`flex flex-col items-center justify-center p-4 rounded-3xl border transition-all h-[76px] ${isExamWeekSafe ? 'bg-indigo-50 border-indigo-200 text-indigo-700 shadow-lg' : 'bg-slate-50 border-slate-100 text-slate-400'}`}
+                >
+                  <i className={`fa-solid fa-calendar-day mb-1 ${isExamWeekSafe ? 'animate-bounce' : ''}`}></i>
+                  <span className="text-[8px] font-black uppercase tracking-widest leading-none">Exam Week Safe</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsSharedLogistics(!isSharedLogistics)}
+                  className={`flex flex-col items-center justify-center p-4 rounded-3xl border transition-all h-[76px] ${isSharedLogistics ? 'bg-orange-50 border-orange-200 text-orange-700 shadow-lg' : 'bg-slate-50 border-slate-100 text-slate-400'}`}
+                >
+                  <i className="fa-solid fa-truck-ramp-box mb-1"></i>
+                  <span className="text-[8px] font-black uppercase tracking-widest leading-none">Shared Courier</span>
+                </button>
               </div>
             </div>
 
@@ -251,7 +298,7 @@ const CreateProduct: React.FC = () => {
                   <p className="text-[10px] text-slate-400 dark:text-slate-600 font-bold mt-1 uppercase">Select at least one secure exchange protocol</p>
                </div>
                <div className="flex flex-wrap gap-4">
-                  {[DeliveryMethod.MEETUP, DeliveryMethod.PICKUP, DeliveryMethod.HOSTEL, DeliveryMethod.DIGITAL].map((method) => (
+                   {[DeliveryMethod.MEETUP, DeliveryMethod.PICKUP, DeliveryMethod.HOSTEL, DeliveryMethod.DIGITAL, DeliveryMethod.COURIER_HUB].map((method) => (
                     <button
                       key={method}
                       type="button"
@@ -262,7 +309,7 @@ const CreateProduct: React.FC = () => {
                           : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800 text-slate-400'
                       }`}
                     >
-                      <i className={`fa-solid ${method === DeliveryMethod.MEETUP ? 'fa-people-arrows' : method === DeliveryMethod.PICKUP ? 'fa-building-columns' : method === DeliveryMethod.HOSTEL ? 'fa-bed' : 'fa-cloud-arrow-down'}`}></i>
+                      <i className={`fa-solid ${method === DeliveryMethod.MEETUP ? 'fa-people-arrows' : method === DeliveryMethod.PICKUP ? 'fa-building-columns' : method === DeliveryMethod.HOSTEL ? 'fa-bed' : method === DeliveryMethod.COURIER_HUB ? 'fa-truck-fast' : 'fa-cloud-arrow-down'}`}></i>
                       <span className="text-[10px] font-black uppercase tracking-widest">{method}</span>
                     </button>
                   ))}

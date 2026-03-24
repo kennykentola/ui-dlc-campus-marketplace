@@ -218,6 +218,21 @@ const ProductDetails: React.FC = () => {
                       {product.listingType}
                     </span>
                   )}
+                  {product.transactionType === 'knowledge_barter' && (
+                    <span className="px-4 py-1.5 bg-indigo-500 text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-indigo-100">
+                      STUDY NODE BARTER
+                    </span>
+                  )}
+                  {product.isExamWeekSafe && (
+                    <span className="px-4 py-1.5 bg-amber-500 text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-amber-100 flex items-center gap-2">
+                      <i className="fa-solid fa-calendar-check text-[11px]"></i> EXAM READY
+                    </span>
+                  )}
+                  {product.isSharedLogistics && (
+                    <span className="px-4 py-1.5 bg-orange-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-orange-100 flex items-center gap-2">
+                      <i className="fa-solid fa-truck-fast text-[11px]"></i> SHARED COURIER
+                    </span>
+                  )}
                 </div>
                 <h1 className="text-5xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight capitalize">
                   {product.name}
@@ -283,9 +298,9 @@ const ProductDetails: React.FC = () => {
                     <p className="text-xs font-black text-slate-800 dark:text-slate-300">{seller?.department || "Academic Auditor"}</p>
                   </div>
                   <div className="space-y-1.5">
-                    <h4 className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">Logistics Hub</h4>
-                    <p className="text-xs font-black text-slate-800 dark:text-slate-300">
-                      {product.deliveryMethods && product.deliveryMethods.length > 0 ? product.deliveryMethods[0] : "Campus Pickup"}
+                    <h4 className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">Regional Hub Base</h4>
+                    <p className="text-xs font-black text-[#003366] dark:text-teal-400 uppercase tracking-tight">
+                      {product.learningHub || "Ibadan Hub (DLC)"}
                     </p>
                   </div>
                 </div>

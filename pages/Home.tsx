@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
-import { Product, UserRole } from "../types";
+import { Product, UserRole, LearningHub, BuyerRequest } from "../types";
 import { databases } from "../lib/appwrite";
 import { Query } from "appwrite";
 import ProductCard from "../components/ProductCard";
@@ -11,9 +11,11 @@ const Home: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
+  const [requests, setRequests] = useState<BuyerRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedHub, setSelectedHub] = useState("All Hubs");
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -25,6 +27,13 @@ const Home: React.FC = () => {
           [Query.orderDesc("$createdAt"), Query.limit(100)]
         );
         setProducts(response.documents as unknown as Product[]);
+
+        const reqResponse = await databases.listDocuments(
+          import.meta.env.VITE_APPWRITE_DATABASE_ID,
+          "requests",
+          [Query.orderDesc("createdAt"), Query.limit(3)]
+        );
+        setRequests(reqResponse.documents as unknown as BuyerRequest[]);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -41,7 +50,9 @@ const Home: React.FC = () => {
       .includes(searchTerm.toLowerCase());
     const matchesCategory =
       selectedCategory === "All" || product.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    const matchesHub =
+      selectedHub === "All Hubs" || product.learningHub === selectedHub;
+    return matchesSearch && matchesCategory && matchesHub;
   });
 
   const featuredProducts = filteredProducts.slice(0, 3);
@@ -106,6 +117,24 @@ const Home: React.FC = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
+              </label>
+
+              <label className="relative block">
+                <span className="mb-2 block text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">
+                  Learning Hub Filter
+                </span>
+                <i className="fa-solid fa-location-dot pointer-events-none absolute left-5 top-[3.35rem] -translate-y-1/2 text-slate-400" />
+                <select
+                  className="w-full appearance-none rounded-[24px] border border-slate-200 bg-slate-50 py-4 pl-12 pr-10 text-base text-slate-900 outline-none transition focus:border-teal-300 focus:bg-white focus:ring-4 focus:ring-teal-100 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-teal-800 dark:focus:ring-teal-950"
+                  value={selectedHub}
+                  onChange={(e) => setSelectedHub(e.target.value)}
+                >
+                  <option value="All Hubs">All Regional Hubs</option>
+                  {Object.values(LearningHub).map(hub => (
+                    <option key={hub} value={hub}>{hub}</option>
+                  ))}
+                </select>
+                <i className="fa-solid fa-chevron-down pointer-events-none absolute right-5 top-[3.35rem] -translate-y-1/2 text-xs text-slate-300" />
               </label>
 
               <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-900">
@@ -175,6 +204,52 @@ const Home: React.FC = () => {
             </div>
           </div>
         </section>
+
+        {/* Campus Noticeboard (Demand-Side Preview) */}
+        {!searchTerm && selectedCategory === "All" && requests.length > 0 && (
+          <section className="space-y-10 animate-fadeIn">
+            <div className="flex items-end justify-between gap-4 px-4 overflow-hidden">
+              <div className="space-y-4">
+                 <div className="inline-flex items-center gap-2 rounded-full border border-[#003366]/10 bg-slate-50 px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#003366] dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400 shadow-sm animate-pulse">
+                    <i className="fa-solid fa-bullhorn text-teal-600"></i> Localized Requirements
+                 </div>
+                 <h2 className="text-4xl font-black text-[#003366] dark:text-white uppercase tracking-tighter leading-none">
+                   Campus Noticeboard.
+                 </h2>
+                 <p className="text-[10px] text-slate-300 dark:text-slate-600 font-bold uppercase tracking-[0.4em] italic leading-none pl-1">
+                    Demand-Side Academic Activity Log
+                 </p>
+              </div>
+              <Link to="/requests" className="hidden sm:inline-flex items-center gap-2 text-[#003366] dark:text-teal-400 text-[10px] font-black uppercase tracking-widest hover:gap-4 transition-all">
+                Full Registry <i className="fa-solid fa-arrow-right-long"></i>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {requests.slice(0, 3).map((req, i) => (
+                <div key={i} className="bg-white dark:bg-slate-900 border border-slate-50 dark:border-slate-800 p-8 rounded-[40px] shadow-sm hover:shadow-xl transition-all group flex flex-col justify-between container">
+                   <div className="space-y-4">
+                      <div className="flex justify-between items-start">
+                         <div className="w-10 h-10 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-[#003366] dark:text-teal-400 shadow-inner group-hover:scale-110 transition-transform">
+                            <i className="fa-solid fa-magnifying-glass text-xs"></i>
+                         </div>
+                         {req.budget > 0 && (
+                           <span className="text-teal-600 font-black text-xs italic">₦{req.budget.toLocaleString()}</span>
+                         )}
+                      </div>
+                      <h3 className="text-lg font-black text-[#003366] dark:text-white uppercase leading-tight group-hover:text-teal-600 transition-colors line-clamp-1">{req.itemNeeded}</h3>
+                      <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium leading-relaxed italic line-clamp-2">{req.description}</p>
+                   </div>
+                   
+                   <div className="mt-8 pt-6 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between">
+                      <p className="text-[9px] font-black text-[#003366] dark:text-slate-400 uppercase tracking-tighter">By {req.userName.split(' ')[0]}</p>
+                      <Link to={`/messages?with=${req.userId}&product=request_${req.$id}`} className="text-teal-600 dark:text-teal-400 text-[10px] font-bold uppercase tracking-widest hover:underline">I Have This</Link>
+                   </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="space-y-8">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
