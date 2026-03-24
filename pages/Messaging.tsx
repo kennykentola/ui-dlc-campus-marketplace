@@ -1,12 +1,12 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { databases, storage, client } from "../lib/appwrite";
 import { useAuth } from "../App";
 import { ID, Query } from "appwrite";
 import { Message, UserProfile } from "../types";
 
-const POPULAR_EMOJIS = ["👋", "🔥", "🤝", "💰", "🎓", "📚", "✅", "❌", "💯", "🚀"];
+const POPULAR_EMOJIS = ["👋", "🔥", "🤝", "💰", "🎓", "📚", "✅", "❌", "💯", "🚀", "😂", "😭", "😍", "🤔", "👍", "👎", "❤️", "💔", "🎉", "🎊", "🚗", "💜", "❤️", "👖", "🧵", "🎁", "🎈", "🎊", "🎉", "🎗️", "🕶️", "👕", "🧢", "💄", "💄", "🏀", "🏈", "🥎", "🎯", "🔔", "🎧", "🎤", "📢", "🪕", "🎹", "📻", "🔨", "🔒", "🔓", "🔑", "🗝️", "🛖", "🧱", "⚙️", "💊", "🧲", "🪜", "🔗", "♂️", "📞", "☎️", "📱", "💣", "💾", "🔌", "🎥", "📸", "📹", "🔍", "📖", "📕", "📗", "📘", "📚", "💴", "💵", "💶", "💷", "🏧", "✏️", "🖌️", "🖋️", "📂", "🗂️", "📈", "🗓️", "✂️", "🕰️", "🍿", "🍞", "🥪", "🍚", "🍰"];
 
 const Messaging: React.FC = () => {
   const { user } = useAuth();
