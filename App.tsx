@@ -118,18 +118,20 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const calculateUnread = async () => {
-    if (!user) {
+    const currentUser = user;
+    if (!currentUser) {
       setUnreadCount(0);
       return;
     }
+    const currentUserId = currentUser.userId;
     try {
       const messages = await databases.listDocuments(
         import.meta.env.VITE_APPWRITE_DATABASE_ID,
         "messages",
-        [Query.equal("receiverId", user.userId), Query.equal("isRead", false)],
+        [Query.equal("receiverId", currentUserId), Query.equal("isRead", false)],
       );
       const filteredCount = messages.documents.filter(
-        (m: any) => !user.blockedUserIds?.includes(m.senderId),
+        (m: any) => !currentUser.blockedUserIds?.includes(m.senderId),
       ).length;
       setUnreadCount(filteredCount);
     } catch (error) {

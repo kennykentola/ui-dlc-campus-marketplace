@@ -28,10 +28,7 @@ export enum DeliveryMethod {
 
 export enum LearningHub {
   IBADAN = 'Ibadan Hub (DLC)',
-  LAGOS = 'Lagos Hub (Ikorodu)',
-  ABUJA = 'Abuja Hub',
-  PORT_HARCOURT = 'Port Harcourt Hub',
-  ENUGU = 'Enugu Hub',
+  LAGOS = 'Lagos Hub',
   ONLINE = 'Online (Digital Only)'
 }
 

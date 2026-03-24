@@ -100,12 +100,14 @@ const CallManager: React.FC = () => {
 
         await new Promise(r => setTimeout(r, 1000));
 
+        if (!user) return;
+
         const callDoc = await databases.createDocument(
             DATABASE_ID,
             CALLS_COLLECTION_ID,
             ID.unique(),
             {
-                callerId: user!.userId,
+                callerId: user.userId,
                 receiverId: receiverId,
                 status: 'ringing',
                 sdp: JSON.stringify(pc.localDescription),

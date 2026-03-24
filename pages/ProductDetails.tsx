@@ -59,12 +59,13 @@ const ProductDetails: React.FC = () => {
         setRelatedProducts(relatedRes.documents as unknown as Product[]);
 
         // Check Transaction for Review Eligibility
-        if (user) {
+        const currentBuyer = user;
+        if (currentBuyer) {
            const txRes = await databases.listDocuments(
              import.meta.env.VITE_APPWRITE_DATABASE_ID,
              "transactions",
              [
-               Query.equal("buyerId", user.userId),
+               Query.equal("buyerId", currentBuyer.userId),
                Query.equal("productId", id),
                Query.equal("status", TransactionStatus.COMPLETED)
              ]

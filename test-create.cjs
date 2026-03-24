@@ -16,7 +16,7 @@ async function testCreate() {
       sellerId: 'test-user',
       sellerName: 'Tester',
       status: 'approved',
-      imageUrls: ['https://via.placeholder.com/150'],
+      imageUrls: ['https://placehold.co/150'],
       listingType: 'Normal',
       deliveryMethods: ['Meetup'],
       isFlagged: false,
