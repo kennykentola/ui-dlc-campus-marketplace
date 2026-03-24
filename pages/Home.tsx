@@ -249,35 +249,39 @@ const Home: React.FC = () => {
                   key={product.$id}
                   className="group relative flex flex-col rounded-[48px] border border-slate-100 bg-white p-4 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-teal-500/10 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900"
                 >
-                  {/* Visual Node with Floating Badges */}
-                  <div className="relative aspect-square overflow-hidden rounded-[36px] bg-slate-50 dark:bg-slate-950">
-                    <img
-                      src={product.imageUrls[0]}
-                      alt={product.name}
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    
-                    {/* Badge Protocol Cluster */}
-                    <div className="absolute top-4 left-4 flex flex-col gap-2">
-                       <span className="px-5 py-2 bg-white rounded-full text-[9px] font-black text-[#003366] uppercase shadow-sm">
-                          {product.category}
-                       </span>
-                       <span className={`px-4 py-1.5 ${product.isNegotiable === false ? 'bg-slate-50 text-slate-400' : 'bg-brand-green text-white'} rounded-full text-[8px] font-black uppercase shadow-sm`}>
-                          {product.isNegotiable === false ? 'Fixed Price' : 'Negotiable'}
-                       </span>
+                  {/* Navigation Layer */}
+                  <Link to={`/product/${product.$id}`} className="flex flex-col grow group/card">
+                    {/* Visual Node with Floating Badges */}
+                    <div className="relative aspect-square overflow-hidden rounded-[36px] bg-slate-50 dark:bg-slate-950">
+                      <img
+                        src={product.imageUrls[0]}
+                        alt={product.name}
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover/card:scale-110"
+                      />
+                      
+                      {/* Badge Protocol Cluster */}
+                      <div className="absolute top-4 left-4 flex flex-col gap-2">
+                         <span className="px-5 py-2 bg-white rounded-full text-[9px] font-black text-[#003366] uppercase shadow-sm">
+                            {product.category}
+                         </span>
+                         <span className={`px-4 py-1.5 ${product.isNegotiable === false ? 'bg-slate-50 text-slate-400' : 'bg-brand-green text-white'} rounded-full text-[8px] font-black uppercase shadow-sm`}>
+                            {product.isNegotiable === false ? 'Fixed Price' : 'Negotiable'}
+                         </span>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Core Metadata Sector */}
-                  <div className="flex grow flex-col px-4 py-8 space-y-4">
-                    <div className="space-y-2">
-                      <h3 className="text-xl font-extrabold tracking-tight text-[#003366] transition-colors group-hover:text-teal-600 dark:text-white capitalize">
-                        {product.name}
-                      </h3>
-                      <p className="text-[12px] font-medium leading-relaxed text-slate-400 line-clamp-2 italic">
-                        {product.description}
-                      </p>
+                    {/* Core Metadata Sector */}
+                    <div className="flex grow flex-col px-4 py-8 space-y-4">
+                      <div className="space-y-2">
+                        <h3 className="text-xl font-extrabold tracking-tight text-[#003366] transition-colors group-hover/card:text-teal-600 dark:text-white capitalize">
+                          {product.name}
+                        </h3>
+                        <p className="text-[12px] font-medium leading-relaxed text-slate-400 line-clamp-2 italic">
+                          {product.description}
+                        </p>
+                      </div>
                     </div>
+                  </Link>
 
                     <div className="mt-auto pt-6 flex items-end justify-between border-t border-slate-50 dark:border-slate-800">
                       <div className="space-y-1">
@@ -305,7 +309,6 @@ const Home: React.FC = () => {
                       <i className="fa-solid fa-comments text-lg"></i>
                       Quick Chat
                     </Link>
-                  </div>
                 </div>
               ))}
             </div>

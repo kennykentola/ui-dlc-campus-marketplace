@@ -284,7 +284,7 @@ const Profile: React.FC = () => {
             ))}
             <div className="sm:col-span-3 flex justify-end pt-4">
                <button onClick={() => setIsEditing(!isEditing)} className="px-10 py-5 bg-[#003366] text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-blue-900/10 hover:brightness-110 active:scale-95 transition-all">
-                  {isEditing ? 'Abort Audit' : 'Initiate Profile Audit'}
+                  {isEditing ? 'Cancel Audit' : 'Update Profile'}
                </button>
             </div>
          </div>
@@ -401,7 +401,97 @@ const Profile: React.FC = () => {
                )}
             </div>
          )}
-      </div>
+
+          {activeTab === 'verification' && (
+            <div className="min-h-100 animate-fadeIn max-w-2xl mx-auto py-12">
+               {user.sellerStatus === SellerStatus.VERIFIED ? (
+                 <div className="space-y-12">
+                    <div className="text-center space-y-4">
+                      <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Verification Center</h2>
+                      <p className="text-slate-500 dark:text-slate-400 font-medium">Your identity is secure within the UI DLC Registry.</p>
+                    </div>
+                    <div className="bg-white dark:bg-slate-900 p-12 rounded-[48px] border border-slate-100 dark:border-slate-800 shadow-[0_40px_100px_-20px_rgba(0,51,102,0.1)] text-center space-y-8 transition-colors">
+                      <div className="w-24 h-24 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner">
+                        <i className="fa-solid fa-circle-check"></i>
+                      </div>
+                      <div className="space-y-3">
+                        <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Verified Seller</h3>
+                        <p className="text-slate-500 dark:text-slate-400 font-medium max-w-sm mx-auto text-sm leading-relaxed">
+                          Congratulations! Your student status is verified. You have full access to list items and exchange goods in the hub.
+                        </p>
+                      </div>
+                      <div className="pt-6">
+                        <button onClick={() => setActiveTab('listings')} className="bg-[#003366] text-white px-10 py-5 rounded-3xl font-black text-[10px] uppercase tracking-widest shadow-2xl shadow-blue-100 dark:shadow-none hover:brightness-110 active:scale-95 transition-all">
+                          View My Listings
+                        </button>
+                      </div>
+                    </div>
+                 </div>
+               ) : user.sellerStatus === SellerStatus.PENDING ? (
+                 <div className="bg-slate-50 dark:bg-slate-900/50 p-16 rounded-[48px] border-2 border-dashed border-slate-100 dark:border-slate-800 text-center space-y-8">
+                    <div className="w-20 h-20 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-full flex items-center justify-center text-3xl mx-auto animate-pulse">
+                      <i className="fa-solid fa-hourglass-half"></i>
+                    </div>
+                    <div className="space-y-3">
+                       <h3 className="text-2xl font-black text-[#003366] dark:text-white uppercase tracking-tighter">Audit in Progress</h3>
+                       <p className="text-[11px] text-slate-400 font-black uppercase tracking-[0.2em]">Registry protocol: UIDLC-VERIFY-PENDING</p>
+                       <p className="text-sm text-slate-500 dark:text-slate-400 font-medium max-w-md mx-auto leading-relaxed">
+                         Our academic auditors are reviewing your credentials. This typically takes 12-24 scholarly hours.
+                       </p>
+                    </div>
+                 </div>
+               ) : (
+                 <div className="space-y-12">
+                    <div className="text-center space-y-4">
+                      <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Verification Center</h2>
+                      <p className="text-slate-500 dark:text-slate-400 font-medium text-sm leading-relaxed max-w-lg mx-auto">
+                        To maintain a safe community, all scholars must verify their student status by uploading a valid University of Ibadan School ID card.
+                      </p>
+                    </div>
+                    <div className="bg-white dark:bg-slate-900 p-12 rounded-[48px] border border-slate-100 dark:border-slate-800 shadow-xl space-y-10">
+                      <form onSubmit={handleSubmitVerification} className="space-y-10">
+                        <label className={`aspect-video rounded-[32px] border-3 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer group ${docPreview ? 'border-teal-500 bg-teal-50 dark:bg-teal-950/20' : 'border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 group-hover:border-teal-400'}`}>
+                           {docPreview ? (
+                             <img src={docPreview} className="w-full h-full object-cover rounded-[30px]" alt="ID Preview" />
+                           ) : (
+                             <div className="text-center space-y-4">
+                               <div className="w-16 h-16 bg-white dark:bg-slate-700 rounded-3xl flex items-center justify-center text-slate-200 dark:text-slate-600 shadow-sm mx-auto group-hover:scale-110 transition-transform">
+                                 <i className="fa-solid fa-id-card text-2xl"></i>
+                               </div>
+                               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Transmit Scholarly ID Node</p>
+                             </div>
+                           )}
+                           <input type="file" className="hidden" accept="image/*" onChange={e => {
+                             if(e.target.files?.[0]) {
+                               const reader = new FileReader();
+                               reader.onloadend = () => setDocPreview(reader.result as string);
+                               reader.readAsDataURL(e.target.files[0]);
+                             }
+                           }} />
+                        </label>
+                        
+                        <div className="flex flex-col gap-6">
+                           <div className="p-6 bg-blue-50/50 dark:bg-blue-900/10 rounded-3xl border border-blue-100 dark:border-blue-900/20 flex items-center gap-4">
+                              <i className="fa-solid fa-shield-halved text-blue-600 text-xl"></i>
+                              <p className="text-[10px] text-blue-800 dark:text-blue-400 font-bold uppercase leading-relaxed tracking-wider">
+                                Your ID is encrypted and only used for registry verification. It will not be shared with other students.
+                              </p>
+                           </div>
+                           <button 
+                             type="submit" 
+                             disabled={!docPreview || isUploadingDoc}
+                             className="w-full py-6 bg-[#003366] text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-blue-900/10 hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
+                           >
+                             {isUploadingDoc ? 'Transmitting Node...' : 'Submit ID for Scholar Verification'}
+                           </button>
+                        </div>
+                      </form>
+                    </div>
+                 </div>
+               )}
+            </div>
+          )}
+        </div>
 
       {/* Editor Hub Fragment */}
       {isEditing && (
@@ -463,7 +553,6 @@ const Profile: React.FC = () => {
             </div>
          </div>
       )}
-
     </div>
   );
 };

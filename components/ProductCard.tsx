@@ -13,9 +13,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete }) => {
   const rating = 4;
 
   return (
-    <div className="shop-card flex flex-col group relative animate-fadeIn bg-white p-6 shadow-sm hover:shadow-2xl transition-all duration-500 rounded-xl">
+    <div className="shop-card flex flex-col group relative animate-fadeIn bg-white shadow-sm hover:shadow-2xl transition-all duration-500 rounded-xl overflow-hidden">
       {/* Portfolio Tool Hub - Favorite & Rapid Contact */}
-      <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
+      <div className="absolute top-4 right-4 z-30 flex flex-col gap-2">
          {onDelete ? (
            <button 
              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(); }}
@@ -25,11 +25,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete }) => {
            </button>
          ) : (
            <>
-             <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-300 hover:text-rose-500 hover:shadow-lg transition-all active:scale-90 shadow-sm border border-slate-50">
+             <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); }} className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-300 hover:text-rose-500 hover:shadow-lg transition-all active:scale-90 shadow-sm border border-slate-50">
                 <i className="fa-regular fa-heart"></i>
              </button>
              <Link 
-                to={`/messages?seller=${product.sellerId}&product=${product.$id}`}
+                onClick={(e) => e.stopPropagation()}
+                to={`/messages?with=${product.sellerId}&product=${product.$id}`}
                 className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-300 hover:text-blue-600 hover:shadow-lg transition-all active:scale-90 shadow-sm border border-slate-50"
              >
                 <i className="fa-solid fa-comments"></i>
@@ -38,16 +39,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete }) => {
          )}
       </div>
 
+      {/* Primary Navigation Layer */}
       <Link 
-        to={`/checkout/${product.$id}`}
-        className="grow flex flex-col"
+        to={`/product/${product.$id}`}
+        className="flex flex-col grow p-6"
       >
         {/* Product Image Node */}
         <div className="relative aspect-square overflow-hidden mb-8 bg-white flex items-center justify-center">
           <img 
-            src={product.imageUrls[0]} 
+            src={product.imageUrls[0] || "https://placehold.co/400x400?text=Product+Preview"} 
             alt={product.name} 
             className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-1000 p-2"
+            onError={(e) => { (e.target as HTMLImageElement).src = "https://placehold.co/400x400?text=Registry+Asset"; }}
           />
         </div>
 
@@ -73,14 +76,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete }) => {
                    <p className="text-lg font-black text-slate-900 tracking-tighter shrink-0">₦{product.price.toLocaleString()}</p>
                 </div>
              </div>
-
-             {/* Audit Quick Access */}
-             <span className="w-full py-3 bg-slate-900 text-white rounded-lg text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 text-center shadow-xl shadow-slate-900/10">
-                View Seller Details
-             </span>
           </div>
         </div>
       </Link>
+
+      {/* Secondary Action: Seller Details Node (OUTSIDE primary Link to avoid nesting) */}
+      <div className="px-6 pb-6">
+        <Link
+          to={`/seller/${product.$id}`}
+          className="block w-full py-3 bg-slate-900 text-white rounded-lg text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 text-center shadow-xl shadow-slate-900/10 hover:bg-blue-700"
+        >
+            View Seller Details
+        </Link>
+      </div>
     </div>
   );
 };

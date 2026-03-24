@@ -180,11 +180,10 @@ const SellerDetails: React.FC = () => {
                   </div>
                 </div>
                 <span
-                  className={`rounded-full px-3 py-1 text-xs font-medium ${
-                    seller.sellerStatus === SellerStatus.VERIFIED
-                      ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
-                      : "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300"
-                  }`}
+                  className={`rounded-full px-3 py-1 text-xs font-medium ${seller.sellerStatus === SellerStatus.VERIFIED
+                    ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
+                    : "bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300"
+                    }`}
                 >
                   {seller.sellerStatus === SellerStatus.VERIFIED
                     ? "Verified seller"
@@ -226,17 +225,24 @@ const SellerDetails: React.FC = () => {
               <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">
                 Your chat is limited to you and this seller. Other users do not
                 see this conversation in their inbox.
+                and please if you have paid, click on the button below to confirm your payment.
               </p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <button
+                  onClick={() => navigate(`/checkout/${product?.$id}`)}
+                  className="inline-flex items-center justify-center rounded-2xl bg-teal-600 px-5 py-4 text-sm font-black text-white uppercase tracking-widest transition hover:brightness-110 active:scale-[0.98] shadow-lg shadow-teal-500/10"
+                >
+                  I Have Paid
+                </button>
+                <button
                   onClick={handleChat}
-                  className="inline-flex items-center justify-center rounded-2xl bg-[#003366] px-5 py-4 text-sm font-medium text-white transition hover:brightness-110 active:scale-[0.98]"
+                  className="inline-flex items-center justify-center rounded-2xl bg-[#003366] px-5 py-4 text-sm font-black text-white uppercase tracking-widest transition hover:brightness-110 active:scale-[0.98]"
                 >
                   Chat with seller
                 </button>
                 <Link
                   to={`/product/${product.$id}`}
-                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm font-medium text-slate-700 transition hover:border-teal-200 hover:text-teal-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-700 transition hover:border-teal-200 hover:text-teal-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
                 >
                   Back to product
                 </Link>
