@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
 import { Product, UserRole } from "../types";
 import { databases } from "../lib/appwrite";
+import { Query } from "appwrite";
 import ProductCard from "../components/ProductCard";
 import { CATEGORIES } from "../constants";
 
@@ -21,6 +22,7 @@ const Home: React.FC = () => {
         const response = await databases.listDocuments(
           import.meta.env.VITE_APPWRITE_DATABASE_ID,
           "products",
+          [Query.orderDesc("$createdAt"), Query.limit(100)]
         );
         setProducts(response.documents as unknown as Product[]);
       } catch (error) {
@@ -226,45 +228,84 @@ const Home: React.FC = () => {
         </section>
 
         {featuredProducts.length > 0 && !loading && !searchTerm && selectedCategory === "All" && (
-          <section className="space-y-6">
+          <section className="space-y-10">
             <div className="flex items-end justify-between gap-4">
               <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-teal-700 dark:text-teal-300">
-                  Featured picks
+                <p className="text-[11px] font-black uppercase tracking-[0.3em] text-teal-600">
+                  Curated Assets
                 </p>
-                <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 dark:text-white">
-                  Strong listings with high visibility.
+                <h2 className="mt-4 text-4xl font-black tracking-tight text-[#003366] uppercase leading-none">
+                  Featured Picks.
                 </h2>
               </div>
+              <p className="hidden md:block text-[10px] font-black text-slate-300 uppercase tracking-widest italic">
+                Verified Hub Listings
+              </p>
             </div>
-            <div className="grid gap-6 lg:grid-cols-3">
+
+            <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
               {featuredProducts.map((product) => (
                 <div
                   key={product.$id}
-                  className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+                  className="group relative flex flex-col rounded-[48px] border border-slate-100 bg-white p-4 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-teal-500/10 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">
-                        {product.category}
-                      </p>
-                      <h3 className="mt-2 text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+                  {/* Visual Node with Floating Badges */}
+                  <div className="relative aspect-square overflow-hidden rounded-[36px] bg-slate-50 dark:bg-slate-950">
+                    <img
+                      src={product.imageUrls[0]}
+                      alt={product.name}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    
+                    {/* Badge Protocol Cluster */}
+                    <div className="absolute top-4 left-4 flex flex-col gap-2">
+                       <span className="px-5 py-2 bg-white rounded-full text-[9px] font-black text-[#003366] uppercase shadow-sm">
+                          {product.category}
+                       </span>
+                       <span className={`px-4 py-1.5 ${product.isNegotiable === false ? 'bg-slate-50 text-slate-400' : 'bg-brand-green text-white'} rounded-full text-[8px] font-black uppercase shadow-sm`}>
+                          {product.isNegotiable === false ? 'Fixed Price' : 'Negotiable'}
+                       </span>
+                    </div>
+                  </div>
+
+                  {/* Core Metadata Sector */}
+                  <div className="flex grow flex-col px-4 py-8 space-y-4">
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-extrabold tracking-tight text-[#003366] transition-colors group-hover:text-teal-600 dark:text-white capitalize">
                         {product.name}
                       </h3>
+                      <p className="text-[12px] font-medium leading-relaxed text-slate-400 line-clamp-2 italic">
+                        {product.description}
+                      </p>
                     </div>
-                    <span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-medium text-teal-700 dark:bg-teal-950/40 dark:text-teal-300">
-                      Featured
-                    </span>
+
+                    <div className="mt-auto pt-6 flex items-end justify-between border-t border-slate-50 dark:border-slate-800">
+                      <div className="space-y-1">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-300">
+                          Price
+                        </p>
+                        <p className="text-xl font-black text-[#003366] dark:text-teal-300">
+                          ₦{product.price.toLocaleString()}
+                        </p>
+                      </div>
+                      <div className="text-right space-y-1">
+                        <p className="text-[10px] font-black text-[#003366] uppercase leading-none">
+                          {product.sellerName.split(' ')[0]}
+                        </p>
+                        <p className="text-[8px] font-black text-slate-300 uppercase italic">
+                          {new Date(product.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+
+                    <Link
+                      to={`/messages?with=${product.sellerId}&product=${product.$id}`}
+                      className="w-full h-16 mt-4 flex items-center justify-center gap-4 bg-[#050505] text-white rounded-[24px] text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl transition-all hover:bg-teal-600 scale-100 active:scale-95"
+                    >
+                      <i className="fa-solid fa-comments text-lg"></i>
+                      Quick Chat
+                    </Link>
                   </div>
-                  <p className="mt-6 text-3xl font-bold tracking-tight text-[#003366] dark:text-teal-300">
-                    ₦{product.price.toLocaleString()}
-                  </p>
-                  <Link
-                    to={`/product/${product.$id}`}
-                    className="mt-6 inline-flex items-center text-sm font-medium text-teal-700 transition hover:text-[#003366] dark:text-teal-300 dark:hover:text-white"
-                  >
-                    View product
-                  </Link>
                 </div>
               ))}
             </div>
