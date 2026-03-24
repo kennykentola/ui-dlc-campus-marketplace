@@ -266,17 +266,19 @@ const Messaging: React.FC = () => {
             <div className="h-20 md:h-24 px-4 md:px-12 flex items-center justify-between bg-white/80 backdrop-blur-xl border-b border-slate-100 z-10 shrink-0">
               <div className="flex items-center gap-3 md:gap-6">
                 <button onClick={() => setChattingWith(null)} className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-[#003366]"><i className="fa-solid fa-arrow-left"></i></button>
-                <div className="relative">
-                  <img src={chattingWith.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(chattingWith.name)}&background=003366&color=fff`} className="w-10 h-10 md:w-16 md:h-16 rounded-[18px] md:rounded-[28px] shadow-md border-2 border-white object-cover" alt="Av" />
-                  <div className="absolute -bottom-1 -right-1 w-3 h-3 md:w-5 md:h-5 bg-teal-500 rounded-lg border-2 md:border-4 border-white"></div>
-                </div>
-                <div className="overflow-hidden">
-                  <h3 className="text-sm md:text-xl font-black text-[#003366] uppercase tracking-tighter truncate leading-none mb-1">{chattingWith.name}</h3>
-                  <span className="text-[8px] md:text-[10px] font-black text-teal-600 uppercase tracking-widest italic flex items-center gap-1 md:gap-2">
-                    <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-teal-500 rounded-full animate-pulse"></span>
-                    Verified Student
-                  </span>
-                </div>
+                <Link to={`/user/${chattingWith.userId}`} className="flex items-center gap-3 md:gap-6 hover:opacity-80 transition-opacity group">
+                  <div className="relative">
+                    <img src={chattingWith.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(chattingWith.name)}&background=003366&color=fff`} className="w-10 h-10 md:w-16 md:h-16 rounded-[18px] md:rounded-[28px] shadow-md border-2 border-white object-cover group-hover:scale-105 transition-transform" alt="Av" />
+                    <div className="absolute -bottom-1 -right-1 w-3 h-3 md:w-5 md:h-5 bg-teal-500 rounded-lg border-2 md:border-4 border-white"></div>
+                  </div>
+                  <div className="overflow-hidden">
+                    <h3 className="text-sm md:text-xl font-black text-[#003366] uppercase tracking-tighter truncate leading-none mb-1 group-hover:text-teal-600 transition-colors">{chattingWith.name}</h3>
+                    <span className="text-[8px] md:text-[10px] font-black text-teal-600 uppercase tracking-widest italic flex items-center gap-1 md:gap-2">
+                      <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-teal-500 rounded-full animate-pulse"></span>
+                      Verified Student
+                    </span>
+                  </div>
+                </Link>
               </div>
               <div className="flex gap-2 md:gap-4">
                 <button onClick={initiateCall} className="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center bg-teal-50 text-teal-600 rounded-xl md:rounded-2xl hover:bg-teal-600 hover:text-white transition-all shadow-sm active:scale-95 group">

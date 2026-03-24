@@ -13,7 +13,8 @@ export const CATEGORIES = [
   'Land',
   'Bags',
   'Shoes',
-  'Clothes'
+  'Clothes',
+  'Others'
 ];
 
 export const UI_COLORS = {

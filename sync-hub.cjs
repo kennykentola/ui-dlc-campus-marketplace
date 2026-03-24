@@ -55,7 +55,12 @@ async function syncCallsSector() {
     console.log('\n--- Sector 2: Voice Communication Node ---');
     try {
         try {
-            await databases.createCollection(config.dbId, SECTOR_CALLS, 'Voice Calls', [Permission.read(Role.users()), Permission.create(Role.users())]);
+            await databases.createCollection(config.dbId, SECTOR_CALLS, 'Voice Calls', [
+                Permission.read(Role.users()),
+                Permission.create(Role.users()),
+                Permission.update(Role.users()),
+                Permission.delete(Role.users())
+            ]);
             console.log('✅ "calls" collection deployed.');
         } catch (e) { if (e.code === 409) console.log('ℹ️ "calls" sector already active.'); else throw e; }
 

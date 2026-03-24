@@ -28,6 +28,7 @@ import Checkout from "./pages/Checkout";
 import Requests from "./pages/Requests";
 import Transactions from "./pages/Transactions";
 import Dispute from "./pages/Dispute";
+import PublicProfile from "./pages/PublicProfile";
 
 // --- Contexts ---
 interface AuthContextType {
@@ -389,6 +390,15 @@ const App: React.FC = () => {
                 element={
                   <ProtectedRoute>
                     <CreateProduct />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/user/:id"
+                element={
+                  <ProtectedRoute>
+                    <PublicProfile />
                   </ProtectedRoute>
                 }
               />
