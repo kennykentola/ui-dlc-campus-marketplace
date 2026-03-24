@@ -22,7 +22,7 @@ const Home: React.FC = () => {
           import.meta.env.VITE_APPWRITE_DATABASE_ID,
           "products",
         );
-        setProducts(response.documents as Product[]);
+        setProducts(response.documents as unknown as Product[]);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {

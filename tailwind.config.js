@@ -18,6 +18,11 @@ export default {
       },
       fontFamily: {
         outfit: ['Outfit', 'sans-serif'],
+      },
+      zIndex: {
+        '100': '100',
+        '110': '110',
+        '120': '120',
       }
     },
   },

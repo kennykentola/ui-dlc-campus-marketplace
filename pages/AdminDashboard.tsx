@@ -135,7 +135,7 @@ const AdminDashboard: React.FC = () => {
          ) : (
             <div className="relative z-10 space-y-12">
                {selectedUser && (
-                  <div className="fixed inset-0 z-[120] flex items-center justify-center p-6">
+                  <div className="fixed inset-0 z-120 flex items-center justify-center p-6">
                      <div className="absolute inset-0 bg-[#003366]/40 backdrop-blur-md" onClick={() => setSelectedUser(null)}></div>
                      <div className="relative z-10 w-full max-w-3xl rounded-[40px] border border-slate-100 bg-white p-8 md:p-10 shadow-2xl">
                         <div className="flex items-start justify-between gap-6">
