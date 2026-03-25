@@ -329,9 +329,10 @@ const Home: React.FC = () => {
                     {/* Visual Node with Floating Badges */}
                     <div className="relative aspect-square overflow-hidden rounded-[36px] bg-slate-50 dark:bg-slate-950">
                       <img
-                        src={product.imageUrls[0]}
+                        src={product.imageUrls[0] || `https://ui-avatars.com/api/?name=${encodeURIComponent(product.name)}&background=003366&color=fff&size=500&bold=true`}
                         alt={product.name}
                         className="h-full w-full object-cover transition-transform duration-700 group-hover/card:scale-110"
+                        onError={(e) => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=ERROR&background=rose&color=fff&size=500&bold=true`; }}
                       />
                       
                       {/* Badge Protocol Cluster */}

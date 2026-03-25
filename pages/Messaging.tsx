@@ -213,6 +213,7 @@ const Messaging: React.FC = () => {
 
   const initiateCall = () => {
     if (!chattingWith) return;
+    console.log(`[Messaging] Dispatching start-app-call for: ${chattingWith.userId}`);
     window.dispatchEvent(new CustomEvent('start-app-call', { detail: { receiverId: chattingWith.userId } }));
   };
 
@@ -348,7 +349,7 @@ const Messaging: React.FC = () => {
 
             <div className="relative bg-white border-t border-slate-100 p-4 md:p-10 shrink-0">
               {showEmojiPicker && (
-                <div className="absolute bottom-full mb-4 left-4 md:left-10 p-4 md:p-6 bg-white rounded-[24px] md:rounded-[36px] shadow-2xl border border-slate-50 grid grid-cols-5 gap-2 md:gap-3 w-[220px] md:w-[280px] z-50 animate-slideUp">
+                <div className="absolute bottom-full mb-4 left-4 md:left-10 p-4 md:p-6 bg-white rounded-[24px] md:rounded-[36px] shadow-2xl border border-slate-50 grid grid-cols-5 gap-2 md:gap-3 w-[220px] md:w-[280px] h-[300px] overflow-y-auto z-50 animate-slideUp no-scrollbar scroll-smooth">
                   {POPULAR_EMOJIS.map(emoji => <button key={emoji} onClick={() => addEmoji(emoji)} className="w-8 h-8 md:w-12 md:h-12 text-lg md:text-2xl hover:scale-125 transition-transform flex items-center justify-center">{emoji}</button>)}
                 </div>
               )}
