@@ -22,29 +22,49 @@ const Messaging: React.FC = () => {
   const [uploadingFile, setUploadingFile] = useState(false);
   const [chatWallpaper, setChatWallpaper] = useState<string>(localStorage.getItem("chat-wallpaper") || "default");
   const [showWallpaperPicker, setShowWallpaperPicker] = useState(false);
+  const wallpaperInputRef = useRef<HTMLInputElement>(null);
 
   const WALLPAPERS = [
     { id: 'default', color: 'bg-white', label: 'Default' },
-    { id: '#f1f5f9', color: 'bg-slate-100', label: 'Silver' },
-    { id: '#e0f2fe', color: 'bg-sky-100', label: 'Ocean' },
-    { id: '#fdf2f8', color: 'bg-pink-100', label: 'Rose' },
     { id: '#003366', color: 'bg-[#003366]', label: 'Midnight' },
+    { id: '#4f46e5', color: 'bg-indigo-600', label: 'Royal' },
     { id: '#0d9488', color: 'bg-teal-600', label: 'Forest' },
-    { id: 'custom', color: 'bg-slate-800', label: 'Custom URL', isAction: true },
+    { id: '#d97706', color: 'bg-amber-600', label: 'Sunset' },
+    { id: '#e11d48', color: 'bg-rose-600', label: 'Vibrant' },
+    { id: '#059669', color: 'bg-emerald-600', label: 'Emerald' },
+    { id: '#7c3aed', color: 'bg-violet-600', label: 'Violet' },
+    { id: '#475569', color: 'bg-slate-600', label: 'Slate' },
+    { id: '#0284c7', color: 'bg-sky-600', label: 'Sky' },
+    { id: '#881337', color: 'bg-rose-900', label: 'Wine' },
+    { id: 'https://images.unsplash.com/photo-1557683316-973673baf926', color: 'bg-indigo-100', label: 'Gradient' },
+    { id: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab', color: 'bg-blue-100', label: 'Abstract' },
+    { id: 'custom', color: 'bg-slate-800', label: 'Upload', isAction: true },
   ];
 
   const changeWallpaper = (id: string) => {
     if (id === 'custom') {
-      const url = prompt("Enter Image URL for Background:");
-      if (url) {
-        setChatWallpaper(url);
-        localStorage.setItem("chat-wallpaper", url);
-      }
+      wallpaperInputRef.current?.click();
     } else {
       setChatWallpaper(id);
       localStorage.setItem("chat-wallpaper", id);
     }
     setShowWallpaperPicker(false);
+  };
+
+  const handleWallpaperUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setUploadingFile(true);
+      const response = await storage.createFile(import.meta.env.VITE_APPWRITE_BUCKET_ID, ID.unique(), file);
+      const fileUrl = storage.getFileView(import.meta.env.VITE_APPWRITE_BUCKET_ID, response.$id).toString();
+      setChatWallpaper(fileUrl);
+      localStorage.setItem("chat-wallpaper", fileUrl);
+    } catch (error) {
+      alert("Wallpaper upload failed.");
+    } finally {
+      setUploadingFile(false);
+    }
   };
 
   // Voice Recording State
@@ -316,11 +336,12 @@ const Messaging: React.FC = () => {
                 </button>
 
                 {showWallpaperPicker && (
-                  <div className="absolute top-full right-0 mt-4 p-4 bg-white rounded-3xl shadow-2xl border border-slate-100 w-[240px] z-70 animate-slideUp">
+                  <div className="absolute top-full right-0 mt-4 p-4 bg-white rounded-3xl shadow-2xl border border-slate-100 w-[280px] max-h-[400px] overflow-y-auto z-70 animate-slideUp no-scrollbar">
                     <p className="text-[10px] font-black uppercase tracking-widest text-[#003366] mb-4 text-center">Chat Theme</p>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-4 gap-3">
                       {WALLPAPERS.map(wp => {
                         const isColor = wp.id.startsWith('#') || wp.id === 'default';
+                        const isImage = wp.id.startsWith('http');
                         return (
                           <button 
                             key={wp.id} 
@@ -329,11 +350,15 @@ const Messaging: React.FC = () => {
                           >
                             <div 
                               className={`w-12 h-12 rounded-2xl border-2 ${chatWallpaper === wp.id ? 'border-teal-500 scale-110' : 'border-slate-100'} shadow-sm hover:scale-110 transition-transform flex items-center justify-center overflow-hidden`}
-                              style={{ backgroundColor: isColor ? (wp.id === 'default' ? '#fff' : wp.id) : '#334155' }}
+                              style={{ 
+                                backgroundColor: isColor ? (wp.id === 'default' ? '#fff' : wp.id) : undefined,
+                                backgroundImage: isImage ? `url("${wp.id}?w=100&h=100&fit=crop")` : undefined,
+                                backgroundSize: 'cover'
+                              }}
                             >
-                              {!isColor && wp.id === 'custom' && <i className="fa-solid fa-link text-white text-xs"></i>}
+                              {wp.id === 'custom' && <i className="fa-solid fa-camera text-white text-xs"></i>}
                             </div>
-                            <span className="text-[8px] font-bold uppercase text-slate-500">{wp.label}</span>
+                            <span className="text-[8px] font-bold uppercase text-slate-500 truncate w-full">{wp.label}</span>
                           </button>
                         );
                       })}
@@ -425,6 +450,7 @@ const Messaging: React.FC = () => {
                   <i className={`fa-regular fa-face-smile cursor-pointer ${showEmojiPicker ? "text-teal-600" : "hover:text-[#003360]"} transition-colors`} onClick={() => setShowEmojiPicker(!showEmojiPicker)}></i>
                   <i className={`fa-solid fa-paperclip cursor-pointer ${uploadingFile ? "animate-spin text-teal-600" : "hover:text-[#003360]"} transition-colors`} onClick={() => fileInputRef.current?.click()}></i>
                   <input type="file" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
+                  <input type="file" className="hidden" ref={wallpaperInputRef} accept="image/*" onChange={handleWallpaperUpload} />
                 </div>
 
                 <div className="grow flex items-center gap-3 md:gap-6">
