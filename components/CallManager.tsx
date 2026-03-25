@@ -96,18 +96,29 @@ const CallManager: React.FC = () => {
         };
     }, [user]);
 
-    const logMissedCallEvidence = async (callerId: string, receiverId: string) => {
+    const callStartTime = useRef<number | null>(null);
+
+    const logCallEvidence = async (callerId: string, receiverId: string, durationSeconds: number = 0) => {
         try {
+            const isMissed = durationSeconds <= 0;
+            const durationText = durationSeconds > 60 
+                ? `${Math.floor(durationSeconds / 60)}m ${durationSeconds % 60}s`
+                : `${durationSeconds}s`;
+
+            const text = isMissed 
+                ? "📞 Missed Voice Call" 
+                : `📞 Voice Call (${durationText})`;
+
             await databases.createDocument(DATABASE_ID, 'messages', ID.unique(), {
                 conversationId: [callerId, receiverId].sort().join('-'),
                 senderId: callerId,
                 receiverId: receiverId,
-                text: "📞 Missed Voice Call",
+                text: text,
                 type: 'text',
                 isRead: false,
                 createdAt: new Date().toISOString()
             });
-            console.log(`[CallManager] 📂 Missed call archived to chat.`);
+            console.log(`[CallManager] 📂 Call record archived: ${text}`);
         } catch (err) {
             console.error("Evidence Archive Failure:", err);
         }
@@ -185,7 +196,7 @@ const CallManager: React.FC = () => {
             const timeout = setTimeout(async () => {
                 if (statusRef.current !== 'connected') {
                     console.log(`[CallManager] 🕰️ TIMEOUT: NO ANSWER.`);
-                    await logMissedCallEvidence(user.userId, receiverId);
+                    await logCallEvidence(user.userId, receiverId, 0);
                     endCall(true);
                 }
             }, 30000);
@@ -252,6 +263,7 @@ const CallManager: React.FC = () => {
                 receiverCandidates
             });
 
+            callStartTime.current = Date.now();
             console.log(`[CallManager] ✅ HANDSHAKE OK. CALL LIVE.`);
 
         } catch (err) {
@@ -262,12 +274,17 @@ const CallManager: React.FC = () => {
 
     const handleAnswer = async (sdp: string) => {
         if (!peerConnection.current) return;
+        if (peerConnection.current.signalingState === 'stable') {
+            console.warn(`[CallManager] PeerConnection already stable. Skipping duplicate answer.`);
+            return;
+        }
         if (ringTimer) clearTimeout(ringTimer);
         try {
             const remoteDesc = new RTCSessionDescription(JSON.parse(sdp));
             await peerConnection.current.setRemoteDescription(remoteDesc);
             setCallStatus('connected');
             statusRef.current = 'connected';
+            callStartTime.current = Date.now();
             console.log(`[CallManager] ✅ CALL CONNECTED.`);
         } catch (e) { console.error(e); }
     };
@@ -287,12 +304,19 @@ const CallManager: React.FC = () => {
 
         if (notifyBackend && activeCallRef.current) {
             try {
-                if (activeCallRef.current.status === 'ringing') {
-                    await logMissedCallEvidence(user?.userId || '', activeCallRef.current.receiverId);
+                const duration = callStartTime.current ? Math.floor((Date.now() - callStartTime.current) / 1000) : 0;
+                
+                // Only log if the caller or if the call was never connected (missed)
+                // We typically only want ONE record in the chat.
+                if (user?.userId === activeCallRef.current.callerId) {
+                    await logCallEvidence(activeCallRef.current.callerId, activeCallRef.current.receiverId, duration);
                 }
+
                 await databases.updateDocument(DATABASE_ID, CALLS_COLLECTION_ID, activeCallRef.current.$id, { status: 'ended' });
             } catch (e) { }
         }
+
+        callStartTime.current = null;
 
         setActiveCall(null);
         activeCallRef.current = null;
