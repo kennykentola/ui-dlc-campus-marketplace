@@ -149,8 +149,8 @@ const ProductDetails: React.FC = () => {
                 <img
                   alt={product.name}
                   className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
-                  src={product.imageUrls[activeImage] || "https://placehold.co/800x600?text=Product+Registry+Asset"}
-                  onError={(e) => { (e.target as HTMLImageElement).src = "https://placehold.co/800x600?text=Asset+Identification+Required"; }}
+                  src={product.imageUrls[activeImage] || `https://ui-avatars.com/api/?name=${encodeURIComponent(product.name)}&background=003366&color=fff&size=800&bold=true`}
+                  onError={(e) => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=ERROR&background=rose&color=fff&size=800&bold=true`; }}
                 />
                 <div className="absolute top-6 right-6 flex flex-col gap-3">
                   <button

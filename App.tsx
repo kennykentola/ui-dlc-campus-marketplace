@@ -29,6 +29,8 @@ import Requests from "./pages/Requests";
 import Transactions from "./pages/Transactions";
 import Dispute from "./pages/Dispute";
 import PublicProfile from "./pages/PublicProfile";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 // --- Contexts ---
 interface AuthContextType {
@@ -41,6 +43,8 @@ interface AuthContextType {
   isDarkMode: boolean;
   toggleDarkMode: () => void;
   unreadCount: number;
+  forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (userId: string, secret: string, password: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -281,6 +285,26 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       localStorage.removeItem("current_user");
     }
   };
+  
+  const forgotPassword = async (email: string) => {
+    try {
+      // Use the current origin for the redirect URL
+      const url = `${window.location.origin}/reset-password`;
+      await account.createRecovery(email, url);
+    } catch (error: any) {
+      console.error("Forgot password error:", error);
+      throw error;
+    }
+  };
+
+  const resetPassword = async (userId: string, secret: string, password: string) => {
+    try {
+      await account.updateRecovery(userId, secret, password);
+    } catch (error: any) {
+      console.error("Reset password error:", error);
+      throw error;
+    }
+  };
 
   return (
     <AuthContext.Provider
@@ -294,6 +318,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isDarkMode,
         toggleDarkMode,
         unreadCount,
+        forgotPassword,
+        resetPassword,
       }}
     >
       {children}
@@ -339,6 +365,8 @@ const App: React.FC = () => {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/product/:id" element={<ProductDetails />} />
               <Route path="/seller/:id" element={<SellerDetails />} />
               

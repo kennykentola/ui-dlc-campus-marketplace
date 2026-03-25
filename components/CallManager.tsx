@@ -24,6 +24,7 @@ const CallManager: React.FC = () => {
     const peerConnection = useRef<RTCPeerConnection | null>(null);
     const localStream = useRef<MediaStream | null>(null);
     const unsubscribe = useRef<(() => void | null)>(null);
+    const [ringTimer, setRingTimer] = useState<NodeJS.Timeout | null>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     // Initialize Realtime Subscription
@@ -35,7 +36,7 @@ const CallManager: React.FC = () => {
             const payload = response.payload as any;
 
             // Incoming Call
-            if (response.events.includes('databases.*.collections.*.documents.*.create')) {
+            if (response.events.some(e => e.includes('.create'))) {
                 if (user && payload.receiverId === user.userId && payload.status === 'ringing') {
                     setIncomingCall(payload);
                     setCallStatus('ringing');
@@ -43,18 +44,30 @@ const CallManager: React.FC = () => {
             }
 
             // Call Action Updates
-            if (response.events.includes('databases.*.collections.*.documents.*.update')) {
+            if (response.events.some(e => e.includes('.update'))) {
+                if (payload.status === 'ended') {
+                    endCall(false);
+                }
+
                 if (activeCall && payload.$id === activeCall.$id) {
-                    if (payload.type === 'answer' && payload.sdp && peerConnection.current) {
-                        handleAnswer(payload.sdp);
-                    }
-                    if (payload.status === 'ended') {
-                        endCall(false);
-                    }
-                    if (payload.candidates && payload.candidates.length > 0 && peerConnection.current) {
-                        payload.candidates.forEach((c: string) => {
-                            peerConnection.current?.addIceCandidate(JSON.parse(c)).catch(console.error);
-                        });
+                    // Caller receiving answer
+                    if (user.userId === payload.callerId) {
+                        if (payload.type === 'answer' && payload.sdp && peerConnection.current && callStatus === 'calling') {
+                            handleAnswer(payload.sdp);
+                        }
+                        if (payload.receiverCandidates && payload.receiverCandidates.length > 0 && peerConnection.current) {
+                            payload.receiverCandidates.forEach((c: string) => {
+                                peerConnection.current?.addIceCandidate(JSON.parse(c)).catch(e => {});
+                            });
+                        }
+                    } 
+                    // Receiver receiving more candidates (though usually they are in the creation)
+                    else if (user.userId === payload.receiverId) {
+                        if (payload.callerCandidates && payload.callerCandidates.length > 0 && peerConnection.current) {
+                            payload.callerCandidates.forEach((c: string) => {
+                                peerConnection.current?.addIceCandidate(JSON.parse(c)).catch(e => {});
+                            });
+                        }
                     }
                 }
             }
@@ -63,10 +76,30 @@ const CallManager: React.FC = () => {
         return () => {
             if (unsubscribe.current) unsubscribe.current();
         };
-    }, [user, activeCall]);
+    }, [user, activeCall, callStatus]);
 
-    const startCall = async (receiverId: string) => {
+    const startCall = async (receiverIdentifier: string) => {
         setCallStatus('calling');
+        let receiverId = receiverIdentifier;
+
+        // Resolve Email to UserID if necessary
+        if (receiverIdentifier.includes('@')) {
+            try {
+                const profiles = await databases.listDocuments(DATABASE_ID, 'profiles', [
+                    Query.equal('email', receiverIdentifier)
+                ]);
+                if (profiles.documents.length > 0) {
+                    receiverId = (profiles.documents[0] as any).userId;
+                } else {
+                    alert("Student Registry: Email not found.");
+                    setCallStatus('idle');
+                    return;
+                }
+            } catch (err) {
+                console.error("Email resolution failed:", err);
+            }
+        }
+
         const pc = new RTCPeerConnection(rtcConfig);
         peerConnection.current = pc;
 
@@ -76,7 +109,7 @@ const CallManager: React.FC = () => {
             stream.getTracks().forEach(track => pc.addTrack(track, stream));
         } catch (err) {
             console.error("Microphone access denied:", err);
-            alert("Microphone access is required for calls.");
+            alert("Terminal Audio: Microphone access required.");
             setCallStatus('idle');
             return;
         }
@@ -88,94 +121,134 @@ const CallManager: React.FC = () => {
             }
         };
 
-        const offer = await pc.createOffer();
-        await pc.setLocalDescription(offer);
-
-        const candidates: string[] = [];
+        const callerCandidates: string[] = [];
         pc.onicecandidate = (event) => {
             if (event.candidate) {
-                candidates.push(JSON.stringify(event.candidate));
+                callerCandidates.push(JSON.stringify(event.candidate));
             }
         };
 
-        await new Promise(r => setTimeout(r, 1000));
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+
+        // Wait a small bit for candidates to gather
+        await new Promise(r => setTimeout(r, 600));
 
         if (!user) return;
 
-        const callDoc = await databases.createDocument(
-            DATABASE_ID,
-            CALLS_COLLECTION_ID,
-            ID.unique(),
-            {
-                callerId: user.userId,
-                receiverId: receiverId,
-                status: 'ringing',
-                sdp: JSON.stringify(pc.localDescription),
-                type: 'offer',
-                candidates: candidates
-            }
-        );
-        setActiveCall(callDoc);
+        try {
+            const callDoc = await databases.createDocument(
+                DATABASE_ID,
+                CALLS_COLLECTION_ID,
+                ID.unique(),
+                {
+                    callerId: user.userId,
+                    receiverId: receiverId,
+                    status: 'ringing',
+                    sdp: JSON.stringify(pc.localDescription),
+                    type: 'offer',
+                    callerCandidates: callerCandidates
+                }
+            );
+            setActiveCall(callDoc);
+
+            // Ringing Timeout (30 seconds)
+            const timeout = setTimeout(() => {
+                if (callStatus === 'calling' || callStatus === 'ringing') {
+                    alert("Call Protocol: Recipient not responding. Missing call recorded.");
+                    endCall(true);
+                }
+            }, 30000);
+            setRingTimer(timeout);
+
+        } catch (err) {
+            console.error("Call creation failed:", err);
+            setCallStatus('idle');
+        }
     };
 
     const answerCall = async () => {
         if (!incomingCall) return;
+        if (ringTimer) clearTimeout(ringTimer);
+        
         setCallStatus('connected');
-        setIncomingCall(null);
-
+        
         const pc = new RTCPeerConnection(rtcConfig);
         peerConnection.current = pc;
 
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-        localStream.current = stream;
-        stream.getTracks().forEach(track => pc.addTrack(track, stream));
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+            localStream.current = stream;
+            stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
-        pc.ontrack = (event) => {
-            setRemoteStream(event.streams[0]);
-            if (audioRef.current) {
-                audioRef.current.srcObject = event.streams[0];
+            pc.ontrack = (event) => {
+                setRemoteStream(event.streams[0]);
+                if (audioRef.current) {
+                    audioRef.current.srcObject = event.streams[0];
+                }
+            };
+
+            const remoteDesc = JSON.parse(incomingCall.sdp);
+            await pc.setRemoteDescription(new RTCSessionDescription(remoteDesc));
+
+            if (incomingCall.callerCandidates) {
+                incomingCall.callerCandidates.forEach((c: string) => {
+                    pc.addIceCandidate(JSON.parse(c)).catch(e => {});
+                });
             }
-        };
 
-        const remoteDesc = JSON.parse(incomingCall.sdp);
-        await pc.setRemoteDescription(new RTCSessionDescription(remoteDesc));
+            const receiverCandidates: string[] = [];
+            pc.onicecandidate = (event) => {
+                if (event.candidate) {
+                    receiverCandidates.push(JSON.stringify(event.candidate));
+                }
+            };
 
-        if (incomingCall.candidates) {
-            incomingCall.candidates.forEach((c: string) => {
-                pc.addIceCandidate(JSON.parse(c)).catch(console.error);
-            });
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+
+            // Wait a bit for receiver candidates
+            await new Promise(r => setTimeout(r, 600));
+
+            await databases.updateDocument(
+                DATABASE_ID,
+                CALLS_COLLECTION_ID,
+                incomingCall.$id,
+                {
+                    status: 'connected',
+                    sdp: JSON.stringify(answer),
+                    type: 'answer',
+                    receiverCandidates: receiverCandidates
+                }
+            );
+
+            setActiveCall(incomingCall);
+            setIncomingCall(null);
+        } catch (err) {
+            console.error("Answer protocol failed:", err);
+            endCall(true);
         }
-
-        const answer = await pc.createAnswer();
-        await pc.setLocalDescription(answer);
-
-        await databases.updateDocument(
-            DATABASE_ID,
-            CALLS_COLLECTION_ID,
-            incomingCall.$id,
-            {
-                status: 'connected',
-                sdp: JSON.stringify(answer),
-                type: 'answer'
-            }
-        );
-
-        setActiveCall(incomingCall);
     };
 
     const handleAnswer = async (sdp: string) => {
         if (!peerConnection.current) return;
-        const remoteDesc = new RTCSessionDescription(JSON.parse(sdp));
-        await peerConnection.current.setRemoteDescription(remoteDesc);
-        setCallStatus('connected');
+        if (ringTimer) clearTimeout(ringTimer);
+        try {
+            const remoteDesc = new RTCSessionDescription(JSON.parse(sdp));
+            await peerConnection.current.setRemoteDescription(remoteDesc);
+            setCallStatus('connected');
+        } catch (e) { console.error(e); }
     };
 
     const endCall = async (notifyBackend = true) => {
+        if (ringTimer) clearTimeout(ringTimer);
+        
         if (localStream.current) {
             localStream.current.getTracks().forEach(t => t.stop());
         }
         if (peerConnection.current) {
             peerConnection.current.close();
+            peerConnection.current = null;
         }
 
         if (notifyBackend && activeCall) {
@@ -186,13 +259,14 @@ const CallManager: React.FC = () => {
                     activeCall.$id,
                     { status: 'ended' }
                 );
-            } catch (e) { console.error(e); }
+            } catch (e) { }
         }
 
         setActiveCall(null);
         setIncomingCall(null);
         setCallStatus('idle');
         setRemoteStream(null);
+        setRingTimer(null);
     };
 
     useEffect(() => {

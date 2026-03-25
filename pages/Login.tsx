@@ -94,6 +94,14 @@ const Login: React.FC = () => {
                >
                  <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"} text-xs`}></i>
                </button>
+              <div className="flex justify-end">
+                <Link
+                  to="/forgot-password"
+                  className="text-[10px] font-black text-teal-600 hover:underline uppercase tracking-widest"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
             </div>
           </div>
 
