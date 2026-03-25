@@ -20,6 +20,32 @@ const Messaging: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
+  const [chatWallpaper, setChatWallpaper] = useState<string>(localStorage.getItem("chat-wallpaper") || "default");
+  const [showWallpaperPicker, setShowWallpaperPicker] = useState(false);
+
+  const WALLPAPERS = [
+    { id: 'default', color: 'bg-white', label: 'Default' },
+    { id: '#f1f5f9', color: 'bg-slate-100', label: 'Silver' },
+    { id: '#e0f2fe', color: 'bg-sky-100', label: 'Ocean' },
+    { id: '#fdf2f8', color: 'bg-pink-100', label: 'Rose' },
+    { id: '#003366', color: 'bg-[#003366]', label: 'Midnight' },
+    { id: '#0d9488', color: 'bg-teal-600', label: 'Forest' },
+    { id: 'custom', color: 'bg-slate-800', label: 'Custom URL', isAction: true },
+  ];
+
+  const changeWallpaper = (id: string) => {
+    if (id === 'custom') {
+      const url = prompt("Enter Image URL for Background:");
+      if (url) {
+        setChatWallpaper(url);
+        localStorage.setItem("chat-wallpaper", url);
+      }
+    } else {
+      setChatWallpaper(id);
+      localStorage.setItem("chat-wallpaper", id);
+    }
+    setShowWallpaperPicker(false);
+  };
 
   // Voice Recording State
   const [isRecording, setIsRecording] = useState(false);
@@ -263,7 +289,7 @@ const Messaging: React.FC = () => {
       <div className={`grow flex flex-col h-full bg-white relative ${!chattingWith ? "hidden md:flex" : "flex"}`}>
         {chattingWith ? (
           <>
-            <div className="h-20 md:h-24 px-4 md:px-12 flex items-center justify-between bg-white/80 backdrop-blur-xl border-b border-slate-100 z-10 shrink-0">
+            <div className="h-20 md:h-24 px-4 md:px-12 flex items-center justify-between bg-white/80 backdrop-blur-xl border-b border-slate-100 z-60 shrink-0">
               <div className="flex items-center gap-3 md:gap-6">
                 <button onClick={() => setChattingWith(null)} className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-[#003366]"><i className="fa-solid fa-arrow-left"></i></button>
                 <Link to={`/user/${chattingWith.userId}`} className="flex items-center gap-3 md:gap-6 hover:opacity-80 transition-opacity group">
@@ -280,15 +306,56 @@ const Messaging: React.FC = () => {
                   </div>
                 </Link>
               </div>
-              <div className="flex gap-2 md:gap-4">
+              <div className="flex gap-2 md:gap-4 relative z-50">
+                <button 
+                  onClick={() => setShowWallpaperPicker(!showWallpaperPicker)} 
+                  className={`w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-xl md:rounded-2xl transition-all shadow-sm active:scale-95 group ${showWallpaperPicker ? 'bg-teal-600 text-white' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'}`}
+                  title="Change Wallpaper"
+                >
+                  <i className="fa-solid fa-palette text-sm md:text-xl"></i>
+                </button>
+
+                {showWallpaperPicker && (
+                  <div className="absolute top-full right-0 mt-4 p-4 bg-white rounded-3xl shadow-2xl border border-slate-100 w-[240px] z-70 animate-slideUp">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-[#003366] mb-4 text-center">Chat Theme</p>
+                    <div className="grid grid-cols-3 gap-3">
+                      {WALLPAPERS.map(wp => {
+                        const isColor = wp.id.startsWith('#') || wp.id === 'default';
+                        return (
+                          <button 
+                            key={wp.id} 
+                            onClick={() => changeWallpaper(wp.id)}
+                            className={`group flex flex-col items-center gap-2`}
+                          >
+                            <div 
+                              className={`w-12 h-12 rounded-2xl border-2 ${chatWallpaper === wp.id ? 'border-teal-500 scale-110' : 'border-slate-100'} shadow-sm hover:scale-110 transition-transform flex items-center justify-center overflow-hidden`}
+                              style={{ backgroundColor: isColor ? (wp.id === 'default' ? '#fff' : wp.id) : '#334155' }}
+                            >
+                              {!isColor && wp.id === 'custom' && <i className="fa-solid fa-link text-white text-xs"></i>}
+                            </div>
+                            <span className="text-[8px] font-bold uppercase text-slate-500">{wp.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 <button onClick={initiateCall} className="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center bg-teal-50 text-teal-600 rounded-xl md:rounded-2xl hover:bg-teal-600 hover:text-white transition-all shadow-sm active:scale-95 group">
                   <i className="fa-solid fa-phone text-sm md:text-xl group-hover:rotate-12 transition-transform"></i>
                 </button>
               </div>
             </div>
 
-            <div ref={scrollRef} className="grow px-4 md:px-12 py-8 md:py-12 space-y-6 md:space-y-8 overflow-y-auto no-scrollbar relative w-full overflow-x-hidden">
-              <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: `url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")`, backgroundRepeat: 'repeat', backgroundSize: '400px' }}></div>
+            <div ref={scrollRef} className="grow px-4 md:px-12 py-8 md:py-12 space-y-6 md:space-y-8 overflow-y-auto no-scrollbar relative w-full overflow-x-hidden"
+              style={{ 
+                backgroundColor: chatWallpaper.startsWith('#') ? chatWallpaper : undefined,
+                backgroundImage: !chatWallpaper.startsWith('#') && chatWallpaper !== 'default' ? `url("${chatWallpaper}")` : undefined,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            >
+              <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: `url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")`, backgroundRepeat: 'repeat', backgroundSize: '400px' }}></div>
               <div className="relative z-10 flex flex-col gap-6 md:gap-8 w-full">
                 {messages.map((m: any, i) => {
                   const isMe = m.senderId === user?.userId;
