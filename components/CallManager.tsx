@@ -31,41 +31,47 @@ const CallManager: React.FC = () => {
     useEffect(() => {
         if (!user) return;
 
+        // Subscribe to the entire calls collection for the database
+        // ensure permissions are set to 'Users' for read in Appwrite
         const channel = `databases.${DATABASE_ID}.collections.${CALLS_COLLECTION_ID}.documents`;
         unsubscribe.current = client.subscribe(channel, (response) => {
             const payload = response.payload as any;
 
-            // Incoming Call
+            // Incoming Call Node Creation
             if (response.events.some(e => e.includes('.create'))) {
-                if (user && payload.receiverId === user.userId && payload.status === 'ringing') {
+                // Ensure the call is for the current user and it's currently ringing
+                if (payload.receiverId === user.userId && payload.status === 'ringing') {
                     setIncomingCall(payload);
                     setCallStatus('ringing');
                 }
             }
 
-            // Call Action Updates
+            // Call Protocol Update (sdp, candidates, status change)
             if (response.events.some(e => e.includes('.update'))) {
-                if (payload.status === 'ended') {
-                    endCall(false);
-                }
+                const callId = payload.$id;
+                
+                // If this is our active call node
+                if (activeCall && callId === activeCall.$id) {
+                    if (payload.status === 'ended') {
+                        endCall(false);
+                    }
 
-                if (activeCall && payload.$id === activeCall.$id) {
-                    // Caller receiving answer
+                    // Caller side logic: receiving answer
                     if (user.userId === payload.callerId) {
                         if (payload.type === 'answer' && payload.sdp && peerConnection.current && callStatus === 'calling') {
                             handleAnswer(payload.sdp);
                         }
                         if (payload.receiverCandidates && payload.receiverCandidates.length > 0 && peerConnection.current) {
                             payload.receiverCandidates.forEach((c: string) => {
-                                peerConnection.current?.addIceCandidate(JSON.parse(c)).catch(e => {});
+                                peerConnection.current?.addIceCandidate(JSON.parse(c)).catch(() => {});
                             });
                         }
                     } 
-                    // Receiver receiving more candidates (though usually they are in the creation)
+                    // Receiver side logic: receiving more caller candidates
                     else if (user.userId === payload.receiverId) {
                         if (payload.callerCandidates && payload.callerCandidates.length > 0 && peerConnection.current) {
                             payload.callerCandidates.forEach((c: string) => {
-                                peerConnection.current?.addIceCandidate(JSON.parse(c)).catch(e => {});
+                                peerConnection.current?.addIceCandidate(JSON.parse(c)).catch(() => {});
                             });
                         }
                     }
@@ -78,11 +84,27 @@ const CallManager: React.FC = () => {
         };
     }, [user, activeCall, callStatus]);
 
+    const logMissedCallEvidence = async (callerId: string, receiverId: string) => {
+        try {
+            await databases.createDocument(DATABASE_ID, 'messages', ID.unique(), {
+                conversationId: [callerId, receiverId].sort().join('-'),
+                senderId: callerId,
+                receiverId: receiverId,
+                text: "📞 Missed Voice Call",
+                type: 'text',
+                isRead: false,
+                createdAt: new Date().toISOString()
+            });
+        } catch (err) {
+            console.error("Evidence Archive Failure:", err);
+        }
+    };
+
     const startCall = async (receiverIdentifier: string) => {
         setCallStatus('calling');
         let receiverId = receiverIdentifier;
 
-        // Resolve Email to UserID if necessary
+        // Resolve Academic Email to Node ID
         if (receiverIdentifier.includes('@')) {
             try {
                 const profiles = await databases.listDocuments(DATABASE_ID, 'profiles', [
@@ -91,12 +113,12 @@ const CallManager: React.FC = () => {
                 if (profiles.documents.length > 0) {
                     receiverId = (profiles.documents[0] as any).userId;
                 } else {
-                    alert("Student Registry: Email not found.");
+                    alert("Registry Failure: Student email not found.");
                     setCallStatus('idle');
                     return;
                 }
             } catch (err) {
-                console.error("Email resolution failed:", err);
+                console.error("Profile resolution failed:", err);
             }
         }
 
@@ -104,35 +126,29 @@ const CallManager: React.FC = () => {
         peerConnection.current = pc;
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             localStream.current = stream;
             stream.getTracks().forEach(track => pc.addTrack(track, stream));
         } catch (err) {
-            console.error("Microphone access denied:", err);
-            alert("Terminal Audio: Microphone access required.");
+            alert("Terminal Shield: Microphone access required for secure transmission.");
             setCallStatus('idle');
             return;
         }
 
         pc.ontrack = (event) => {
             setRemoteStream(event.streams[0]);
-            if (audioRef.current) {
-                audioRef.current.srcObject = event.streams[0];
-            }
+            if (audioRef.current) audioRef.current.srcObject = event.streams[0];
         };
 
         const callerCandidates: string[] = [];
         pc.onicecandidate = (event) => {
-            if (event.candidate) {
-                callerCandidates.push(JSON.stringify(event.candidate));
-            }
+            if (event.candidate) callerCandidates.push(JSON.stringify(event.candidate));
         };
 
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
 
-        // Wait a small bit for candidates to gather
-        await new Promise(r => setTimeout(r, 600));
+        await new Promise(r => setTimeout(r, 800)); // Gathers initial candidates
 
         if (!user) return;
 
@@ -143,26 +159,27 @@ const CallManager: React.FC = () => {
                 ID.unique(),
                 {
                     callerId: user.userId,
-                    receiverId: receiverId,
+                    receiverId,
                     status: 'ringing',
                     sdp: JSON.stringify(pc.localDescription),
                     type: 'offer',
-                    callerCandidates: callerCandidates
+                    callerCandidates
                 }
             );
             setActiveCall(callDoc);
 
-            // Ringing Timeout (30 seconds)
-            const timeout = setTimeout(() => {
-                if (callStatus === 'calling' || callStatus === 'ringing') {
-                    alert("Call Protocol: Recipient not responding. Missing call recorded.");
+            // Ringing Timeout Protocol (30s)
+            const timeout = setTimeout(async () => {
+                if (callStatus !== 'connected') {
+                    alert("Registry Alert: Student not responding. Archiving missed call.");
+                    await logMissedCallEvidence(user.userId, receiverId);
                     endCall(true);
                 }
             }, 30000);
             setRingTimer(timeout);
 
         } catch (err) {
-            console.error("Call creation failed:", err);
+            console.error("Sync Failure:", err);
             setCallStatus('idle');
         }
     };
@@ -172,20 +189,17 @@ const CallManager: React.FC = () => {
         if (ringTimer) clearTimeout(ringTimer);
         
         setCallStatus('connected');
-        
         const pc = new RTCPeerConnection(rtcConfig);
         peerConnection.current = pc;
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             localStream.current = stream;
             stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
             pc.ontrack = (event) => {
                 setRemoteStream(event.streams[0]);
-                if (audioRef.current) {
-                    audioRef.current.srcObject = event.streams[0];
-                }
+                if (audioRef.current) audioRef.current.srcObject = event.streams[0];
             };
 
             const remoteDesc = JSON.parse(incomingCall.sdp);
@@ -193,22 +207,19 @@ const CallManager: React.FC = () => {
 
             if (incomingCall.callerCandidates) {
                 incomingCall.callerCandidates.forEach((c: string) => {
-                    pc.addIceCandidate(JSON.parse(c)).catch(e => {});
+                    pc.addIceCandidate(JSON.parse(c)).catch(() => {});
                 });
             }
 
             const receiverCandidates: string[] = [];
             pc.onicecandidate = (event) => {
-                if (event.candidate) {
-                    receiverCandidates.push(JSON.stringify(event.candidate));
-                }
+                if (event.candidate) receiverCandidates.push(JSON.stringify(event.candidate));
             };
 
             const answer = await pc.createAnswer();
             await pc.setLocalDescription(answer);
 
-            // Wait a bit for receiver candidates
-            await new Promise(r => setTimeout(r, 600));
+            await new Promise(r => setTimeout(r, 800));
 
             await databases.updateDocument(
                 DATABASE_ID,
@@ -218,14 +229,14 @@ const CallManager: React.FC = () => {
                     status: 'connected',
                     sdp: JSON.stringify(answer),
                     type: 'answer',
-                    receiverCandidates: receiverCandidates
+                    receiverCandidates
                 }
             );
 
             setActiveCall(incomingCall);
             setIncomingCall(null);
         } catch (err) {
-            console.error("Answer protocol failed:", err);
+            console.error("Audio Handshake Failure:", err);
             endCall(true);
         }
     };
@@ -245,6 +256,7 @@ const CallManager: React.FC = () => {
         
         if (localStream.current) {
             localStream.current.getTracks().forEach(t => t.stop());
+            localStream.current = null;
         }
         if (peerConnection.current) {
             peerConnection.current.close();
@@ -280,7 +292,7 @@ const CallManager: React.FC = () => {
 
     useEffect(() => {
         if (audioRef.current && remoteStream) {
-            audioRef.current.play().catch(console.error);
+            audioRef.current.play().catch(() => {});
         }
     }, [remoteStream]);
 
