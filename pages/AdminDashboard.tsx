@@ -323,28 +323,55 @@ const AdminDashboard: React.FC = () => {
                               <div className="shrink-0 w-20 h-20 bg-rose-500/10 rounded-[32px] flex items-center justify-center text-rose-500">
                                  <i className="fa-solid fa-skull-crossbones text-2xl"></i>
                               </div>
-                              <div className="grow space-y-4">
-                                 <div className="flex items-center gap-4">
-                                    <h4 className="text-xl font-black text-[#003366] uppercase tracking-tighter">{r.reason}</h4>
-                                    <span className={`px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${r.status === 'resolved' ? 'bg-teal-100 text-teal-700' : 'bg-rose-100 text-rose-700'}`}>{r.status || 'Critical'}</span>
-                                 </div>
-                                 <p className="text-sm font-medium text-slate-600 leading-relaxed italic max-w-2xl">"{r.description}"</p>
-                                 <div className="flex flex-wrap gap-6 pt-4 text-[10px] font-black uppercase tracking-widest text-slate-300">
-                                    <span className="flex items-center gap-2"><i className="fa-solid fa-cube"></i> Asset: {r.productName}</span>
-                                    <span className="flex items-center gap-2"><i className="fa-solid fa-user-ninja"></i> Reported By: {r.reporterName}</span>
-                                    <span className="flex items-center gap-2"><i className="fa-solid fa-clock"></i> Timestamp: {new Date(r.createdAt).toLocaleString()}</span>
-                                 </div>
-                              </div>
-                              <div className="flex shrink-0 gap-3 md:flex-col lg:flex-row w-full md:w-auto mt-6 md:mt-0">
-                                 <Link to={`/product/${r.productId}`} className="grow text-center py-4 px-6 bg-[#003366] text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all">Inspect Asset</Link>
-                                 <button 
-                                   onClick={() => resolveReport(r.$id, 'resolved')} 
-                                   disabled={r.status === 'resolved' || resolvingReportId === r.$id}
-                                   className="grow text-center py-4 px-6 bg-teal-500 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-50"
-                                 >
-                                    Archive Resolution
-                                 </button>
-                              </div>
+                               <div className="grow space-y-6">
+                                  <div className="flex items-center justify-between gap-4 border-b border-slate-50 pb-4">
+                                     <div className="flex items-center gap-4">
+                                        <h4 className="text-xl font-black text-[#003366] uppercase tracking-tighter">{r.reason}</h4>
+                                        <span className={`px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${r.status === 'resolved' ? 'bg-teal-100 text-teal-700' : r.status === 'investigating' ? 'bg-blue-100 text-blue-700' : 'bg-rose-100 text-rose-700'}`}>{r.status || 'Pending'}</span>
+                                     </div>
+                                     <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{new Date(r.createdAt).toLocaleString()}</p>
+                                  </div>
+
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                     <div className="space-y-3 p-6 bg-slate-50 rounded-3xl border border-slate-100">
+                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Reporter (The Accuser)</p>
+                                        <div>
+                                           <p className="text-sm font-black text-[#003366] uppercase">{r.reporterName}</p>
+                                           <p className="text-[10px] font-bold text-teal-600 uppercase italic">MATRIC: {(r as any).reporterMatric || 'N/A'}</p>
+                                           <p className="text-[10px] font-bold text-slate-400 uppercase">MAIL: {(r as any).reporterEmail || 'N/A'}</p>
+                                        </div>
+                                     </div>
+                                     <div className="space-y-3 p-6 bg-rose-50/30 rounded-3xl border border-rose-100/30">
+                                        <p className="text-[9px] font-black text-rose-400 uppercase tracking-widest">Reported (The Scammer/Target)</p>
+                                        <div>
+                                           <p className="text-sm font-black text-[#003366] uppercase">{(r as any).reportedName || 'System Hub'}</p>
+                                           <p className="text-[10px] font-bold text-rose-600 uppercase italic">MATRIC: {(r as any).reportedMatric || 'N/A'}</p>
+                                           <p className="text-[10px] font-bold text-slate-400 uppercase">MAIL: {(r as any).reportedEmail || 'N/A'}</p>
+                                        </div>
+                                     </div>
+                                  </div>
+
+                                  <div className="p-8 bg-white border border-slate-100 rounded-[32px]">
+                                     <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-3 italic">Statement of Facts</p>
+                                     <p className="text-sm font-medium text-slate-600 leading-relaxed italic">"{r.description}"</p>
+                                  </div>
+                               </div>
+                               <div className="flex shrink-0 gap-3 md:flex-col w-full md:w-56 mt-6 md:mt-0">
+                                  <button 
+                                    onClick={() => resolveReport(r.$id, 'investigating' as any)} 
+                                    disabled={r.status === 'investigating' || r.status === 'resolved' || resolvingReportId === r.$id}
+                                    className="grow py-4 px-6 bg-blue-500 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-blue-500/20 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                                  >
+                                     Investigate <i className="fa-solid fa-magnifying-glass"></i>
+                                  </button>
+                                  <button 
+                                    onClick={() => resolveReport(r.$id, 'resolved')} 
+                                    disabled={r.status === 'resolved' || resolvingReportId === r.$id}
+                                    className="grow py-4 px-6 bg-teal-500 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-teal-500/20 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                                  >
+                                     Finalize Case <i className="fa-solid fa-check-double"></i>
+                                  </button>
+                               </div>
                            </div>
                         ))}
                         {reports.length === 0 && <p className="py-20 text-center uppercase font-black text-slate-200 tracking-widest">No conflict data in registry.</p>}

@@ -40,16 +40,26 @@ const Dispute: React.FC = () => {
         updatedAt: new Date().toISOString()
       });
       
-      // Create a Report for Admin
+      // Fetch the other user's profile for traceability
+      const otherUserId = transaction.sellerId === user.userId ? transaction.buyerId : transaction.sellerId;
+      const otherUser = await databases.getDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "profiles", otherUserId);
+
+      // Create a Report for Admin with full traceability
       await databases.createDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "reports", ID.unique(), {
-         productId: transaction.productId,
-         productName: transaction.productName,
          reporterId: user.userId,
          reporterName: user.name,
+         reporterEmail: user.email,
+         reporterMatric: user.matricNumber,
+         reportedUserId: otherUser.userId,
+         reportedName: otherUser.name,
+         reportedMatric: (otherUser as any).matricNumber,
+         reportedEmail: (otherUser as any).email,
+         reportedProductId: transaction.productId,
          reason: "Transaction Dispute",
-         description: `TX-ID: ${transaction.$id}. Reason: ${reason}. Details: ${description}`,
+         description: `TX-ID: ${transaction.$id}. Asset Conflict: ${transaction.productName}. Reason: ${reason}. Details: ${description}`,
+         status: 'pending',
          createdAt: new Date().toISOString(),
-         status: 'pending'
+         updatedAt: new Date().toISOString()
       });
 
       alert("Dispute transmission successful. Admin audit initiated.");

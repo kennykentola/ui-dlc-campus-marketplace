@@ -149,7 +149,7 @@ export interface ProductReport {
   reason: string;
   description: string;
   createdAt: string;
-  status?: 'pending' | 'resolved' | 'dismissed';
+  status?: 'pending' | 'investigating' | 'resolved' | 'dismissed';
 }
 
 export interface Review {

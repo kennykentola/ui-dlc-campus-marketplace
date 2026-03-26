@@ -61,9 +61,12 @@ const PublicProfile: React.FC = () => {
                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-2">Listings</p>
                    <p className="text-3xl font-black text-[#003366] tracking-tighter">{userProducts.length}</p>
                 </div>
-                <div className="p-8 bg-white border border-slate-100 rounded-[36px] shadow-sm">
+                <div className="p-8 bg-white border border-slate-100 rounded-[36px] shadow-sm flex flex-col items-center">
                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-2">Rating</p>
-                   <p className="text-3xl font-black text-teal-600 tracking-tighter">{targetUser.averageRating || "5.0"}</p>
+                   <p className="text-3xl font-black text-teal-600 tracking-tighter mb-4">{targetUser.averageRating || "5.0"}</p>
+                   <Link to={`/support?reportUser=${id}`} className="w-full py-3 bg-rose-50 text-rose-500 rounded-2xl text-[8px] font-black uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all border border-rose-100 flex items-center justify-center gap-2 shadow-sm">
+                      <i className="fa-solid fa-flag"></i> Report
+                   </Link>
                 </div>
              </div>
           </section>

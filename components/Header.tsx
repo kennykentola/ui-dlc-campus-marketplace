@@ -26,8 +26,9 @@ const Header: React.FC = () => {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Noticeboard", path: "/requests" },
-    { name: "Archive", path: "/transactions" },
+    { name: "Transactions", path: "/transactions" },
     { name: "Chat", path: "/messages", hasNotification: unreadCount > 0 },
+    { name: "Support", path: "/support" },
   ];
 
   if (user?.role === UserRole.ADMIN) {

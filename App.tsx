@@ -29,8 +29,9 @@ import Requests from "./pages/Requests";
 import Transactions from "./pages/Transactions";
 import Dispute from "./pages/Dispute";
 import PublicProfile from "./pages/PublicProfile";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
+import Support from "@/pages/Support";
 
 // --- Contexts ---
 interface AuthContextType {
@@ -407,6 +408,15 @@ const App: React.FC = () => {
               />
 
               <Route
+                path="/support"
+                element={
+                  <ProtectedRoute>
+                    <Support />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
                 path="/sell"
                 element={
                   <ProtectedRoute>
@@ -491,6 +501,7 @@ const App: React.FC = () => {
                     <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">
                       © {new Date().getFullYear()} UI DLC Community Platform
                     </p>
+                    <Link to="/support" className="text-rose-500 text-[10px] font-black uppercase tracking-widest hover:underline decoration-2 underline-offset-4 decoration-rose-500/30 transition-all">Report / Support</Link>
                     <div className="flex gap-4 text-slate-400">
                        <i className="fa-brands fa-whatsapp hover:text-[#14b8a6] cursor-pointer transition-colors"></i>
                        <i className="fa-brands fa-instagram hover:text-[#14b8a6] cursor-pointer transition-colors"></i>

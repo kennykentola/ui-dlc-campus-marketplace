@@ -88,7 +88,17 @@ const Transactions: React.FC = () => {
                         </div>
 
                         <div className="flex items-center gap-4">
-                           {tx.paymentProofUrl && (
+                            {tx.status !== TransactionStatus.COMPLETED && tx.status !== TransactionStatus.CANCELLED && (
+                              <button 
+                                onClick={() => window.location.href = `/dispute/${tx.$id}`}
+                                className="w-14 h-14 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all border border-rose-100 shadow-sm"
+                                title="Report Conflict / Dispute"
+                              >
+                                <i className="fa-solid fa-triangle-exclamation"></i>
+                              </button>
+                            )}
+                           
+                            {tx.paymentProofUrl && (
                              <a href={tx.paymentProofUrl} target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 hover:text-teal-600 transition-all border border-slate-100 shadow-sm"><i className="fa-solid fa-file-invoice"></i></a>
                            )}
                            

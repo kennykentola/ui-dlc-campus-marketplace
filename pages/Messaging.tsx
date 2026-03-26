@@ -285,8 +285,14 @@ const Messaging: React.FC = () => {
 
       {/* Sidebar Terminal */}
       <div className={`w-full md:w-1/3 lg:w-[450px] bg-slate-50 border-r border-slate-100 flex flex-col h-full ${chattingWith ? "hidden md:flex" : "flex"}`}>
-        <div className="h-20 md:h-24 px-6 md:px-10 flex items-center justify-between border-b border-slate-100 bg-white shrink-0">
-          <h2 className="text-xl md:text-2xl font-black text-[#003366] uppercase tracking-tighter">Campus <span className="text-teal-600">Chat.</span></h2>
+        <div className="h-24 md:h-28 px-6 md:px-10 flex items-center justify-between border-b border-slate-100 bg-white shrink-0">
+          <div>
+            <h2 className="text-xl md:text-2xl font-black text-[#003366] uppercase tracking-tighter">Campus <span className="text-teal-600">Chat.</span></h2>
+            <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mt-1 italic">Active Transmissions</p>
+          </div>
+          <Link to="/support" className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm border border-rose-100" title="Safe Trade Support">
+             <i className="fa-solid fa-shield-halved"></i>
+          </Link>
         </div>
         <div className="grow overflow-y-auto bg-white no-scrollbar">
           {conversations.map((c, i) => (
