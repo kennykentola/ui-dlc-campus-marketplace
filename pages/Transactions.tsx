@@ -187,7 +187,7 @@ const Transactions: React.FC = () => {
                        <div className="w-full bg-slate-50 rounded-3xl p-6 border border-slate-100 mt-2">
                           <div className="flex items-center justify-between relative">
                              <div className="absolute top-1/2 left-0 w-full h-1 bg-slate-200 -translate-y-1/2 z-0 rounded-full"></div>
-                             <div className="absolute top-1/2 left-0 h-1 bg-brand-secondary -translate-y-1/2 z-0 rounded-full transition-all duration-1000" style={{ width: tx.status === TransactionStatus.PAYMENT_SENT ? '33%' : tx.status === TransactionStatus.PAYMENT_CONFIRMED ? '66%' : '100%' }}></div>
+                             <div className={`absolute top-1/2 left-0 h-1 bg-brand-secondary -translate-y-1/2 z-0 rounded-full transition-all duration-1000 ${tx.status === TransactionStatus.PAYMENT_SENT ? 'w-1/3' : tx.status === TransactionStatus.PAYMENT_CONFIRMED ? 'w-2/3' : 'w-full'}`}></div>
                              
                              <div className="relative z-10 flex flex-col items-center gap-2">
                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs text-white shadow-md transition-colors ${tx.status === TransactionStatus.PAYMENT_SENT || tx.status === TransactionStatus.PAYMENT_CONFIRMED || tx.status === TransactionStatus.COMPLETED ? 'bg-brand-secondary' : 'bg-slate-300'}`}>1</div>
