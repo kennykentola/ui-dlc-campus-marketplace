@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../App";
 import {
@@ -252,7 +252,7 @@ const Profile: React.FC = () => {
                <img src={user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&size=300&background=003366&color=ffffff`} className="w-36 h-36 rounded-[48px] border-8 border-slate-50 shadow-xl object-cover transition-all group-hover:scale-105" alt="Av" />
                <label htmlFor="av-up" className="absolute -bottom-2 -right-2 w-12 h-12 bg-brand-primary rounded-2xl flex items-center justify-center text-white border-4 border-white cursor-pointer shadow-lg hover:rotate-12 transition-all">
                   <i className="fa-solid fa-camera"></i>
-                  <input id="av-up" type="file" className="hidden" accept="image/*" onChange={handleAvatarChange} />
+                  <input id="av-up" type="file" className="hidden" accept="image/*" onChange={handleAvatarChange} aria-label="Upload avatar image" />
                </label>
             </div>
 
@@ -513,25 +513,25 @@ const Profile: React.FC = () => {
             <div className="bg-white w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-[56px] p-10 md:p-14 shadow-2xl relative z-10 animate-slideUp space-y-12 no-scrollbar">
                <div className="flex items-center justify-between border-b border-slate-100 pb-8">
                   <h2 className="text-3xl font-black text-brand-primary uppercase tracking-tighter leading-none">Profile Audit Protocol.</h2>
-                  <button onClick={() => setIsEditing(false)} className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-rose-500 hover:bg-rose-50 transition-all"><i className="fa-solid fa-xmark"></i></button>
+                  <button onClick={() => setIsEditing(false)} aria-label="Close profile editor" className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-rose-500 hover:bg-rose-50 transition-all"><i className="fa-solid fa-xmark"></i></button>
                </div>
                
                <form onSubmit={handleUpdateProfile} className="space-y-12">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                      <div className="space-y-4">
                         <p className={sectionSubtleClass}>Scholar Nomenclature</p>
-                        <input type="text" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-brand-primary outline-none focus:bg-white focus:border-brand-primary shadow-sm" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} required />
+                        <input type="text" aria-label="Full name" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-brand-primary outline-none focus:bg-white focus:border-brand-primary shadow-sm" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} required />
                      </div>
                      <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-4">
                            <p className={sectionSubtleClass}>Department sector</p>
-                           <select className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-xs font-black text-brand-primary outline-none" value={editForm.department} onChange={e => setEditForm({...editForm, department: e.target.value})}>
+                           <select aria-label="Department" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-xs font-black text-brand-primary outline-none" value={editForm.department} onChange={e => setEditForm({...editForm, department: e.target.value})}>
                               {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
                            </select>
                         </div>
                         <div className="space-y-4">
                            <p className={sectionSubtleClass}>Level Code</p>
-                           <select className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-xs font-black text-brand-primary outline-none" value={editForm.level} onChange={e => setEditForm({...editForm, level: e.target.value})}>
+                           <select aria-label="Level" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-xs font-black text-brand-primary outline-none" value={editForm.level} onChange={e => setEditForm({...editForm, level: e.target.value})}>
                               {LEVELS.map(l => <option key={l} value={l}>{l}L</option>)}
                            </select>
                         </div>

@@ -1,11 +1,11 @@
-﻿
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../App";
 import { UserRole } from "../types";
 
 const Header: React.FC = () => {
-  const { user, logout, unreadCount } = useAuth();
+  const { user, logout, unreadCount, pendingTxCount } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -26,7 +26,7 @@ const Header: React.FC = () => {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Noticeboard", path: "/requests" },
-    { name: "Transactions", path: "/transactions" },
+    { name: "Transactions", path: "/transactions", hasNotification: pendingTxCount > 0 },
     { name: "Chat", path: "/messages", hasNotification: unreadCount > 0 },
     { name: "Support", path: "/support" },
   ];

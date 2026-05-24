@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
@@ -67,11 +67,12 @@ const CreateProduct: React.FC = () => {
 
     try {
       const imageUrls = await Promise.all(
-        images.map(async (file) => {
+        images.map(async (file, index) => {
+          const safeFile = new File([file], `product_${index}.jpg`, { type: file.type || 'image/jpeg' });
           const res = await storage.createFile(
             import.meta.env.VITE_APPWRITE_BUCKET_ID,
             ID.unique(),
-            file
+            safeFile
           );
           const url = storage.getFileView(import.meta.env.VITE_APPWRITE_BUCKET_ID, res.$id);
           return url.toString();
@@ -348,7 +349,7 @@ const CreateProduct: React.FC = () => {
                       <i className="fa-solid fa-camera text-slate-300 dark:text-slate-600 text-xl"></i>
                     </div>
                     <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Add Photo</span>
-                    <input multiple accept="image/*" className="hidden" type="file" onChange={handleImageChange} />
+                    <input type="file" multiple accept="image/jpeg, image/png, image/jpg, image/webp" className="hidden" onChange={handleImageChange} />
                   </label>
                 )}
               </div>

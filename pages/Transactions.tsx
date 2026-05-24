@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../App";
 import { Transaction, TransactionStatus } from "../types";
@@ -11,6 +11,7 @@ const Transactions: React.FC = () => {
   const [receivedTransactions, setReceivedTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'buying' | 'selling'>('buying');
+  const { pendingTxCount } = useAuth();
 
   const loadTransactions = async () => {
     if (!user) return;
@@ -25,6 +26,13 @@ const Transactions: React.FC = () => {
   useEffect(() => {
     loadTransactions();
   }, [user]);
+
+  // Auto-switch to Inbound tab when seller has pending receipts
+  useEffect(() => {
+    if (pendingTxCount > 0) {
+      setActiveTab('selling');
+    }
+  }, [pendingTxCount]);
 
   const confirmPayment = async (txId: string) => {
     try {
@@ -60,6 +68,16 @@ const Transactions: React.FC = () => {
             <button onClick={() => setActiveTab('buying')} className={`px-10 py-5 rounded-[24px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'buying' ? 'bg-white text-brand-primary shadow-sm' : 'text-slate-400 hover:text-brand-primary'}`}>Outbound Registry</button>
             <button onClick={() => setActiveTab('selling')} className={`px-10 py-5 rounded-[24px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'selling' ? 'bg-white text-brand-primary shadow-sm' : 'text-slate-400 hover:text-brand-primary'}`}>Inbound Registry</button>
          </div>
+
+          {/* Pending Receipt Alert */}
+          {activeTab === 'selling' && pendingTxCount > 0 && (
+            <div className="flex items-center gap-4 px-8 py-5 bg-brand-secondary/10 border border-brand-secondary/20 rounded-[28px] animate-slideUp">
+              <span className="w-3 h-3 bg-brand-secondary rounded-full animate-pulse shrink-0"></span>
+              <p className="text-[11px] font-black text-brand-primary uppercase tracking-widest">
+                You have {pendingTxCount} pending payment receipt{pendingTxCount > 1 ? 's' : ''} to review
+              </p>
+            </div>
+          )}
 
          <div className="space-y-10">
             {loading ? (

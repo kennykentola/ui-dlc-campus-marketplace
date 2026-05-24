@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect, createContext, useContext } from "react";
 import {
   BrowserRouter,
@@ -8,7 +8,7 @@ import {
   Link,
   useNavigate,
 } from "react-router-dom";
-import { UserProfile, UserRole, Product, SellerStatus, Message } from "./types";
+import { UserProfile, UserRole, Product, SellerStatus, Message, TransactionStatus } from "./types";
 import { account, databases } from "./lib/appwrite";
 import { Query, ID } from "appwrite";
 
@@ -44,6 +44,7 @@ interface AuthContextType {
   isDarkMode: boolean;
   toggleDarkMode: () => void;
   unreadCount: number;
+  pendingTxCount: number;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (userId: string, secret: string, password: string) => Promise<void>;
 }
@@ -65,6 +66,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     () => localStorage.getItem("theme") === "dark",
   );
   const [unreadCount, setUnreadCount] = useState(0);
+  const [pendingTxCount, setPendingTxCount] = useState(0);
 
   const createUserProfile = async (profileData: Partial<UserProfile>) => {
     try {
@@ -145,6 +147,27 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const calculatePendingTx = async () => {
+    if (!user) {
+      setPendingTxCount(0);
+      return;
+    }
+    try {
+      const result = await databases.listDocuments(
+        import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        "transactions",
+        [
+          Query.equal("sellerId", user.userId),
+          Query.equal("status", TransactionStatus.PAYMENT_SENT),
+        ],
+      );
+      setPendingTxCount(result.total);
+    } catch (error) {
+      console.error("Error calculating pending transactions:", error);
+      setPendingTxCount(0);
+    }
+  };
+
   useEffect(() => {
     const initAuth = async () => {
       // Always attempt to synchronize with an existing browser session
@@ -156,7 +179,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     calculateUnread();
-    const interval = setInterval(calculateUnread, 3000); 
+    calculatePendingTx();
+    const interval = setInterval(() => {
+      calculateUnread();
+      calculatePendingTx();
+    }, 5000);
     return () => clearInterval(interval);
   }, [user]);
 
@@ -319,6 +346,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         isDarkMode,
         toggleDarkMode,
         unreadCount,
+        pendingTxCount,
         forgotPassword,
         resetPassword,
       }}

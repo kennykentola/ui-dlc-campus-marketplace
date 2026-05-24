@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
@@ -54,10 +54,19 @@ const Checkout: React.FC = () => {
     if (!receipt || !product || !user || !seller) return;
     setUploading(true);
     try {
+      // Appwrite strict validation: The File object MUST have a valid extension in its name.
+      // If the user's file is missing an extension on their OS, Appwrite rejects it.
+      let ext = 'jpg';
+      if (receipt.type === 'application/pdf') ext = 'pdf';
+      else if (receipt.type === 'image/png') ext = 'png';
+      else if (receipt.type === 'image/webp') ext = 'webp';
+      
+      const safeFile = new File([receipt], `upload_${ID.unique()}.${ext}`, { type: receipt.type });
+
       const file = await storage.createFile(
         import.meta.env.VITE_APPWRITE_BUCKET_ID, 
         ID.unique(), 
-        receipt
+        safeFile
       );
       const url = storage.getFileView(import.meta.env.VITE_APPWRITE_BUCKET_ID, file.$id).toString();
 
@@ -69,7 +78,6 @@ const Checkout: React.FC = () => {
         {
            productId: product.$id,
            productName: product.name,
-           productImage: product.imageUrls[0],
            sellerId: seller.userId,
            sellerName: seller.name,
            buyerId: user.userId,
@@ -205,7 +213,7 @@ const Checkout: React.FC = () => {
                            <span className="mt-4 text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest">Drop Screenshot Here</span>
                         </>
                      )}
-                     <input type="file" className="hidden" onChange={handleReceiptUpload} />
+                     <input type="file" accept="image/jpeg, image/png, image/jpg, image/webp, application/pdf" className="hidden" onChange={handleReceiptUpload} />
                   </label>
 
                   <div className="space-y-4 pt-12 border-t border-slate-50 dark:border-slate-800">
