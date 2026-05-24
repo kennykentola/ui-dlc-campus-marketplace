@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { databases, storage, client } from "../lib/appwrite";
 import { useAuth } from "../App";
@@ -508,8 +508,8 @@ const Messaging: React.FC = () => {
         ) : (
           <div className="grow flex flex-col items-center justify-center p-10 md:p-20 text-center bg-[#F8FAFC]">
             <div className="mb-8 relative">
-               <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-lg border border-slate-100">
-                 <i className="fa-brands fa-whatsapp text-6xl text-brand-primary opacity-20"></i>
+               <div className="w-32 h-32 bg-white rounded-[40px] flex items-center justify-center shadow-lg shadow-brand-primary/5 border border-slate-100 overflow-hidden">
+                 <img src="/favicon.svg" alt="App Logo" className="w-16 h-16 opacity-30 grayscale" />
                </div>
                <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-brand-secondary rounded-full border-4 border-[#F8FAFC] flex items-center justify-center text-white">
                   <i className="fa-solid fa-graduation-cap text-xs"></i>

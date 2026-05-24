@@ -72,7 +72,7 @@ const Requests: React.FC = () => {
         <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
            <div className="space-y-4">
                <h1 className="text-5xl font-black text-brand-primary dark:text-white uppercase tracking-tighter leading-none">Campus <span className="text-brand-secondary">Noticeboard.</span></h1>
-               <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-[0.4em] italic leading-none pl-1">Demand-Side Academic Activity Log</p>
+               <p className="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-[0.4em] italic leading-none pl-1">Demand-Side Academic Activity Log</p>
            </div>
            <button 
              onClick={() => setShowModal(true)}
