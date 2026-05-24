@@ -58,16 +58,14 @@ const Transactions: React.FC = () => {
 
   const handleDownload = async (url: string, txId: string) => {
     try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const downloadUrl = window.URL.createObjectURL(blob);
+      const downloadUrl = url.replace('/view', '/download');
       const link = document.createElement('a');
       link.href = downloadUrl;
-      link.download = `receipt_TX-${txId.slice(-6)}.pdf`;
+      link.download = `receipt_TX-${txId.slice(-6)}`;
+      link.target = '_blank';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      window.URL.revokeObjectURL(downloadUrl);
     } catch (error) {
       alert("Failed to download receipt.");
     }
@@ -221,32 +219,51 @@ const Transactions: React.FC = () => {
       </div>
 
       {/* Receipt Preview Modal */}
-      {previewUrl && (
-        <div className="fixed inset-0 z-100 flex items-center justify-center p-6 animate-fadeIn">
-          <div className="absolute inset-0 bg-brand-primary/80 backdrop-blur-sm" onClick={() => setPreviewUrl(null)}></div>
-          <div className="bg-white rounded-[40px] p-8 max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col relative z-10 animate-slideUp shadow-2xl">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-black text-brand-primary uppercase tracking-tighter">Payment Proof</h3>
-              <div className="flex items-center gap-3">
-                <button onClick={() => handleDownload(previewUrl, "preview")} className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-brand-primary hover:bg-brand-primary hover:text-white transition-all border border-slate-100 shadow-sm" aria-label="Download receipt">
-                  <i className="fa-solid fa-download"></i>
-                </button>
-                <button onClick={() => setPreviewUrl(null)} className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm" aria-label="Close modal">
-                  <i className="fa-solid fa-xmark"></i>
-                </button>
+      {previewUrl && (() => {
+        // Find the transaction associated with this preview
+        const tx = [...sentTransactions, ...receivedTransactions].find(t => t.paymentProofUrl === previewUrl);
+        
+        return (
+          <div className="fixed inset-0 z-100 flex items-center justify-center p-6 animate-fadeIn">
+            <div className="absolute inset-0 bg-brand-primary/80 backdrop-blur-sm" onClick={() => setPreviewUrl(null)}></div>
+            <div className="bg-white rounded-[40px] p-8 max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col relative z-10 animate-slideUp shadow-2xl">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+                <h3 className="text-xl font-black text-brand-primary uppercase tracking-tighter">Payment Proof</h3>
+                <div className="flex items-center gap-3 flex-wrap">
+                  
+                  {/* Administrative Action Nodes inside Modal */}
+                  {tx && activeTab === 'selling' && tx.status === TransactionStatus.PAYMENT_SENT && (
+                    <button onClick={() => { confirmPayment(tx.$id); setPreviewUrl(null); }} className="px-6 py-4 bg-brand-primary text-white rounded-[20px] font-black text-[9px] uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all">Confirm Payment</button>
+                  )}
+                  {tx && activeTab === 'buying' && tx.status === TransactionStatus.PAYMENT_CONFIRMED && (
+                    <button onClick={() => { completetx(tx.$id); setPreviewUrl(null); }} className="px-6 py-4 bg-brand-primary text-white rounded-[20px] font-black text-[9px] uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all">Asset Received</button>
+                  )}
+                  {tx && tx.status === TransactionStatus.PAYMENT_SENT && (
+                    <button onClick={() => { cancelTransaction(tx.$id); setPreviewUrl(null); }} disabled={cancellingId === tx.$id} className="px-4 py-4 bg-white text-rose-500 border border-rose-100 rounded-[20px] font-black text-[9px] uppercase tracking-widest hover:bg-rose-50 transition-all disabled:opacity-50">
+                      {cancellingId === tx.$id ? 'Cancelling...' : 'Cancel'}
+                    </button>
+                  )}
+
+                  <button onClick={() => handleDownload(previewUrl, tx ? tx.$id : "preview")} className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-brand-primary hover:bg-brand-primary hover:text-white transition-all border border-slate-100 shadow-sm" aria-label="Download receipt">
+                    <i className="fa-solid fa-download"></i>
+                  </button>
+                  <button onClick={() => setPreviewUrl(null)} className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm" aria-label="Close modal">
+                    <i className="fa-solid fa-xmark"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div className="flex-1 overflow-auto bg-slate-50 rounded-[24px] border border-slate-100 flex items-center justify-center p-4">
+                {previewUrl.toLowerCase().includes('.pdf') ? (
+                  <iframe src={previewUrl} className="w-full h-full min-h-[60vh] rounded-[16px]" title="Receipt PDF Preview" />
+                ) : (
+                  <img src={previewUrl} className="max-w-full max-h-[60vh] object-contain rounded-[16px]" alt="Receipt Preview" />
+                )}
               </div>
             </div>
-            
-            <div className="flex-1 overflow-auto bg-slate-50 rounded-[24px] border border-slate-100 flex items-center justify-center p-4">
-              {previewUrl.toLowerCase().includes('.pdf') ? (
-                <iframe src={previewUrl} className="w-full h-full min-h-[60vh] rounded-[16px]" title="Receipt PDF Preview" />
-              ) : (
-                <img src={previewUrl} className="max-w-full max-h-[60vh] object-contain rounded-[16px]" alt="Receipt Preview" />
-              )}
-            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
     </div>
   );
