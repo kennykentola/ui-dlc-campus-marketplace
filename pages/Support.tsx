@@ -125,7 +125,7 @@ const Support: React.FC = () => {
                      <p className="text-sm font-black text-brand-primary uppercase">{reportedUser.name}</p>
                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-1">{(reportedUser as any).matricNumber} • {(reportedUser as any).email}</p>
                   </div>
-                  <button type="button" onClick={() => setReportedUser(null)} className="w-10 h-10 bg-slate-50 rounded-xl text-slate-300 hover:text-rose-500 transition-all border border-slate-100"><i className="fa-solid fa-circle-xmark"></i></button>
+                  <button type="button" onClick={() => setReportedUser(null)} aria-label="Remove suspect" className="w-10 h-10 bg-slate-50 rounded-xl text-slate-300 hover:text-rose-500 transition-all border border-slate-100"><i className="fa-solid fa-circle-xmark"></i></button>
                </div>
             ) : (
                (category === 'scam_report' || category === 'payment_issue') && (
@@ -146,7 +146,7 @@ const Support: React.FC = () => {
                         <div className="bg-white border border-slate-100 rounded-[32px] overflow-hidden shadow-xl divide-y divide-slate-50">
                            {searchResults.map(r => (
                               <button key={r.$id} type="button" onClick={() => { setReportedUser(r); setSearchResults([]); setSearchTerm(""); }} className="w-full px-6 py-4 flex items-center gap-4 hover:bg-slate-50 transition-all text-left">
-                                 <img src={r.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.name)}&background=003366&color=fff`} className="w-10 h-10 rounded-xl" />
+                                 <img src={r.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(r.name)}&background=003366&color=fff`} alt={`${r.name}'s avatar`} className="w-10 h-10 rounded-xl" />
                                  <div>
                                     <p className="text-xs font-black text-brand-primary uppercase">{r.name}</p>
                                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">{r.matricNumber}</p>
@@ -160,8 +160,9 @@ const Support: React.FC = () => {
             )}
 
             <div className="space-y-4">
-              <label className="text-[10px] font-black text-brand-surface/60 uppercase tracking-widest px-1">Complaint Category</label>
+              <label htmlFor="complaint-category" className="text-[10px] font-black text-brand-surface/60 uppercase tracking-widest px-1">Complaint Category</label>
               <select 
+                id="complaint-category"
                 className="w-full bg-black/20 border border-white/10 rounded-2xl px-6 py-5 text-sm font-black text-white outline-none focus:ring-4 focus:ring-brand-secondary/30 focus:border-brand-secondary transition-all shadow-inner appearance-none"
                 value={category}
                 onChange={e => setCategory(e.target.value)}

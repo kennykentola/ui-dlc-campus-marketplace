@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
@@ -63,6 +63,30 @@ const AdminDashboard: React.FC = () => {
     } catch (error) {
       console.error("Failed to update seller status:", error);
       alert("Seller verification update failed.");
+    } finally {
+      setUpdatingSellerId(null);
+    }
+  };
+
+  const handleRoleUpdate = async (
+    profile: UserProfile,
+    nextRole: UserRole,
+  ) => {
+    try {
+      setUpdatingSellerId(profile.userId);
+      await databases.updateDocument(
+        import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        "profiles",
+        profile.$id || profile.userId,
+        {
+          role: nextRole,
+          updatedAt: new Date().toISOString(),
+        },
+      );
+      await fetchAdminData();
+    } catch (error) {
+      console.error("Failed to update role:", error);
+      alert("Role update failed.");
     } finally {
       setUpdatingSellerId(null);
     }
@@ -151,7 +175,7 @@ const AdminDashboard: React.FC = () => {
                                  <p className="mt-2 text-[10px] font-black uppercase tracking-widest text-brand-primary">{selectedUser.role}</p>
                               </div>
                            </div>
-                           <button onClick={() => setSelectedUser(null)} className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-50 text-slate-500 hover:text-rose-500 transition-colors">
+                           <button onClick={() => setSelectedUser(null)} aria-label="Close user details" className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-50 text-slate-500 hover:text-rose-500 transition-colors">
                               <i className="fa-solid fa-xmark"></i>
                            </button>
                         </div>
@@ -222,7 +246,7 @@ const AdminDashboard: React.FC = () => {
                                  <tr key={p.$id} className="group hover:bg-slate-50/50 transition-colors">
                                     <td className="px-6 py-8">
                                        <div className="flex items-center gap-4">
-                                          <img src={p.imageUrls[0]} className="w-16 h-16 rounded-2xl object-cover shadow-sm group-hover:scale-110 transition-transform" />
+                                          <img src={p.imageUrls[0]} alt={p.name} className="w-16 h-16 rounded-2xl object-cover shadow-sm group-hover:scale-110 transition-transform" />
                                           <div className="overflow-hidden">
                                              <p className="text-[15px] font-black text-brand-primary line-clamp-1 truncate leading-tight uppercase tracking-tight">{p.name}</p>
                                              <p className="text-[11px] text-slate-400 font-bold italic truncate leading-relaxed">ID: {p.$id.substring(0,8)}</p>
@@ -260,7 +284,7 @@ const AdminDashboard: React.FC = () => {
                         {users.map(u => (
                            <div key={u.userId} className="bg-white p-10 rounded-[48px] border border-slate-50 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all group flex flex-col items-center text-center">
                               <div className="relative">
-                                 <img src={u.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=003366&color=fff`} className="w-24 h-24 rounded-[36px] shadow-2xl mb-8 group-hover:scale-110 transition-transform object-cover" />
+                                 <img src={u.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=003366&color=fff`} alt={`${u.name}'s avatar`} className="w-24 h-24 rounded-[36px] shadow-2xl mb-8 group-hover:scale-110 transition-transform object-cover" />
                                  <div className={`absolute -bottom-2 -right-2 w-10 h-10 rounded-2xl flex items-center justify-center text-white border-4 border-white ${u.sellerStatus === SellerStatus.VERIFIED ? 'bg-brand-primary' : 'bg-slate-300'}`}>
                                     <i className="fa-solid fa-shield-check text-xs"></i>
                                  </div>
