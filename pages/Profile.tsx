@@ -309,7 +309,9 @@ const Profile: React.FC = () => {
                      <p className={sectionSubtleClass}>Asset Registry Feed</p>
                      <h2 className={sectionHeadingClass}>Your Exported Scholarly Nodes.</h2>
                   </div>
-                  <Link to="/sell" className="text-brand-primary text-[10px] font-black uppercase tracking-[0.2em] border-b-2 border-brand-primary/20 hover:border-brand-primary transition-all">+ Export New Asset</Link>
+                  <Link to="/sell" className="flex items-center gap-2 px-5 py-3 bg-brand-secondary text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.18em] hover:brightness-110 shadow-xl shadow-teal-600/20 transition-all active:scale-95 whitespace-nowrap">
+                     <i className="fa-solid fa-plus-circle"></i> List Asset
+                  </Link>
                </div>
                {myProducts.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
