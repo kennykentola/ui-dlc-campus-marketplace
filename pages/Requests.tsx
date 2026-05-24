@@ -1,9 +1,10 @@
-﻿
+
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../App";
 import { BuyerRequest } from "../types";
 import { databases } from "../lib/appwrite";
 import { ID, Query } from "appwrite";
+import { Link } from "react-router-dom";
 
 const Requests: React.FC = () => {
   const { user } = useAuth();
@@ -65,17 +66,17 @@ const Requests: React.FC = () => {
   };
 
   return (
-    <div className="bg-hub-gradient-light min-h-screen pt-32 pb-40 animate-fadeIn relative text-brand-ink dark:text-slate-100">
+    <div className="bg-slate-50/50 dark:bg-slate-950 min-h-screen pt-32 pb-40 animate-fadeIn relative text-brand-ink dark:text-slate-100">
       <div className="container mx-auto px-6 max-w-6xl space-y-16 relative z-10">
         
         <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
            <div className="space-y-4">
-               <h1 className="text-5xl font-black text-brand-primary dark:text-white uppercase tracking-tighter leading-none">Campus <span className="text-brand-primary">Noticeboard.</span></h1>
-               <p className="text-[10px] text-slate-300 dark:text-slate-600 font-bold uppercase tracking-[0.4em] italic leading-none pl-1">Demand-Side Academic Activity Log</p>
+               <h1 className="text-5xl font-black text-brand-primary dark:text-white uppercase tracking-tighter leading-none">Campus <span className="text-brand-secondary">Noticeboard.</span></h1>
+               <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-[0.4em] italic leading-none pl-1">Demand-Side Academic Activity Log</p>
            </div>
            <button 
              onClick={() => setShowModal(true)}
-             className="px-10 py-5 bg-brand-primary text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-brand-primary/10 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-4"
+             className="px-10 py-5 bg-brand-primary text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-xl shadow-brand-primary/20 hover:-translate-y-1 hover:shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-4"
            >
               Deploy Request <i className="fa-solid fa-bullhorn"></i>
            </button>
@@ -86,30 +87,33 @@ const Requests: React.FC = () => {
               [...Array(6)].map((_, i) => <div key={i} className="h-64 bg-slate-50 dark:bg-slate-900 rounded-[40px] animate-pulse"></div>)
            ) : requests.length > 0 ? (
              requests.map((r, i) => (
-                <div key={i} className={`p-10 border border-slate-100 dark:border-slate-800 rounded-[48px] space-y-8 hover:shadow-2xl hover:border-brand-primary/10 transition-all group ${r.isFulfilled ? 'opacity-50 grayscale' : 'bg-white dark:bg-slate-900 shadow-sm'}`}>
+                <div key={i} className={`p-10 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] space-y-8 hover:shadow-[0_20px_50px_-12px_rgba(0,51,102,0.12)] hover:-translate-y-2 hover:border-brand-secondary/20 transition-all duration-300 group ${r.isFulfilled ? 'opacity-50 grayscale' : ''}`}>
                    <div className="flex items-center justify-between">
-                      <span className="px-4 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-full text-[9px] font-black uppercase tracking-widest text-brand-primary dark:text-indigo-500">Request Log #{r.$id.slice(-4)}</span>
-                      {r.budget > 0 && <span className="text-brand-primary font-black text-sm italic">₦{r.budget.toLocaleString()}</span>}
+                      <span className="px-4 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-full text-[9px] font-black uppercase tracking-widest text-slate-400 dark:text-indigo-500">Log #{r.$id.slice(-4)}</span>
+                      {r.budget > 0 && <span className="px-4 py-1.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-black text-[10px] uppercase tracking-widest rounded-full border border-emerald-100 dark:border-emerald-800/50">₦{r.budget.toLocaleString()}</span>}
                    </div>
 
                    <div className="space-y-4">
-                      <h3 className="text-xl font-black text-brand-primary dark:text-white uppercase tracking-tight group-hover:text-brand-primary transition-colors leading-tight">{r.itemNeeded}</h3>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed italic line-clamp-3">{r.description}</p>
+                      <h3 className="text-2xl font-black text-brand-primary dark:text-white leading-tight tracking-tight group-hover:text-brand-secondary transition-colors line-clamp-2">{r.itemNeeded}</h3>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed italic line-clamp-3">{r.description}</p>
                    </div>
 
                    <div className="pt-6 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                         <div className="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center text-white text-xs font-black shadow-lg">
+                         <div className="w-10 h-10 bg-brand-secondary/10 dark:bg-slate-800 rounded-xl flex items-center justify-center text-brand-secondary dark:text-white text-sm font-black">
                             {r.userName.charAt(0)}
                          </div>
                          <div>
                             <p className="text-[10px] font-black text-brand-primary dark:text-white uppercase tracking-tighter leading-none">{r.userName}</p>
-                            <p className="text-[9px] font-bold text-slate-300 dark:text-slate-600 uppercase tracking-widest mt-1">Requester</p>
+                            <p className="text-[9px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest mt-1">Requester</p>
                          </div>
                       </div>
-                      <button aria-label="Send message" className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-brand-primary dark:text-indigo-500 group-hover:bg-brand-primary group-hover:text-white transition-all shadow-sm">
-                         <i className="fa-solid fa-paper-plane text-[10px]" aria-hidden="true"></i>
-                      </button>
+                      
+                      {user && user.userId !== r.userId && (
+                        <Link to={`/messages?with=${r.userId}&product=request_${r.$id}`} aria-label="Send message" className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-brand-primary dark:text-indigo-500 group-hover:bg-brand-secondary group-hover:text-white transition-all shadow-sm group-hover:scale-110">
+                           <i className="fa-solid fa-paper-plane text-xs" aria-hidden="true"></i>
+                        </Link>
+                      )}
                   </div>
                </div>
              ))
@@ -124,12 +128,12 @@ const Requests: React.FC = () => {
 
       {/* Deploy Request Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-100 flex items-start justify-center p-6 overflow-y-auto no-scrollbar scroll-smooth animate-fadeIn">
-           <div className="fixed inset-0 bg-brand-primary/60 backdrop-blur-xl" onClick={() => setShowModal(false)}></div>
-           <div className="relative my-auto bg-white dark:bg-slate-900 w-full max-w-xl rounded-[48px] p-10 md:p-14 shadow-2xl z-10 animate-slideUp border border-white/10 dark:border-slate-800">
-              <div className="space-y-4 mb-12">
-                 <h2 className="text-3xl font-black text-brand-primary dark:text-white uppercase tracking-tighter leading-none">Deploy Requirement.</h2>
-                 <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-[0.3em] italic">Noticeboard Transmission Protocol</p>
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-6 overflow-y-auto no-scrollbar scroll-smooth animate-fadeIn">
+           <div className="fixed inset-0 bg-brand-primary/80 backdrop-blur-md" onClick={() => setShowModal(false)}></div>
+           <div className="relative my-auto bg-white dark:bg-slate-900 w-full max-w-xl rounded-[40px] p-10 md:p-14 shadow-2xl z-10 animate-slideUp border border-white/10 dark:border-slate-800">
+              <div className="space-y-4 mb-10">
+                 <h2 className="text-3xl font-black text-brand-primary dark:text-white tracking-tighter leading-none">Deploy Request</h2>
+                 <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Tell the campus what you need. Someone might have it!</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-10">
@@ -149,8 +153,8 @@ const Requests: React.FC = () => {
                  </div>
 
                  <div className="pt-6 flex gap-4">
-                    <button type="button" onClick={() => setShowModal(false)} className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-300 hover:text-rose-500 transition-all">Abort</button>
-                    <button type="submit" className="grow py-5 bg-brand-primary text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-brand-primary/10 hover:scale-[1.02] active:scale-95 transition-all">Initiate Transmission</button>
+                    <button type="button" onClick={() => setShowModal(false)} className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-rose-500 transition-all">Cancel</button>
+                    <button type="submit" className="grow py-5 bg-brand-primary text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-xl shadow-brand-primary/20 hover:-translate-y-1 hover:shadow-2xl active:scale-95 transition-all">Post Request</button>
                  </div>
               </form>
            </div>
