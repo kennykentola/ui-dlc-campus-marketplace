@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../App";
 import {
@@ -238,7 +238,7 @@ const Profile: React.FC = () => {
     { label: "Reputation", value: user.averageRating || "New" },
   ];
 
-  const sectionHeadingClass = "text-2xl font-black text-[#003366] uppercase tracking-tighter";
+  const sectionHeadingClass = "text-2xl font-black text-brand-primary uppercase tracking-tighter";
   const sectionSubtleClass = "text-[10px] text-slate-400 font-bold uppercase tracking-widest";
   const emptyStateClass = "rounded-[40px] border border-dashed border-slate-100 bg-slate-50/50 px-6 py-20 text-center space-y-4";
 
@@ -250,7 +250,7 @@ const Profile: React.FC = () => {
          <div className="flex flex-col md:flex-row items-center gap-10">
             <div className="relative group">
                <img src={user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&size=300&background=003366&color=ffffff`} className="w-36 h-36 rounded-[48px] border-8 border-slate-50 shadow-xl object-cover transition-all group-hover:scale-105" alt="Av" />
-               <label htmlFor="av-up" className="absolute -bottom-2 -right-2 w-12 h-12 bg-teal-600 rounded-2xl flex items-center justify-center text-white border-4 border-white cursor-pointer shadow-lg hover:rotate-12 transition-all">
+               <label htmlFor="av-up" className="absolute -bottom-2 -right-2 w-12 h-12 bg-brand-primary rounded-2xl flex items-center justify-center text-white border-4 border-white cursor-pointer shadow-lg hover:rotate-12 transition-all">
                   <i className="fa-solid fa-camera"></i>
                   <input id="av-up" type="file" className="hidden" accept="image/*" onChange={handleAvatarChange} />
                </label>
@@ -258,12 +258,12 @@ const Profile: React.FC = () => {
 
             <div className="text-center md:text-left space-y-4">
                <div className="flex items-center justify-center md:justify-start gap-3">
-                  <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${user.sellerStatus === SellerStatus.VERIFIED ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/20' : 'bg-slate-100 text-slate-400'}`}>
+                  <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${user.sellerStatus === SellerStatus.VERIFIED ? 'bg-brand-primary text-white shadow-lg shadow-brand-primary/20' : 'bg-slate-100 text-slate-400'}`}>
                      {user.sellerStatus === SellerStatus.VERIFIED ? 'Verified Scholar' : 'Registry Pending'}
                   </span>
-                  <span className="px-4 py-1.5 bg-[#003366]/5 text-[#003366] rounded-full text-[9px] font-black uppercase tracking-widest">{user.role}</span>
+                  <span className="px-4 py-1.5 bg-brand-primary/5 text-brand-primary rounded-full text-[9px] font-black uppercase tracking-widest">{user.role}</span>
                </div>
-               <h1 className="text-5xl font-black text-[#003366] tracking-tighter uppercase leading-none">{user.name}</h1>
+               <h1 className="text-5xl font-black text-brand-primary tracking-tighter uppercase leading-none">{user.name}</h1>
                <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                   <span>{user.department}</span>
                   <div className="w-1.5 h-1.5 bg-slate-100 rounded-full"></div>
@@ -277,13 +277,13 @@ const Profile: React.FC = () => {
          {/* Metrics Block */}
          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:w-[420px]">
             {stats.map(s => (
-               <div key={s.label} className="bg-slate-50/50 border border-slate-100 p-6 rounded-[32px] text-center hover:bg-white hover:border-teal-500/20 transition-all group">
-                  <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-3 group-hover:text-teal-600">{s.label}</p>
-                  <p className="text-2xl font-black text-[#003366] tracking-tighter">{s.value}</p>
+               <div key={s.label} className="bg-slate-50/50 border border-slate-100 p-6 rounded-[32px] text-center hover:bg-white hover:border-brand-primary/20 transition-all group">
+                  <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-3 group-hover:text-brand-primary">{s.label}</p>
+                  <p className="text-2xl font-black text-brand-primary tracking-tighter">{s.value}</p>
                </div>
             ))}
             <div className="sm:col-span-3 flex justify-end pt-4">
-               <button onClick={() => setIsEditing(!isEditing)} className="px-10 py-5 bg-[#003366] text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-blue-900/10 hover:brightness-110 active:scale-95 transition-all">
+               <button onClick={() => setIsEditing(!isEditing)} className="px-10 py-5 bg-brand-primary text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-brand-primary/10 hover:brightness-110 active:scale-95 transition-all">
                   {isEditing ? 'Cancel Audit' : 'Update Profile'}
                </button>
             </div>
@@ -293,8 +293,8 @@ const Profile: React.FC = () => {
       {/* Profile Tab Switcher */}
       <div className="flex overflow-x-auto no-scrollbar gap-2 p-3 bg-slate-50 border border-slate-100 rounded-[32px]">
          {tabs.map(t => (
-            <button key={t.id} onClick={() => setActiveTab(t.id as any)} className={`shrink-0 flex items-center gap-4 px-8 py-5 rounded-[24px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === t.id ? 'bg-white text-[#003366] shadow-sm' : 'text-slate-400 hover:text-[#003366]'}`}>
-               <i className={`fa-solid ${t.icon} ${activeTab === t.id ? 'text-teal-600' : 'opacity-40'}`}></i>
+            <button key={t.id} onClick={() => setActiveTab(t.id as any)} className={`shrink-0 flex items-center gap-4 px-8 py-5 rounded-[24px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === t.id ? 'bg-white text-brand-primary shadow-sm' : 'text-slate-400 hover:text-brand-primary'}`}>
+               <i className={`fa-solid ${t.icon} ${activeTab === t.id ? 'text-brand-primary' : 'opacity-40'}`}></i>
                {t.label}
             </button>
          ))}
@@ -309,7 +309,7 @@ const Profile: React.FC = () => {
                      <p className={sectionSubtleClass}>Asset Registry Feed</p>
                      <h2 className={sectionHeadingClass}>Your Exported Scholarly Nodes.</h2>
                   </div>
-                  <Link to="/sell" className="text-teal-600 text-[10px] font-black uppercase tracking-[0.2em] border-b-2 border-teal-600/20 hover:border-teal-600 transition-all">+ Export New Asset</Link>
+                  <Link to="/sell" className="text-brand-primary text-[10px] font-black uppercase tracking-[0.2em] border-b-2 border-brand-primary/20 hover:border-brand-primary transition-all">+ Export New Asset</Link>
                </div>
                {myProducts.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -352,14 +352,14 @@ const Profile: React.FC = () => {
                {transactions.length > 0 ? (
                   <div className="space-y-6">
                      {transactions.map(tx => (
-                        <div key={tx.$id} className="bg-white border border-slate-50 p-6 rounded-[32px] flex items-center justify-between group hover:border-teal-500/20 transition-all shadow-sm">
+                        <div key={tx.$id} className="bg-white border border-slate-50 p-6 rounded-[32px] flex items-center justify-between group hover:border-brand-primary/20 transition-all shadow-sm">
                            <div className="flex items-center gap-6">
-                              <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-[#003366] group-hover:bg-teal-50 transition-all">
-                                 <i className={`fa-solid ${tx.status === TransactionStatus.COMPLETED ? 'fa-check-double text-teal-600' : 'fa-clock opacity-20'}`}></i>
+                              <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-brand-primary group-hover:bg-brand-surface transition-all">
+                                 <i className={`fa-solid ${tx.status === TransactionStatus.COMPLETED ? 'fa-check-double text-brand-primary' : 'fa-clock opacity-20'}`}></i>
                               </div>
                               <div>
-                                 <h4 className="text-sm font-black text-[#003366] uppercase">{tx.productName}</h4>
-                                 <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest mt-1 italic">Status: <span className="text-teal-600">{tx.status}</span></p>
+                                 <h4 className="text-sm font-black text-brand-primary uppercase">{tx.productName}</h4>
+                                 <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest mt-1 italic">Status: <span className="text-brand-primary">{tx.status}</span></p>
                               </div>
                            </div>
                             <div className="flex items-center gap-3">
@@ -368,13 +368,13 @@ const Profile: React.FC = () => {
                                     href={tx.paymentProofUrl} 
                                     target="_blank" 
                                     rel="noopener noreferrer"
-                                    className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 hover:text-teal-600 transition-all border border-slate-100 dark:border-slate-800 shadow-sm"
+                                    className="w-12 h-12 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400 hover:text-brand-primary transition-all border border-slate-100 dark:border-slate-800 shadow-sm"
                                     title="View Payment Evidence"
                                   >
                                      <i className="fa-solid fa-file-invoice text-lg"></i>
                                   </a>
                                )}
-                               <Link to="/transactions" className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-200 hover:text-teal-600 transition-colors border border-slate-100 dark:border-slate-800"><i className="fa-solid fa-chevron-right"></i></Link>
+                               <Link to="/transactions" className="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-200 hover:text-brand-primary transition-colors border border-slate-100 dark:border-slate-800"><i className="fa-solid fa-chevron-right"></i></Link>
                             </div>
                          </div>
                      ))}
@@ -398,11 +398,11 @@ const Profile: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                      {myReviews.map(r => (
                         <div key={r.$id} className="bg-white border border-slate-50 p-8 rounded-[40px] shadow-sm space-y-4">
-                           <div className="flex gap-1 text-teal-500">
+                           <div className="flex gap-1 text-brand-primary">
                               {[...Array(5)].map((_, i) => <i key={i} className={`fa-solid fa-star text-[9px] ${i < r.rating ? 'opacity-100' : 'opacity-10'}`}></i>)}
                            </div>
                            <p className="text-xs font-medium text-slate-600 italic leading-relaxed">"{r.comment}"</p>
-                           <p className="text-[9px] font-black text-[#003366] uppercase tracking-widest pt-2 border-t border-slate-50">BY: {r.buyerName}</p>
+                           <p className="text-[9px] font-black text-brand-primary uppercase tracking-widest pt-2 border-t border-slate-50">BY: {r.buyerName}</p>
                         </div>
                      ))}
                   </div>
@@ -420,7 +420,7 @@ const Profile: React.FC = () => {
                {user.sellerStatus === SellerStatus.VERIFIED ? (
                  <div className="space-y-12">
                     <div className="text-center space-y-4">
-                      <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Verification Center</h2>
+                      <h2 className="text-3xl font-black text-brand-ink dark:text-white uppercase tracking-tighter">Verification Center</h2>
                       <p className="text-slate-500 dark:text-slate-400 font-medium">Your identity is secure within the UI DLC Registry.</p>
                     </div>
                     <div className="bg-white dark:bg-slate-900 p-12 rounded-[48px] border border-slate-100 dark:border-slate-800 shadow-[0_40px_100px_-20px_rgba(0,51,102,0.1)] text-center space-y-8 transition-colors">
@@ -428,13 +428,13 @@ const Profile: React.FC = () => {
                         <i className="fa-solid fa-circle-check"></i>
                       </div>
                       <div className="space-y-3">
-                        <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Verified Seller</h3>
+                        <h3 className="text-2xl font-black text-brand-ink dark:text-white uppercase tracking-tight">Verified Seller</h3>
                         <p className="text-slate-500 dark:text-slate-400 font-medium max-w-sm mx-auto text-sm leading-relaxed">
                           Congratulations! Your student status is verified. You have full access to list items and exchange goods in the hub.
                         </p>
                       </div>
                       <div className="pt-6">
-                        <button onClick={() => setActiveTab('listings')} className="bg-[#003366] text-white px-10 py-5 rounded-3xl font-black text-[10px] uppercase tracking-widest shadow-2xl shadow-blue-100 dark:shadow-none hover:brightness-110 active:scale-95 transition-all">
+                        <button onClick={() => setActiveTab('listings')} className="bg-brand-primary text-white px-10 py-5 rounded-3xl font-black text-[10px] uppercase tracking-widest shadow-2xl shadow-indigo-100 dark:shadow-none hover:brightness-110 active:scale-95 transition-all">
                           View My Listings
                         </button>
                       </div>
@@ -446,7 +446,7 @@ const Profile: React.FC = () => {
                       <i className="fa-solid fa-hourglass-half"></i>
                     </div>
                     <div className="space-y-3">
-                       <h3 className="text-2xl font-black text-[#003366] dark:text-white uppercase tracking-tighter">Audit in Progress</h3>
+                       <h3 className="text-2xl font-black text-brand-primary dark:text-white uppercase tracking-tighter">Audit in Progress</h3>
                        <p className="text-[11px] text-slate-400 font-black uppercase tracking-[0.2em]">Registry protocol: UIDLC-VERIFY-PENDING</p>
                        <p className="text-sm text-slate-500 dark:text-slate-400 font-medium max-w-md mx-auto leading-relaxed">
                          Our academic auditors are reviewing your credentials. This typically takes 12-24 scholarly hours.
@@ -456,14 +456,14 @@ const Profile: React.FC = () => {
                ) : (
                  <div className="space-y-12">
                     <div className="text-center space-y-4">
-                      <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Verification Center</h2>
+                      <h2 className="text-3xl font-black text-brand-ink dark:text-white uppercase tracking-tighter">Verification Center</h2>
                       <p className="text-slate-500 dark:text-slate-400 font-medium text-sm leading-relaxed max-w-lg mx-auto">
                         To maintain a safe community, all scholars must verify their student status by uploading a valid University of Ibadan School ID card.
                       </p>
                     </div>
                     <div className="bg-white dark:bg-slate-900 p-12 rounded-[48px] border border-slate-100 dark:border-slate-800 shadow-xl space-y-10">
                       <form onSubmit={handleSubmitVerification} className="space-y-10">
-                        <label className={`aspect-video rounded-[32px] border-3 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer group ${docPreview ? 'border-teal-500 bg-teal-50 dark:bg-teal-950/20' : 'border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 group-hover:border-teal-400'}`}>
+                        <label className={`aspect-video rounded-[32px] border-3 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer group ${docPreview ? 'border-brand-primary bg-brand-surface dark:bg-indigo-950/20' : 'border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 group-hover:border-indigo-500'}`}>
                            {docPreview ? (
                              <img src={docPreview} className="w-full h-full object-cover rounded-[30px]" alt="ID Preview" />
                            ) : (
@@ -484,16 +484,16 @@ const Profile: React.FC = () => {
                         </label>
                         
                         <div className="flex flex-col gap-6">
-                           <div className="p-6 bg-blue-50/50 dark:bg-blue-900/10 rounded-3xl border border-blue-100 dark:border-blue-900/20 flex items-center gap-4">
-                              <i className="fa-solid fa-shield-halved text-blue-600 text-xl"></i>
-                              <p className="text-[10px] text-blue-800 dark:text-blue-400 font-bold uppercase leading-relaxed tracking-wider">
+                           <div className="p-6 bg-brand-surface dark:bg-brand-primary/10 rounded-3xl border border-indigo-100 dark:border-indigo-900/20 flex items-center gap-4">
+                              <i className="fa-solid fa-shield-halved text-brand-primary text-xl"></i>
+                              <p className="text-[10px] text-brand-primary dark:text-blue-400 font-bold uppercase leading-relaxed tracking-wider">
                                 Your ID is encrypted and only used for registry verification. It will not be shared with other students.
                               </p>
                            </div>
                            <button 
                              type="submit" 
                              disabled={!docPreview || isUploadingDoc}
-                             className="w-full py-6 bg-[#003366] text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-blue-900/10 hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
+                             className="w-full py-6 bg-brand-primary text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-brand-primary/10 hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
                            >
                              {isUploadingDoc ? 'Transmitting Node...' : 'Submit ID for Scholar Verification'}
                            </button>
@@ -509,10 +509,10 @@ const Profile: React.FC = () => {
       {/* Editor Hub Fragment */}
       {isEditing && (
          <div className="fixed inset-0 z-100 flex items-center justify-center p-6 animate-fadeIn">
-            <div className="absolute inset-0 bg-[#003366]/40 backdrop-blur-xl" onClick={() => setIsEditing(false)}></div>
+            <div className="absolute inset-0 bg-brand-primary/40 backdrop-blur-xl" onClick={() => setIsEditing(false)}></div>
             <div className="bg-white w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-[56px] p-10 md:p-14 shadow-2xl relative z-10 animate-slideUp space-y-12 no-scrollbar">
                <div className="flex items-center justify-between border-b border-slate-100 pb-8">
-                  <h2 className="text-3xl font-black text-[#003366] uppercase tracking-tighter leading-none">Profile Audit Protocol.</h2>
+                  <h2 className="text-3xl font-black text-brand-primary uppercase tracking-tighter leading-none">Profile Audit Protocol.</h2>
                   <button onClick={() => setIsEditing(false)} className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-rose-500 hover:bg-rose-50 transition-all"><i className="fa-solid fa-xmark"></i></button>
                </div>
                
@@ -520,18 +520,18 @@ const Profile: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                      <div className="space-y-4">
                         <p className={sectionSubtleClass}>Scholar Nomenclature</p>
-                        <input type="text" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-[#003366] outline-none focus:bg-white focus:border-teal-600 shadow-sm" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} required />
+                        <input type="text" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-brand-primary outline-none focus:bg-white focus:border-brand-primary shadow-sm" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} required />
                      </div>
                      <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-4">
                            <p className={sectionSubtleClass}>Department sector</p>
-                           <select className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-xs font-black text-[#003366] outline-none" value={editForm.department} onChange={e => setEditForm({...editForm, department: e.target.value})}>
+                           <select className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-xs font-black text-brand-primary outline-none" value={editForm.department} onChange={e => setEditForm({...editForm, department: e.target.value})}>
                               {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
                            </select>
                         </div>
                         <div className="space-y-4">
                            <p className={sectionSubtleClass}>Level Code</p>
-                           <select className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-xs font-black text-[#003366] outline-none" value={editForm.level} onChange={e => setEditForm({...editForm, level: e.target.value})}>
+                           <select className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-xs font-black text-brand-primary outline-none" value={editForm.level} onChange={e => setEditForm({...editForm, level: e.target.value})}>
                               {LEVELS.map(l => <option key={l} value={l}>{l}L</option>)}
                            </select>
                         </div>
@@ -540,19 +540,19 @@ const Profile: React.FC = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-10 border-t border-slate-50">
                      <div className="space-y-8">
-                        <h3 className="text-xs font-black text-teal-600 uppercase tracking-widest">Digital Terminals</h3>
+                        <h3 className="text-xs font-black text-brand-primary uppercase tracking-widest">Digital Terminals</h3>
                         <div className="space-y-4">
-                           <input type="tel" placeholder="WhatsApp Number" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-[#003366] outline-none focus:bg-white focus:border-teal-600 shadow-sm" value={editForm.phoneNumber} onChange={e => setEditForm({...editForm, phoneNumber: e.target.value})} />
-                           <input type="text" placeholder="OPay / PalmPay Handles" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-[#003366] outline-none focus:bg-white focus:border-teal-600 shadow-sm" value={editForm.fintechHandles} onChange={e => setEditForm({...editForm, fintechHandles: e.target.value})} />
+                           <input type="tel" placeholder="WhatsApp Number" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-brand-primary outline-none focus:bg-white focus:border-brand-primary shadow-sm" value={editForm.phoneNumber} onChange={e => setEditForm({...editForm, phoneNumber: e.target.value})} />
+                           <input type="text" placeholder="OPay / PalmPay Handles" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-brand-primary outline-none focus:bg-white focus:border-brand-primary shadow-sm" value={editForm.fintechHandles} onChange={e => setEditForm({...editForm, fintechHandles: e.target.value})} />
                         </div>
                      </div>
                      <div className="space-y-8">
-                        <h3 className="text-xs font-black text-teal-600 uppercase tracking-widest">Bank Node Details</h3>
+                        <h3 className="text-xs font-black text-brand-primary uppercase tracking-widest">Bank Node Details</h3>
                         <div className="space-y-4">
-                           <input type="text" placeholder="Bank Name" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-[#003366] outline-none focus:bg-white focus:border-teal-600 shadow-sm" value={editForm.bankName} onChange={e => setEditForm({...editForm, bankName: e.target.value})} />
+                           <input type="text" placeholder="Bank Name" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-brand-primary outline-none focus:bg-white focus:border-brand-primary shadow-sm" value={editForm.bankName} onChange={e => setEditForm({...editForm, bankName: e.target.value})} />
                            <div className="grid grid-cols-2 gap-4">
-                              <input type="text" placeholder="Account Number" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-[#003366] outline-none focus:bg-white focus:border-teal-600 shadow-sm" value={editForm.accountNumber} onChange={e => setEditForm({...editForm, accountNumber: e.target.value})} />
-                              <input type="text" placeholder="Account Name" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-[#003366] outline-none focus:bg-white focus:border-teal-600 shadow-sm" value={editForm.accountName} onChange={e => setEditForm({...editForm, accountName: e.target.value})} />
+                              <input type="text" placeholder="Account Number" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-brand-primary outline-none focus:bg-white focus:border-brand-primary shadow-sm" value={editForm.accountNumber} onChange={e => setEditForm({...editForm, accountNumber: e.target.value})} />
+                              <input type="text" placeholder="Account Name" className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-6 py-4 text-sm font-black text-brand-primary outline-none focus:bg-white focus:border-brand-primary shadow-sm" value={editForm.accountName} onChange={e => setEditForm({...editForm, accountName: e.target.value})} />
                            </div>
                         </div>
                      </div>
@@ -560,7 +560,7 @@ const Profile: React.FC = () => {
 
                   <div className="pt-10 flex gap-6">
                      <button type="button" onClick={() => setIsEditing(false)} className="px-10 py-5 text-[10px] font-black uppercase tracking-widest text-slate-300 hover:text-rose-500 transition-all border border-transparent hover:border-rose-100 rounded-2xl">Abort Deployment</button>
-                     <button type="submit" className="grow py-5 bg-[#003366] text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-blue-900/20 hover:scale-[1.02] active:scale-95 transition-all">Execute Audit Sync</button>
+                     <button type="submit" className="grow py-5 bg-brand-primary text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-brand-primary/20 hover:scale-[1.02] active:scale-95 transition-all">Execute Audit Sync</button>
                   </div>
                </form>
             </div>

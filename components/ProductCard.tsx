@@ -1,4 +1,4 @@
-
+﻿
 import React from "react";
 import { Link } from "react-router-dom";
 import { Product } from "../types";
@@ -17,19 +17,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete }) => {
       {/* DLC Metadata Nodes */}
       <div className="absolute top-4 left-4 z-30 flex flex-wrap gap-2 max-w-[calc(100%-100px)]">
          {product.learningHub && (
-           <span className="bg-white/90 backdrop-blur-sm dark:bg-slate-900/90 border border-slate-100 dark:border-slate-800 rounded-lg px-3 py-1.5 text-[8px] font-black text-[#003366] dark:text-teal-400 uppercase tracking-widest shadow-sm flex items-center gap-1.5">
+           <span className="bg-white/90 backdrop-blur-sm dark:bg-slate-900/90 border border-slate-100 dark:border-slate-800 rounded-lg px-3 py-1.5 text-[8px] font-black text-brand-primary dark:text-indigo-500 uppercase tracking-widest shadow-sm flex items-center gap-1.5">
               <i className="fa-solid fa-location-dot"></i>
               {product.learningHub.split(' ')[0]}
            </span>
          )}
          {product.isExamWeekSafe && (
-           <span className="bg-indigo-500 text-white rounded-lg px-3 py-1.5 text-[8px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 flex items-center gap-1.5">
+           <span className="bg-brand-surface0 text-white rounded-lg px-3 py-1.5 text-[8px] font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20 flex items-center gap-1.5">
               <i className="fa-solid fa-calendar-check"></i>
               Exam Ready
            </span>
          )}
          {product.isSharedLogistics && (
-           <span className="bg-orange-500 text-white rounded-lg px-3 py-1.5 text-[8px] font-black uppercase tracking-widest shadow-lg shadow-orange-500/20 flex items-center gap-1.5">
+           <span className="bg-amber-500 text-white rounded-lg px-3 py-1.5 text-[8px] font-black uppercase tracking-widest shadow-lg shadow-amber-500/20 flex items-center gap-1.5">
               <i className="fa-solid fa-truck-fast"></i>
               Shared
            </span>
@@ -53,7 +53,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete }) => {
              <Link 
                 onClick={(e) => e.stopPropagation()}
                 to={`/messages?with=${product.sellerId}&product=${product.$id}`}
-                className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-300 hover:text-blue-600 hover:shadow-lg transition-all active:scale-90 shadow-sm border border-slate-50"
+                className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-300 hover:text-brand-primary hover:shadow-lg transition-all active:scale-90 shadow-sm border border-slate-50"
              >
                 <i className="fa-solid fa-comments"></i>
              </Link>
@@ -79,7 +79,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete }) => {
         {/* Structured Shopio Detail Section */}
         <div className="text-center space-y-4 flex flex-col grow">
           <div className="space-y-2">
-             <h3 className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors uppercase tracking-tight leading-tight line-clamp-1">{product.name}</h3>
+             <h3 className="text-sm font-black text-brand-ink group-hover:text-brand-primary transition-colors uppercase tracking-tight leading-tight line-clamp-1">{product.name}</h3>
              <p className="text-[11px] text-slate-400 font-medium italic leading-relaxed line-clamp-2 max-w-[200px] mx-auto">{product.category}</p>
           </div>
 
@@ -95,7 +95,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete }) => {
                 {/* Price Focal Node */}
                 <div className="flex flex-col items-end">
                    <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest leading-none mb-1 italic">Exchange Value</span>
-                   <p className="text-lg font-black text-slate-900 tracking-tighter shrink-0">₦{product.price.toLocaleString()}</p>
+                   <p className="text-lg font-black text-brand-ink tracking-tighter shrink-0">₦{product.price.toLocaleString()}</p>
                 </div>
              </div>
           </div>
@@ -106,7 +106,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete }) => {
       <div className="px-6 pb-6">
         <Link
           to={`/seller/${product.$id}`}
-          className="block w-full py-3 bg-slate-900 text-white rounded-lg text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 text-center shadow-xl shadow-slate-900/10 hover:bg-blue-700"
+          className="block w-full py-3 bg-slate-900 text-white rounded-lg text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 text-center shadow-xl shadow-slate-900/10 hover:bg-brand-primary"
         >
             View Seller Details
         </Link>

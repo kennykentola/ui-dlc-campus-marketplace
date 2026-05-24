@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
@@ -57,8 +57,8 @@ const Register: React.FC = () => {
         </div>
         
         <div className="text-center space-y-4">
-           <h1 className="text-4xl font-black text-[#003366] uppercase tracking-tighter leading-none">
-              <span className="text-[#14b8a6]">Register</span>
+           <h1 className="text-4xl font-black text-brand-primary uppercase tracking-tighter leading-none">
+              <span className="text-brand-secondary">Register</span>
            </h1>
            <p className="text-slate-400 text-[11px] font-medium">
               Create your account
@@ -76,19 +76,19 @@ const Register: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-3">
               <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Full Name</label>
-              <input name="name" required className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" placeholder="Tunde Adebayo" value={formData.name} onChange={handleChange} />
+              <input name="name" required className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-brand-primary outline-none focus:bg-white focus:ring-4 focus:ring-brand-secondary/5 focus:border-brand-secondary transition-all placeholder:text-slate-200" placeholder="Tunde Adebayo" value={formData.name} onChange={handleChange} />
             </div>
             <div className="space-y-3">
               <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Student Email</label>
-              <input name="email" type="email" autoComplete="email" required className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" placeholder="student@dlc.ui.edu.ng" value={formData.email} onChange={handleChange} />
+              <input name="email" type="email" autoComplete="email" required className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-brand-primary outline-none focus:bg-white focus:ring-4 focus:ring-brand-secondary/5 focus:border-brand-secondary transition-all placeholder:text-slate-200" placeholder="student@dlc.ui.edu.ng" value={formData.email} onChange={handleChange} />
             </div>
             <div className="space-y-3">
               <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Department</label>
-              <input name="department" required className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" placeholder="Statistics" value={formData.department} onChange={handleChange} />
+              <input name="department" required className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-brand-primary outline-none focus:bg-white focus:ring-4 focus:ring-brand-secondary/5 focus:border-brand-secondary transition-all placeholder:text-slate-200" placeholder="Statistics" value={formData.department} onChange={handleChange} />
             </div>
             <div className="space-y-3">
               <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Matric Number</label>
-              <input name="matricNumber" required className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" placeholder="DLC/21/XXXX" value={formData.matricNumber} onChange={handleChange} />
+              <input name="matricNumber" required className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-brand-primary outline-none focus:bg-white focus:ring-4 focus:ring-brand-secondary/5 focus:border-brand-secondary transition-all placeholder:text-slate-200" placeholder="DLC/21/XXXX" value={formData.matricNumber} onChange={handleChange} />
             </div>
             <div className="space-y-3">
               <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Password</label>
@@ -98,12 +98,12 @@ const Register: React.FC = () => {
                   type={showPassword ? "text" : "password"} 
                   required
                   autoComplete="new-password"
-                  className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 pr-14 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" 
+                  className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 pr-14 text-sm font-black text-brand-primary outline-none focus:bg-white focus:ring-4 focus:ring-brand-secondary/5 focus:border-brand-secondary transition-all placeholder:text-slate-200" 
                   placeholder="••••••••" 
                   value={formData.password} 
                   onChange={handleChange} 
                 />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-[#14b8a6] transition-colors">
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-brand-secondary transition-colors">
                    <i className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"} text-xs`}></i>
                 </button>
               </div>
@@ -116,12 +116,12 @@ const Register: React.FC = () => {
                   type={showConfirmPassword ? "text" : "password"} 
                   required
                   autoComplete="new-password"
-                  className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 pr-14 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" 
+                  className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 pr-14 text-sm font-black text-brand-primary outline-none focus:bg-white focus:ring-4 focus:ring-brand-secondary/5 focus:border-brand-secondary transition-all placeholder:text-slate-200" 
                   placeholder="••••••••" 
                   value={formData.confirmPassword} 
                   onChange={handleChange} 
                 />
-                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-[#14b8a6] transition-colors">
+                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-brand-secondary transition-colors">
                    <i className={`fa-solid ${showConfirmPassword ? "fa-eye-slash" : "fa-eye"} text-xs`}></i>
                 </button>
               </div>
@@ -130,13 +130,13 @@ const Register: React.FC = () => {
 
           <div className="space-y-3">
               <label className="text-[10px] font-black text-slate-300 uppercase tracking-widest ml-1">Admin Code (Optional)</label>
-            <input name="adminCode" className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-[#003366] outline-none focus:bg-white focus:ring-4 focus:ring-[#14b8a6]/5 focus:border-[#14b8a6] transition-all placeholder:text-slate-200" placeholder="••••••••" value={formData.adminCode} onChange={handleChange} />
+            <input name="adminCode" className="w-full bg-slate-50 border border-slate-50 rounded-2xl px-6 py-5 text-sm font-black text-brand-primary outline-none focus:bg-white focus:ring-4 focus:ring-brand-secondary/5 focus:border-brand-secondary transition-all placeholder:text-slate-200" placeholder="••••••••" value={formData.adminCode} onChange={handleChange} />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#003366] text-white py-6 rounded-2xl font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-blue-900/10 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
+            className="w-full bg-brand-primary text-white py-6 rounded-2xl font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-brand-primary/10 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
           >
             {loading ? "Registering..." : "Register"}
             <i className="fa-solid fa-user-plus text-[10px]"></i>
@@ -146,7 +146,7 @@ const Register: React.FC = () => {
         <div className="pt-8 border-t border-slate-50 text-center">
            <p className="text-[11px] font-medium text-slate-500 leading-relaxed">
               Already have an account?{" "}
-              <Link to="/login" className="text-[#14b8a6] hover:underline underline-offset-4 ml-2">
+              <Link to="/login" className="text-brand-secondary hover:underline underline-offset-4 ml-2">
                 login
               </Link>
            </p>

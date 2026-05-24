@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../App';
 
@@ -56,8 +56,8 @@ const ResetPassword: React.FC = () => {
         
         <div className="relative z-10 space-y-8">
           <div className="text-center space-y-2">
-            <h2 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Reset Pass.</h2>
-            <p className="text-[10px] font-black text-teal-600 uppercase tracking-widest italic">Credential Synchronization Hub</p>
+            <h2 className="text-3xl font-black text-brand-ink dark:text-white uppercase tracking-tighter">Reset Pass.</h2>
+            <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest italic">Credential Synchronization Hub</p>
           </div>
 
           {!success ? (
@@ -68,7 +68,7 @@ const ResetPassword: React.FC = () => {
                   <input
                     type="password"
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-3xl px-6 py-4 text-sm font-medium focus:ring-4 focus:ring-teal-50 dark:focus:ring-teal-900/20 outline-none transition-all"
+                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-3xl px-6 py-4 text-sm font-medium focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-950/20 outline-none transition-all"
                     placeholder="Create new password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -79,7 +79,7 @@ const ResetPassword: React.FC = () => {
                   <input
                     type="password"
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-3xl px-6 py-4 text-sm font-medium focus:ring-4 focus:ring-teal-50 dark:focus:ring-teal-900/20 outline-none transition-all"
+                    className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-3xl px-6 py-4 text-sm font-medium focus:ring-4 focus:ring-indigo-50 dark:focus:ring-indigo-950/20 outline-none transition-all"
                     placeholder="Verify new password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
@@ -94,25 +94,25 @@ const ResetPassword: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading || !userId || !secret}
-                className="w-full bg-[#003366] text-white rounded-3xl py-4 font-black uppercase tracking-widest text-[11px] shadow-xl hover:bg-teal-600 transition-all active:scale-95 disabled:opacity-50"
+                className="w-full bg-brand-primary text-white rounded-3xl py-4 font-black uppercase tracking-widest text-[11px] shadow-xl hover:bg-brand-primary transition-all active:scale-95 disabled:opacity-50"
               >
                 {loading ? 'Processing...' : 'Sync New Credentials'}
               </button>
             </form>
           ) : (
             <div className="text-center space-y-6 animate-bounceIn">
-              <div className="w-20 h-20 bg-teal-50 dark:bg-teal-900/30 rounded-[28px] flex items-center justify-center mx-auto text-teal-600">
+              <div className="w-20 h-20 bg-brand-surface dark:bg-indigo-950/30 rounded-[28px] flex items-center justify-center mx-auto text-brand-primary">
                 <i className="fa-solid fa-check-double text-3xl"></i>
               </div>
               <div className="space-y-2">
                 <p className="text-sm font-bold text-slate-600 dark:text-slate-400">Registry Updated Successfully.</p>
-                <p className="text-[10px] text-teal-600 italic">Redirecting to login terminal...</p>
+                <p className="text-[10px] text-brand-primary italic">Redirecting to login terminal...</p>
               </div>
             </div>
           )}
 
           <div className="text-center pt-4">
-            <Link to="/login" className="text-[10px] font-black text-[#003366] dark:text-teal-400 uppercase tracking-widest hover:underline">
+            <Link to="/login" className="text-[10px] font-black text-brand-primary dark:text-indigo-500 uppercase tracking-widest hover:underline">
               Return to Login Terminal
             </Link>
           </div>

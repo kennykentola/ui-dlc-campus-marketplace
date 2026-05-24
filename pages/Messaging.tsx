@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { databases, storage, client } from "../lib/appwrite";
 import { useAuth } from "../App";
@@ -26,18 +26,18 @@ const Messaging: React.FC = () => {
 
   const WALLPAPERS = [
     { id: 'default', color: 'bg-white', label: 'Default' },
-    { id: '#003366', color: 'bg-[#003366]', label: 'Midnight' },
-    { id: '#4f46e5', color: 'bg-indigo-600', label: 'Royal' },
-    { id: '#0d9488', color: 'bg-teal-600', label: 'Forest' },
-    { id: '#d97706', color: 'bg-amber-600', label: 'Sunset' },
+    { id: '#1E3A8A', color: 'bg-brand-primary', label: 'Midnight' },
+    { id: '#4f46e5', color: 'bg-brand-primary', label: 'Royal' },
+    { id: '#0d9488', color: 'bg-brand-primary', label: 'Forest' },
+    { id: '#d97706', color: 'bg-brand-secondary', label: 'Sunset' },
     { id: '#e11d48', color: 'bg-rose-600', label: 'Vibrant' },
     { id: '#059669', color: 'bg-emerald-600', label: 'Emerald' },
     { id: '#7c3aed', color: 'bg-violet-600', label: 'Violet' },
     { id: '#475569', color: 'bg-slate-600', label: 'Slate' },
     { id: '#0284c7', color: 'bg-sky-600', label: 'Sky' },
     { id: '#881337', color: 'bg-rose-900', label: 'Wine' },
-    { id: 'https://images.unsplash.com/photo-1557683316-973673baf926', color: 'bg-indigo-100', label: 'Gradient' },
-    { id: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab', color: 'bg-blue-100', label: 'Abstract' },
+    { id: 'https://images.unsplash.com/photo-1557683316-973673baf926', color: 'bg-brand-surface', label: 'Gradient' },
+    { id: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab', color: 'bg-brand-surface', label: 'Abstract' },
     { id: 'custom', color: 'bg-slate-800', label: 'Upload', isAction: true },
   ];
 
@@ -281,13 +281,35 @@ const Messaging: React.FC = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-140px)] w-full max-w-[1500px] mx-auto md:w-[calc(100%-5rem)] flex bg-white overflow-hidden shadow-2xl md:rounded-[48px] border border-slate-100 animate-fadeIn my-12 md:my-12 relative z-10 transition-all duration-500">
+    <>
+      <style>
+        {`
+          .dynamic-chat-bg {
+            background-color: ` + (chatWallpaper.startsWith('#') ? chatWallpaper : 'transparent') + `;
+            background-image: ` + (!chatWallpaper.startsWith('#') && chatWallpaper !== 'default' ? "url('" + chatWallpaper + "')" : 'none') + `;
+            background-size: cover;
+            background-position: center;
+          }
+        ` + WALLPAPERS.map(wp => {
+            const safeId = wp.id.replace(/[^a-zA-Z0-9]/g, '');
+            const isColor = wp.id.startsWith('#') || wp.id === 'default';
+            const isImage = wp.id.startsWith('http');
+            return `
+              .wp-preview-` + safeId + ` {
+                background-color: ` + (isColor ? (wp.id === 'default' ? '#fff' : wp.id) : 'transparent') + `;
+                background-image: ` + (isImage ? "url('" + wp.id + "?w=100&h=100&fit=crop')" : 'none') + `;
+                background-size: cover;
+              }
+            `;
+          }).join('')}
+      </style>
+      <div className="h-[calc(100vh-140px)] w-full max-w-[1500px] mx-auto md:w-[calc(100%-5rem)] flex bg-white overflow-hidden shadow-2xl md:rounded-[48px] border border-slate-100 animate-fadeIn my-12 md:my-12 relative z-10 transition-all duration-500">
 
       {/* Sidebar Terminal */}
       <div className={`w-full md:w-1/3 lg:w-[450px] bg-slate-50 border-r border-slate-100 flex flex-col h-full ${chattingWith ? "hidden md:flex" : "flex"}`}>
         <div className="h-24 md:h-28 px-6 md:px-10 flex items-center justify-between border-b border-slate-100 bg-white shrink-0">
           <div>
-            <h2 className="text-xl md:text-2xl font-black text-[#003366] uppercase tracking-tighter">Campus <span className="text-teal-600">Chat.</span></h2>
+            <h2 className="text-xl md:text-2xl font-black text-brand-primary uppercase tracking-tighter">Campus <span className="text-brand-primary">Chat.</span></h2>
             <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest mt-1 italic">Active Transmissions</p>
           </div>
           <Link to="/support" className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm border border-rose-100" title="Safe Trade Support">
@@ -296,14 +318,14 @@ const Messaging: React.FC = () => {
         </div>
         <div className="grow overflow-y-auto bg-white no-scrollbar">
           {conversations.map((c, i) => (
-            <button key={i} onClick={() => { setChattingWith(c.user); navigate(`/messages?with=${c.user.userId}`); }} className={`w-full h-20 md:h-24 px-6 md:px-10 flex items-center gap-4 md:gap-6 border-b border-slate-50 transition-all ${chattingWith?.userId === c.user.userId ? "bg-teal-50/50" : "hover:bg-slate-50"}`}>
-              <img src={c.user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.user.name)}&background=003366&color=fff`} className="w-12 h-12 md:w-16 md:h-16 rounded-[22px] md:rounded-[28px] shrink-0 shadow-lg border-2 border-white object-cover" alt="Av" />
-              <div className="grow text-left overflow-hidden">
-                <div className="flex justify-between items-center mb-1">
-                  <p className="text-[13px] md:text-[15px] font-black text-[#003366] uppercase tracking-tight truncate leading-none">{c.user.name}</p>
-                  <span className="text-[8px] md:text-[9px] font-black text-slate-300 uppercase tracking-widest">{c.time}</span>
+            <button key={i} onClick={() => { setChattingWith(c.user); navigate(`/messages?with=${c.user.userId}`); }} className={`w-full px-4 md:px-6 py-3 flex items-center gap-4 transition-all ${chattingWith?.userId === c.user.userId ? "bg-brand-surface" : "hover:bg-slate-50"}`}>
+              <img src={c.user.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(c.user.name)}&background=1E3A8A&color=fff`} className="w-12 h-12 md:w-14 md:h-14 rounded-full shrink-0 object-cover" alt="Avatar" />
+              <div className="grow text-left overflow-hidden border-b border-slate-100 pb-3 h-full flex flex-col justify-center">
+                <div className="flex justify-between items-center mb-1 mt-2">
+                  <p className="text-sm md:text-[16px] font-semibold text-brand-ink truncate leading-none capitalize">{c.user.name.toLowerCase()}</p>
+                  <span className="text-[10px] md:text-xs text-slate-400">{c.time}</span>
                 </div>
-                <p className="text-[11px] md:text-[12px] text-slate-400 font-medium italic truncate leading-relaxed">{c.lastMsg}</p>
+                <p className="text-xs md:text-sm text-slate-500 truncate leading-relaxed">{c.lastMsg}</p>
               </div>
             </button>
           ))}
@@ -317,16 +339,16 @@ const Messaging: React.FC = () => {
           <>
             <div className="h-20 md:h-24 px-4 md:px-12 flex items-center justify-between bg-white/80 backdrop-blur-xl border-b border-slate-100 z-60 shrink-0">
               <div className="flex items-center gap-3 md:gap-6">
-                <button onClick={() => setChattingWith(null)} className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-[#003366]"><i className="fa-solid fa-arrow-left"></i></button>
+                <button onClick={() => setChattingWith(null)} aria-label="Close chat" className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-brand-primary"><i className="fa-solid fa-arrow-left" aria-hidden="true"></i></button>
                 <Link to={`/user/${chattingWith.userId}`} className="flex items-center gap-3 md:gap-6 hover:opacity-80 transition-opacity group">
                   <div className="relative">
                     <img src={chattingWith.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(chattingWith.name)}&background=003366&color=fff`} className="w-10 h-10 md:w-16 md:h-16 rounded-[18px] md:rounded-[28px] shadow-md border-2 border-white object-cover group-hover:scale-105 transition-transform" alt="Av" />
-                    <div className="absolute -bottom-1 -right-1 w-3 h-3 md:w-5 md:h-5 bg-teal-500 rounded-lg border-2 md:border-4 border-white"></div>
+                    <div className="absolute -bottom-1 -right-1 w-3 h-3 md:w-5 md:h-5 bg-brand-primary rounded-lg border-2 md:border-4 border-white"></div>
                   </div>
                   <div className="overflow-hidden">
-                    <h3 className="text-sm md:text-xl font-black text-[#003366] uppercase tracking-tighter truncate leading-none mb-1 group-hover:text-teal-600 transition-colors">{chattingWith.name}</h3>
-                    <span className="text-[8px] md:text-[10px] font-black text-teal-600 uppercase tracking-widest italic flex items-center gap-1 md:gap-2">
-                      <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-teal-500 rounded-full animate-pulse"></span>
+                    <h3 className="text-sm md:text-xl font-black text-brand-primary uppercase tracking-tighter truncate leading-none mb-1 group-hover:text-brand-primary transition-colors">{chattingWith.name}</h3>
+                    <span className="text-[8px] md:text-[10px] font-black text-brand-primary uppercase tracking-widest italic flex items-center gap-1 md:gap-2">
+                      <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-brand-primary rounded-full animate-pulse"></span>
                       Verified Student
                     </span>
                   </div>
@@ -335,7 +357,7 @@ const Messaging: React.FC = () => {
               <div className="flex gap-2 md:gap-4 relative z-50">
                 <button 
                   onClick={() => setShowWallpaperPicker(!showWallpaperPicker)} 
-                  className={`w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-xl md:rounded-2xl transition-all shadow-sm active:scale-95 group ${showWallpaperPicker ? 'bg-teal-600 text-white' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'}`}
+                  className={`w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-xl md:rounded-2xl transition-all shadow-sm active:scale-95 group ${showWallpaperPicker ? 'bg-brand-primary text-white' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'}`}
                   title="Change Wallpaper"
                 >
                   <i className="fa-solid fa-palette text-sm md:text-xl"></i>
@@ -343,7 +365,7 @@ const Messaging: React.FC = () => {
 
                 {showWallpaperPicker && (
                   <div className="absolute top-full right-0 mt-4 p-4 bg-white rounded-3xl shadow-2xl border border-slate-100 w-[280px] max-h-[400px] overflow-y-auto z-70 animate-slideUp no-scrollbar">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-[#003366] mb-4 text-center">Chat Theme</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-brand-primary mb-4 text-center">Chat Theme</p>
                     <div className="grid grid-cols-4 gap-3">
                       {WALLPAPERS.map(wp => {
                         const isColor = wp.id.startsWith('#') || wp.id === 'default';
@@ -355,12 +377,7 @@ const Messaging: React.FC = () => {
                             className={`group flex flex-col items-center gap-2`}
                           >
                             <div 
-                              className={`w-12 h-12 rounded-2xl border-2 ${chatWallpaper === wp.id ? 'border-teal-500 scale-110' : 'border-slate-100'} shadow-sm hover:scale-110 transition-transform flex items-center justify-center overflow-hidden`}
-                              style={{ 
-                                backgroundColor: isColor ? (wp.id === 'default' ? '#fff' : wp.id) : undefined,
-                                backgroundImage: isImage ? `url("${wp.id}?w=100&h=100&fit=crop")` : undefined,
-                                backgroundSize: 'cover'
-                              }}
+                              className={`w-12 h-12 rounded-2xl border-2 ${chatWallpaper === wp.id ? 'border-brand-primary scale-110' : 'border-slate-100'} shadow-sm hover:scale-110 transition-transform flex items-center justify-center overflow-hidden wp-preview-${wp.id.replace(/[^a-zA-Z0-9]/g, '')}`}
                             >
                               {wp.id === 'custom' && <i className="fa-solid fa-camera text-white text-xs"></i>}
                             </div>
@@ -372,28 +389,21 @@ const Messaging: React.FC = () => {
                   </div>
                 )}
 
-                <button onClick={initiateCall} className="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center bg-teal-50 text-teal-600 rounded-xl md:rounded-2xl hover:bg-teal-600 hover:text-white transition-all shadow-sm active:scale-95 group">
-                  <i className="fa-solid fa-phone text-sm md:text-xl group-hover:rotate-12 transition-transform"></i>
+                <button onClick={initiateCall} aria-label="Call user" className="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center bg-brand-surface text-brand-primary rounded-xl md:rounded-2xl hover:bg-brand-primary hover:text-white transition-all shadow-sm active:scale-95 group">
+                  <i className="fa-solid fa-phone text-sm md:text-xl group-hover:rotate-12 transition-transform" aria-hidden="true"></i>
                 </button>
               </div>
             </div>
 
-            <div ref={scrollRef} className="grow px-4 md:px-12 py-8 md:py-12 space-y-6 md:space-y-8 overflow-y-auto no-scrollbar relative w-full overflow-x-hidden"
-              style={{ 
-                backgroundColor: chatWallpaper.startsWith('#') ? chatWallpaper : undefined,
-                backgroundImage: !chatWallpaper.startsWith('#') && chatWallpaper !== 'default' ? `url("${chatWallpaper}")` : undefined,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-              }}
-            >
-              <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: `url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png")`, backgroundRepeat: 'repeat', backgroundSize: '400px' }}></div>
+            <div ref={scrollRef} className="grow px-4 md:px-12 py-8 md:py-12 space-y-6 md:space-y-8 overflow-y-auto no-scrollbar relative w-full overflow-x-hidden dynamic-chat-bg">
+              <div className="absolute inset-0 opacity-[0.05] pointer-events-none bg-whatsapp-pattern"></div>
               <div className="relative z-10 flex flex-col gap-6 md:gap-8 w-full">
                 {messages.map((m: any, i) => {
                   const isMe = m.senderId === user?.userId;
                   return (
                     <div key={m.$id} className={`flex w-full ${isMe ? "justify-end" : "justify-start"}`}>
                       <div className={`max-w-[85%] md:max-w-[70%] space-y-2 md:space-y-3 flex flex-col ${isMe ? "items-end" : "items-start"}`}>
-                        <div className={`px-4 py-3 md:px-8 md:py-6 rounded-[24px] md:rounded-[32px] text-[13px] md:text-[15px] font-medium leading-relaxed border wrap-break-word w-full shadow-sm ${isMe ? "bg-[#003366] text-white rounded-tr-none border-[#003366] text-right" : "bg-white text-slate-800 rounded-tl-none border-slate-50 text-left"}`}>
+                        <div className={`px-4 py-3 md:px-8 md:py-6 rounded-[24px] md:rounded-[32px] text-[13px] md:text-[15px] font-medium leading-relaxed border wrap-break-word w-full shadow-sm ${isMe ? "bg-brand-primary text-white rounded-tr-none border-brand-primary text-right" : "bg-white text-brand-ink rounded-tl-none border-slate-50 text-left"}`}>
                           {m.type === 'file' ? (
                             <div className="space-y-3 md:space-y-4">
                               {m.fileName?.toLowerCase().match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
@@ -409,12 +419,12 @@ const Messaging: React.FC = () => {
                             </div>
                           ) : m.type === 'audio' ? (
                             <div className="flex items-center gap-4 md:gap-6 py-1 md:py-2">
-                              <button onClick={() => toggleAudio(m.$id)} className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all ${isMe ? 'bg-white text-[#003366]' : 'bg-[#003366] text-white'}`}>
-                                <i className={`fa-solid ${currentlyPlaying === m.$id ? 'fa-pause' : 'fa-play ml-1'} text-xs md:text-base`}></i>
+                              <button onClick={() => toggleAudio(m.$id)} aria-label={currentlyPlaying === m.$id ? 'Pause audio' : 'Play audio'} className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all ${isMe ? 'bg-white text-brand-primary' : 'bg-brand-primary text-white'}`}>
+                                <i className={`fa-solid ${currentlyPlaying === m.$id ? 'fa-pause' : 'fa-play ml-1'} text-xs md:text-base`} aria-hidden="true"></i>
                               </button>
                               <div className="grow space-y-1.5 md:space-y-2 min-w-[100px] md:min-w-[150px]">
                                 <div className={`h-1 rounded-full relative ${isMe ? 'bg-white/20' : 'bg-slate-100'}`}>
-                                  {currentlyPlaying === m.$id && <div className={`absolute left-0 top-0 h-full w-1/3 rounded-full bg-teal-400 animate-progressPulse`}></div>}
+                                  {currentlyPlaying === m.$id && <div className={`absolute left-0 top-0 h-full w-1/3 rounded-full bg-brand-surface0 animate-progressPulse`}></div>}
                                 </div>
                                 <div className="flex justify-between text-[8px] md:text-[9px] font-black uppercase tracking-widest opacity-60">
                                   <span>Voice Asset</span>
@@ -453,10 +463,10 @@ const Messaging: React.FC = () => {
               )}
               <div className="flex items-center gap-3 md:gap-10 grow max-w-full">
                 <div className="flex gap-4 md:gap-8 text-slate-300 text-xl md:text-3xl shrink-0">
-                  <i className={`fa-regular fa-face-smile cursor-pointer ${showEmojiPicker ? "text-teal-600" : "hover:text-[#003360]"} transition-colors`} onClick={() => setShowEmojiPicker(!showEmojiPicker)}></i>
-                  <i className={`fa-solid fa-paperclip cursor-pointer ${uploadingFile ? "animate-spin text-teal-600" : "hover:text-[#003360]"} transition-colors`} onClick={() => fileInputRef.current?.click()}></i>
-                  <input type="file" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
-                  <input type="file" className="hidden" ref={wallpaperInputRef} accept="image/*" onChange={handleWallpaperUpload} />
+                  <i className={`fa-regular fa-face-smile cursor-pointer ${showEmojiPicker ? "text-brand-primary" : "hover:text-[#003360]"} transition-colors`} onClick={() => setShowEmojiPicker(!showEmojiPicker)}></i>
+                  <i className={`fa-solid fa-paperclip cursor-pointer ${uploadingFile ? "animate-spin text-brand-primary" : "hover:text-[#003360]"} transition-colors`} onClick={() => fileInputRef.current?.click()}></i>
+                  <input type="file" className="hidden" aria-label="Upload file" title="Upload file" ref={fileInputRef} onChange={handleFileUpload} />
+                  <input type="file" className="hidden" aria-label="Upload wallpaper" title="Upload wallpaper" ref={wallpaperInputRef} accept="image/*" onChange={handleWallpaperUpload} />
                 </div>
 
                 <div className="grow flex items-center gap-3 md:gap-6">
@@ -473,20 +483,20 @@ const Messaging: React.FC = () => {
                       <form onSubmit={sendMessage} className="grow">
                         <input
                           type="text"
-                          className="w-full bg-slate-50 border border-slate-100 rounded-[24px] md:rounded-[40px] pl-6 pr-14 md:pl-10 md:pr-24 py-4 md:py-7 text-xs md:text-sm font-medium text-slate-900 outline-none focus:bg-white focus:ring-4 md:focus:ring-12 focus:ring-teal-50 transition-all placeholder:text-slate-300 shadow-sm"
+                          className="w-full bg-slate-50 border border-slate-100 rounded-[24px] md:rounded-[40px] pl-6 pr-14 md:pl-10 md:pr-24 py-4 md:py-7 text-xs md:text-sm font-medium text-brand-ink outline-none focus:bg-white focus:ring-4 md:focus:ring-12 focus:ring-indigo-50 transition-all placeholder:text-slate-300 shadow-sm"
                           placeholder="Message..."
                           value={newMessage}
                           onChange={(e) => setNewMessage(e.target.value)}
                         />
                         {newMessage.trim() && (
-                          <button type="submit" className="absolute right-1.5 md:right-3 top-1/2 -translate-y-1/2 w-10 h-10 md:w-16 md:h-16 flex items-center justify-center rounded-xl md:rounded-[30px] bg-[#003366] text-white shadow-xl transition-all scale-105 active:scale-95">
-                            <i className="fa-solid fa-paper-plane text-[10px] md:text-xl"></i>
+                          <button type="submit" aria-label="Send message" className="absolute right-1.5 md:right-3 top-1/2 -translate-y-1/2 w-10 h-10 md:w-16 md:h-16 flex items-center justify-center rounded-xl md:rounded-[30px] bg-brand-primary text-white shadow-xl transition-all scale-105 active:scale-95">
+                            <i className="fa-solid fa-paper-plane text-[10px] md:text-xl" aria-hidden="true"></i>
                           </button>
                         )}
                       </form>
                       {!newMessage.trim() && (
-                        <button onClick={startRecording} className="absolute right-1.5 md:right-3 top-1/2 -translate-y-1/2 w-10 h-10 md:w-16 md:h-16 flex items-center justify-center bg-teal-500 text-white rounded-xl md:rounded-[30px] hover:bg-teal-600 transition-all shadow-md active:scale-90">
-                          <i className="fa-solid fa-microphone text-xs md:text-xl"></i>
+                        <button onClick={startRecording} aria-label="Record voice message" className="absolute right-1.5 md:right-3 top-1/2 -translate-y-1/2 w-10 h-10 md:w-16 md:h-16 flex items-center justify-center bg-brand-primary text-white rounded-xl md:rounded-[30px] hover:bg-brand-primary transition-all shadow-md active:scale-90">
+                          <i className="fa-solid fa-microphone text-xs md:text-xl" aria-hidden="true"></i>
                         </button>
                       )}
                     </div>
@@ -496,16 +506,28 @@ const Messaging: React.FC = () => {
             </div>
           </>
         ) : (
-          <div className="grow flex flex-col items-center justify-center p-10 md:p-20 text-center bg-slate-50/20">
-            <div className="w-24 h-24 md:w-32 md:h-32 bg-slate-100 rounded-[40px] md:rounded-[48px] flex items-center justify-center text-slate-200 mb-6 md:mb-8 animate-pulse">
-              <i className="fa-solid fa-satellite-dish text-4xl md:text-6xl"></i>
+          <div className="grow flex flex-col items-center justify-center p-10 md:p-20 text-center bg-[#F8FAFC]">
+            <div className="mb-8 relative">
+               <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-lg border border-slate-100">
+                 <i className="fa-brands fa-whatsapp text-6xl text-brand-primary opacity-20"></i>
+               </div>
+               <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-brand-secondary rounded-full border-4 border-[#F8FAFC] flex items-center justify-center text-white">
+                  <i className="fa-solid fa-graduation-cap text-xs"></i>
+               </div>
             </div>
-            <h2 className="text-2xl md:text-4xl font-black text-[#003366] uppercase tracking-tighter">Hub Terminal.</h2>
-            <p className="text-[8px] md:text-[10px] font-bold text-slate-300 uppercase tracking-[0.3em] mt-3 md:mt-4 italic">Select a student terminal to engage encryption.</p>
+            <h2 className="text-2xl md:text-3xl font-light text-slate-700 mb-4">UI DLC Campus Chat</h2>
+            <p className="text-sm text-slate-500 mb-10 max-w-md leading-relaxed">
+              Send and receive messages with your fellow students seamlessly. Select a contact to start chatting.
+            </p>
+            <div className="mt-auto pt-20 flex items-center justify-center gap-2 text-xs text-slate-400">
+               <i className="fa-solid fa-lock text-[10px]"></i>
+               <span>End-to-end encrypted by Campus Hub</span>
+            </div>
           </div>
         )}
       </div>
     </div>
+    </>
   );
 };
 

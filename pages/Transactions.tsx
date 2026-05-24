@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../App";
 import { Transaction, TransactionStatus } from "../types";
@@ -47,44 +47,44 @@ const Transactions: React.FC = () => {
   };
 
   return (
-    <div className="bg-white min-h-screen pt-32 pb-40 animate-fadeIn relative px-6">
+    <div className="bg-hub-gradient-light min-h-screen pt-32 pb-40 animate-fadeIn relative px-6">
       <div className="container mx-auto max-w-5xl space-y-16 relative z-10">
          
          <header className="space-y-4">
-            <h1 className="text-4xl font-black text-[#003366] uppercase tracking-tighter">Transaction <span className="text-teal-600">Archive.</span></h1>
+            <h1 className="text-4xl font-black text-brand-primary uppercase tracking-tighter">Transaction <span className="text-brand-primary">Archive.</span></h1>
             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.4em] italic mb-10 leading-none">Immutable Hub Trade Registry</p>
          </header>
 
          {/* Protocol Toggle */}
          <div className="flex gap-4 p-2 bg-slate-50 border border-slate-100 rounded-[32px] w-fit mb-12">
-            <button onClick={() => setActiveTab('buying')} className={`px-10 py-5 rounded-[24px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'buying' ? 'bg-white text-[#003366] shadow-sm' : 'text-slate-400 hover:text-[#003366]'}`}>Outbound Registry</button>
-            <button onClick={() => setActiveTab('selling')} className={`px-10 py-5 rounded-[24px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'selling' ? 'bg-white text-[#003366] shadow-sm' : 'text-slate-400 hover:text-[#003366]'}`}>Inbound Registry</button>
+            <button onClick={() => setActiveTab('buying')} className={`px-10 py-5 rounded-[24px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'buying' ? 'bg-white text-brand-primary shadow-sm' : 'text-slate-400 hover:text-brand-primary'}`}>Outbound Registry</button>
+            <button onClick={() => setActiveTab('selling')} className={`px-10 py-5 rounded-[24px] text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'selling' ? 'bg-white text-brand-primary shadow-sm' : 'text-slate-400 hover:text-brand-primary'}`}>Inbound Registry</button>
          </div>
 
          <div className="space-y-10">
             {loading ? (
-               <div className="py-20 flex justify-center"><div className="w-10 h-10 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div></div>
+               <div className="py-20 flex justify-center"><div className="w-10 h-10 border-4 border-brand-primary border-t-transparent rounded-full animate-spin"></div></div>
             ) : (
                (activeTab === 'buying' ? sentTransactions : receivedTransactions).map(tx => (
-                  <div key={tx.$id} className="relative bg-white border border-slate-100 p-8 rounded-[48px] shadow-sm flex flex-col md:flex-row items-center justify-between gap-10 hover:shadow-xl hover:border-teal-500/10 transition-all group animate-slideUp">
+                  <div key={tx.$id} className="relative bg-white border border-slate-100 p-8 rounded-[48px] shadow-sm flex flex-col md:flex-row items-center justify-between gap-10 hover:shadow-xl hover:border-brand-primary/10 transition-all group animate-slideUp">
                      <div className="flex items-center gap-8 w-full md:w-auto">
-                        <div className="w-24 h-24 bg-slate-50 rounded-[32px] flex items-center justify-center text-[#003366] text-3xl shadow-inner relative overflow-hidden">
-                           <i className={`fa-solid ${tx.status === TransactionStatus.COMPLETED ? 'fa-circle-check text-teal-600' : tx.status === TransactionStatus.CANCELLED ? 'fa-circle-xmark text-rose-500' : 'fa-hourglass-half animate-pulse'}`}></i>
+                        <div className="w-24 h-24 bg-slate-50 rounded-[32px] flex items-center justify-center text-brand-primary text-3xl shadow-inner relative overflow-hidden">
+                           <i className={`fa-solid ${tx.status === TransactionStatus.COMPLETED ? 'fa-circle-check text-brand-primary' : tx.status === TransactionStatus.CANCELLED ? 'fa-circle-xmark text-rose-500' : 'fa-hourglass-half animate-pulse'}`}></i>
                         </div>
                         <div className="space-y-2">
                            <div className="flex items-center gap-3">
-                              <span className={`px-4 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest border ${tx.status === TransactionStatus.COMPLETED ? 'bg-teal-50 border-teal-100 text-teal-700' : 'bg-yellow-50 border-yellow-100 text-yellow-700'}`}>TX Node: {tx.$id.slice(-6)}</span>
+                              <span className={`px-4 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest border ${tx.status === TransactionStatus.COMPLETED ? 'bg-brand-surface border-indigo-100 text-brand-primary' : 'bg-yellow-50 border-yellow-100 text-yellow-700'}`}>TX Node: {tx.$id.slice(-6)}</span>
                               <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest italic">{new Date(tx.updatedAt).toLocaleDateString()}</span>
                            </div>
-                           <h3 className="text-xl font-black text-[#003366] uppercase tracking-tight truncate">{tx.productName}</h3>
-                           <p className="text-[12px] font-black text-teal-600 tracking-tight italic leading-none">₦{tx.amount.toLocaleString()}</p>
+                           <h3 className="text-xl font-black text-brand-primary uppercase tracking-tight truncate">{tx.productName}</h3>
+                           <p className="text-[12px] font-black text-brand-primary tracking-tight italic leading-none">₦{tx.amount.toLocaleString()}</p>
                         </div>
                      </div>
 
                      <div className="flex items-center gap-10 w-full md:w-auto justify-between border-t md:border-t-0 md:border-l border-slate-50 pt-8 md:pt-0 pl-0 md:pl-10">
                         <div className="space-y-2">
                            <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest leading-none">{activeTab === 'buying' ? 'Authorized Seller' : 'Authorized Buyer'}</p>
-                           <p className="text-sm font-black text-[#003366] uppercase">{activeTab === 'buying' ? tx.sellerName : tx.buyerName}</p>
+                           <p className="text-sm font-black text-brand-primary uppercase">{activeTab === 'buying' ? tx.sellerName : tx.buyerName}</p>
                         </div>
 
                         <div className="flex items-center gap-4">
@@ -99,15 +99,15 @@ const Transactions: React.FC = () => {
                             )}
                            
                             {tx.paymentProofUrl && (
-                             <a href={tx.paymentProofUrl} target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 hover:text-teal-600 transition-all border border-slate-100 shadow-sm"><i className="fa-solid fa-file-invoice"></i></a>
+                             <a href={tx.paymentProofUrl} target="_blank" rel="noopener noreferrer" aria-label="View payment proof" className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 hover:text-brand-primary transition-all border border-slate-100 shadow-sm"><i className="fa-solid fa-file-invoice" aria-hidden="true"></i></a>
                            )}
                            
                            {/* Administrative Action Nodes */}
                            {activeTab === 'selling' && tx.status === TransactionStatus.PAYMENT_SENT && (
-                             <button onClick={() => confirmPayment(tx.$id)} className="px-10 py-5 bg-teal-600 text-white rounded-[24px] font-black text-[10px] uppercase tracking-widest shadow-2xl shadow-teal-500/20 hover:scale-105 active:scale-95 transition-all">Confirm Payment</button>
+                             <button onClick={() => confirmPayment(tx.$id)} className="px-10 py-5 bg-brand-primary text-white rounded-[24px] font-black text-[10px] uppercase tracking-widest shadow-2xl shadow-brand-primary/20 hover:scale-105 active:scale-95 transition-all">Confirm Payment</button>
                            )}
                            {activeTab === 'buying' && tx.status === TransactionStatus.PAYMENT_CONFIRMED && (
-                             <button onClick={() => completetx(tx.$id)} className="px-10 py-5 bg-[#003366] text-white rounded-[24px] font-black text-[10px] uppercase tracking-widest shadow-2xl shadow-blue-900/10 hover:scale-105 active:scale-95 transition-all">Asset Received</button>
+                             <button onClick={() => completetx(tx.$id)} className="px-10 py-5 bg-brand-primary text-white rounded-[24px] font-black text-[10px] uppercase tracking-widest shadow-2xl shadow-brand-primary/10 hover:scale-105 active:scale-95 transition-all">Asset Received</button>
                            )}
                         </div>
                      </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { databases } from "../lib/appwrite";
 import { Product, SellerStatus, UserProfile } from "../types";
@@ -75,7 +75,7 @@ const SellerDetails: React.FC = () => {
   if (loading) {
     return (
       <div className="flex min-h-[70vh] flex-col items-center justify-center gap-4">
-        <div className="h-12 w-12 rounded-full border-4 border-[#14b8a6] border-t-transparent animate-spin" />
+        <div className="h-12 w-12 rounded-full border-4 border-brand-secondary border-t-transparent animate-spin" />
         <p className="text-sm text-slate-500 dark:text-slate-400">
           Loading seller details...
         </p>
@@ -87,7 +87,7 @@ const SellerDetails: React.FC = () => {
     return (
       <div className="mx-auto max-w-3xl px-4 py-24 text-center">
         <div className="rounded-[32px] border border-slate-200 bg-white p-10 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <h1 className="text-3xl font-bold tracking-tight text-brand-ink dark:text-white">
             Seller details not available
           </h1>
           <p className="mt-3 text-sm leading-7 text-slate-500 dark:text-slate-400">
@@ -95,7 +95,7 @@ const SellerDetails: React.FC = () => {
           </p>
           <Link
             to="/"
-            className="mt-6 inline-flex rounded-2xl bg-[#003366] px-5 py-3 text-sm font-medium text-white"
+            className="mt-6 inline-flex rounded-2xl bg-brand-primary px-5 py-3 text-sm font-medium text-white"
           >
             Back to marketplace
           </Link>
@@ -108,23 +108,23 @@ const SellerDetails: React.FC = () => {
     <div className="bg-[#f7fafc] pb-24 pt-28 dark:bg-slate-950">
       <div className="container mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
-          <Link to="/" className="hover:text-[#003366] dark:hover:text-teal-300">
+          <Link to="/" className="hover:text-brand-primary dark:hover:text-indigo-400">
             Marketplace
           </Link>
           <span>/</span>
           <Link
             to={`/product/${product.$id}`}
-            className="hover:text-[#003366] dark:hover:text-teal-300"
+            className="hover:text-brand-primary dark:hover:text-indigo-400"
           >
             Product details
           </Link>
           <span>/</span>
-          <span className="text-slate-900 dark:text-white">Seller details</span>
+          <span className="text-brand-ink dark:text-white">Seller details</span>
         </div>
 
         <section className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-teal-700 dark:text-teal-300">
+            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-brand-primary dark:text-indigo-400">
               Selected item
             </p>
             <div className="mt-5 overflow-hidden rounded-[24px] bg-slate-50 p-6 dark:bg-slate-950">
@@ -135,7 +135,7 @@ const SellerDetails: React.FC = () => {
               />
             </div>
             <div className="mt-6 space-y-4">
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+              <h1 className="text-3xl font-bold tracking-tight text-brand-ink dark:text-white">
                 {product.name}
               </h1>
               <p className="text-sm leading-7 text-slate-600 dark:text-slate-300">
@@ -145,13 +145,13 @@ const SellerDetails: React.FC = () => {
                 <span className="text-sm text-slate-500 dark:text-slate-400">
                   Price
                 </span>
-                <span className="text-3xl font-bold tracking-tight text-[#003366] dark:text-teal-300">
+                <span className="text-3xl font-bold tracking-tight text-brand-primary dark:text-indigo-400">
                   ₦{product.price.toLocaleString()}
                 </span>
               </div>
               <Link
                 to={`/product/${product.$id}`}
-                className="inline-flex text-sm font-medium text-teal-700 hover:text-[#003366] dark:text-teal-300 dark:hover:text-white"
+                className="inline-flex text-sm font-medium text-brand-primary hover:text-brand-primary dark:text-indigo-400 dark:hover:text-white"
               >
                 View full product page
               </Link>
@@ -171,7 +171,7 @@ const SellerDetails: React.FC = () => {
                     className="h-16 w-16 rounded-[20px] object-cover"
                   />
                   <div>
-                    <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+                    <h2 className="text-2xl font-bold tracking-tight text-brand-ink dark:text-white">
                       {seller.name}
                     </h2>
                     <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -191,11 +191,11 @@ const SellerDetails: React.FC = () => {
                 </span>
               </div>
 
-              <div className="mt-6 rounded-[24px] border border-teal-100 bg-teal-50/70 p-4 dark:border-teal-900/40 dark:bg-teal-950/20">
-                <p className="text-sm font-medium text-teal-900 dark:text-teal-200">
+              <div className="mt-6 rounded-[24px] border border-indigo-100 bg-brand-surface/70 p-4 dark:border-indigo-950/40 dark:bg-indigo-950/20">
+                <p className="text-sm font-medium text-indigo-950 dark:text-indigo-200">
                   Payment and contact details
                 </p>
-                <p className="mt-1 text-sm leading-6 text-teal-800/80 dark:text-teal-200/80">
+                <p className="mt-1 text-sm leading-6 text-brand-primary/80 dark:text-indigo-200/80">
                   Confirm the item and seller before sending payment. If any
                   detail is missing, use chat first.
                 </p>
@@ -210,7 +210,7 @@ const SellerDetails: React.FC = () => {
                     <span className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">
                       {row.label}
                     </span>
-                    <span className="text-sm font-medium text-slate-900 dark:text-white">
+                    <span className="text-sm font-medium text-brand-ink dark:text-white">
                       {row.value}
                     </span>
                   </div>
@@ -219,7 +219,7 @@ const SellerDetails: React.FC = () => {
             </div>
 
             <div className="rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-              <h3 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+              <h3 className="text-xl font-bold tracking-tight text-brand-ink dark:text-white">
                 Contact the seller privately
               </h3>
               <p className="mt-2 text-sm leading-7 text-slate-600 dark:text-slate-300">
@@ -230,19 +230,19 @@ const SellerDetails: React.FC = () => {
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <button
                   onClick={() => navigate(`/checkout/${product?.$id}`)}
-                  className="inline-flex items-center justify-center rounded-2xl bg-teal-600 px-5 py-4 text-sm font-black text-white uppercase tracking-widest transition hover:brightness-110 active:scale-[0.98] shadow-lg shadow-teal-500/10"
+                  className="inline-flex items-center justify-center rounded-2xl bg-brand-primary px-5 py-4 text-sm font-black text-white uppercase tracking-widest transition hover:brightness-110 active:scale-[0.98] shadow-lg shadow-brand-primary/10"
                 >
                   I Have Paid
                 </button>
                 <button
                   onClick={handleChat}
-                  className="inline-flex items-center justify-center rounded-2xl bg-[#003366] px-5 py-4 text-sm font-black text-white uppercase tracking-widest transition hover:brightness-110 active:scale-[0.98]"
+                  className="inline-flex items-center justify-center rounded-2xl bg-brand-primary px-5 py-4 text-sm font-black text-white uppercase tracking-widest transition hover:brightness-110 active:scale-[0.98]"
                 >
                   Chat with seller
                 </button>
                 <Link
                   to={`/product/${product.$id}`}
-                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-700 transition hover:border-teal-200 hover:text-teal-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-4 text-[10px] font-black uppercase tracking-widest text-slate-700 transition hover:border-indigo-200 hover:text-brand-primary dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
                 >
                   Back to product
                 </Link>
