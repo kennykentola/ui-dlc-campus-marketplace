@@ -3,17 +3,17 @@
 @import "tailwindcss";
 
 @theme {
-  --color-hub-blue: #003366;
-  --color-hub-gold: #14b8a6;
-  --color-hub-accent: #0f766e;
+  --color-hub-blue: #032221; /* Dark Green */
+  --color-hub-gold: #2CC295; /* Mountain Meadow */
+  --color-hub-accent: #007B81; /* Caribbean Green */
 }
 
 :root {
-  --hub-blue: #003366;
-  --hub-gold: #14b8a6;
-  --hub-accent: #0f766e;
-  --hub-success: #22C55E;
-  --hub-bg: #FFFFFF;
+  --hub-blue: #032221;
+  --hub-gold: #2CC295;
+  --hub-accent: #007B81;
+  --hub-success: #10b981;
+  --hub-bg: #F1F7F6; /* Anti-Flash White */
 }
 
 /* Vibrant Base */
@@ -24,8 +24,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--hub-bg);
-  color: #0F172A;
+  background: linear-gradient(to bottom right, var(--brand-primary), var(--brand-secondary));
+  background-attachment: fixed;
+  color: var(--brand-surface);
   overflow-x: hidden;
 }
 
@@ -47,9 +48,9 @@ body {
 }
 
 @keyframes pulse-glow {
-  0% { box-shadow: 0 0 0 0 rgba(0, 51, 102, 0.4); }
-  70% { box-shadow: 0 0 0 15px rgba(0, 51, 102, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 51, 102, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(3, 34, 33, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(3, 34, 33, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(3, 34, 33, 0); }
 }
 
 .animate-fadeIn { animation: fadeIn 0.8s ease-out forwards; }
@@ -59,7 +60,7 @@ body {
 
 /* Registry Utility Classes */
 .hub-card {
-  @apply bg-white border border-slate-100 rounded-[32px] transition-all duration-500 hover:border-hub-blue/20 hover:shadow-[0_20px_50px_-12px_rgba(0,51,102,0.12)] active:scale-[0.98];
+  @apply bg-white border border-slate-100 rounded-[32px] transition-all duration-500 hover:border-hub-gold/20 hover:shadow-[0_20px_50px_-12px_rgba(3,34,33,0.12)] active:scale-[0.98];
 }
 
 .btn-hub-primary {

@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect, createContext, useContext } from "react";
 import {
   BrowserRouter,
@@ -340,10 +340,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const { user, loading } = useAuth();
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen bg-white">
+      <div className="flex items-center justify-center min-h-screen bg-transparent">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-4 border-[#14b8a6] border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-xs font-bold text-[#003366] uppercase tracking-widest">Loading Hub...</span>
+          <div className="w-10 h-10 border-4 border-brand-secondary border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-xs font-bold text-brand-primary uppercase tracking-widest">Loading Hub...</span>
         </div>
       </div>
     );
@@ -359,7 +359,7 @@ const App: React.FC = () => {
     <AuthProvider>
       <BrowserRouter>
         <CallManager />
-        <div className="min-h-screen flex flex-col bg-transparent dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-teal-100 transition-colors duration-300 overflow-x-hidden">
+        <div className="min-h-screen flex flex-col bg-transparent text-brand-ink dark:text-slate-100 font-sans selection:bg-brand-surface transition-colors duration-300 overflow-x-hidden">
           <Header />
           <main className="grow container mx-auto px-4 py-8 relative mt-16">
             <Routes>
@@ -475,7 +475,7 @@ const App: React.FC = () => {
           </main>
 
           <footer className="bg-slate-950 border-t border-slate-900 py-20 mt-32 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-[#14b8a6] to-transparent opacity-30"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-brand-secondary to-transparent opacity-30"></div>
             
             <div className="container mx-auto px-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -486,9 +486,9 @@ const App: React.FC = () => {
                     </div>
                     <div>
                       <p className="text-2xl font-black text-white leading-none uppercase tracking-tighter">
-                        UI DLC <span className="text-[#14b8a6]">Hub.</span>
+                        UI DLC <span className="text-brand-secondary">Hub.</span>
                       </p>
-                      <p className="text-[#14b8a6] text-[10px] font-black uppercase tracking-[0.2em] mt-2">Certified Student Marketplace</p>
+                      <p className="text-brand-secondary text-[10px] font-black uppercase tracking-[0.2em] mt-2">Certified Student Marketplace</p>
                     </div>
                   </div>
                 </div>
@@ -503,8 +503,8 @@ const App: React.FC = () => {
                     </p>
                     <Link to="/support" className="text-rose-500 text-[10px] font-black uppercase tracking-widest hover:underline decoration-2 underline-offset-4 decoration-rose-500/30 transition-all">Report / Support</Link>
                     <div className="flex gap-4 text-slate-400">
-                       <i className="fa-brands fa-whatsapp hover:text-[#14b8a6] cursor-pointer transition-colors"></i>
-                       <i className="fa-brands fa-instagram hover:text-[#14b8a6] cursor-pointer transition-colors"></i>
+                       <i className="fa-brands fa-whatsapp hover:text-brand-secondary cursor-pointer transition-colors"></i>
+                       <i className="fa-brands fa-instagram hover:text-brand-secondary cursor-pointer transition-colors"></i>
                     </div>
                   </div>
                 </div>

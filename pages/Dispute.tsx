@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
@@ -71,10 +71,10 @@ const Dispute: React.FC = () => {
   if (loading) return <div className="min-h-screen pt-40 flex justify-center"><div className="w-10 h-10 border-4 border-rose-500 border-t-transparent rounded-full animate-spin"></div></div>;
 
   return (
-    <div className="bg-white min-h-screen pt-32 pb-40 px-6">
+    <div className="bg-transparent min-h-screen pt-32 pb-40 px-6">
       <main className="max-w-2xl mx-auto space-y-12 animate-slideUp">
          <div className="text-center space-y-4">
-            <h1 className="text-4xl font-black text-rose-500 uppercase tracking-tighter leading-none">Dispute <span className="text-[#003366]">Protocol.</span></h1>
+            <h1 className="text-4xl font-black text-rose-500 uppercase tracking-tighter leading-none">Dispute <span className="text-brand-primary">Protocol.</span></h1>
             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.4em] italic pl-1">Transaction Conflict Resolution Hub</p>
          </div>
 
@@ -84,14 +84,14 @@ const Dispute: React.FC = () => {
                   <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Target Transaction</p>
                   <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest italic leading-none">Conflicting Node: {transaction?.$id.slice(-6)}</span>
                </div>
-               <h3 className="text-2xl font-black text-[#003366] uppercase tracking-tight">{transaction?.productName}</h3>
-               <p className="text-lg font-black text-teal-600 leading-none">₦{transaction?.amount.toLocaleString()}</p>
+               <h3 className="text-2xl font-black text-brand-primary uppercase tracking-tight">{transaction?.productName}</h3>
+               <p className="text-lg font-black text-brand-primary leading-none">₦{transaction?.amount.toLocaleString()}</p>
             </div>
 
             <div className="space-y-8">
                <div className="space-y-4">
-                  <p className="text-[10px] font-black text-[#003366]/40 uppercase tracking-widest px-1">Conflict Category</p>
-                  <select className="w-full bg-white border border-slate-100 rounded-2xl px-6 py-5 text-sm font-black text-[#003366] outline-none focus:ring-4 focus:ring-rose-500/10 transition-all shadow-sm" value={reason} onChange={e => setReason(e.target.value)} required>
+                  <p className="text-[10px] font-black text-brand-primary/40 uppercase tracking-widest px-1">Conflict Category</p>
+                  <select className="w-full bg-white border border-slate-100 rounded-2xl px-6 py-5 text-sm font-black text-brand-primary outline-none focus:ring-4 focus:ring-rose-500/10 transition-all shadow-sm" value={reason} onChange={e => setReason(e.target.value)} required>
                      <option value="">Select Protocol Conflict</option>
                      <option value="fake_listing">Fake Listing / Scams</option>
                      <option value="wrong_item">Asset Mismatch / Wrong Item</option>
@@ -102,8 +102,8 @@ const Dispute: React.FC = () => {
                </div>
 
                <div className="space-y-4">
-                  <p className="text-[10px] font-black text-[#003366]/40 uppercase tracking-widest px-1">Incident Documentation</p>
-                  <textarea placeholder="Describe the conflict in detail for administrative audit..." className="w-full h-48 bg-white border border-slate-100 rounded-[32px] px-8 py-6 text-sm font-medium text-slate-800 outline-none focus:ring-4 focus:ring-rose-500/10 transition-all shadow-sm resize-none" value={description} onChange={e => setDescription(e.target.value)} required />
+                  <p className="text-[10px] font-black text-brand-primary/40 uppercase tracking-widest px-1">Incident Documentation</p>
+                  <textarea placeholder="Describe the conflict in detail for administrative audit..." className="w-full h-48 bg-white border border-slate-100 rounded-[32px] px-8 py-6 text-sm font-medium text-brand-ink outline-none focus:ring-4 focus:ring-rose-500/10 transition-all shadow-sm resize-none" value={description} onChange={e => setDescription(e.target.value)} required />
                </div>
             </div>
 

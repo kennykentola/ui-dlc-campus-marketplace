@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
@@ -101,12 +101,12 @@ const AdminDashboard: React.FC = () => {
       
       {/* High Contrast Sub-Header */}
       <header className="mb-20 space-y-6">
-         <div className="flex items-center gap-4 text-teal-600">
-            <span className="w-12 h-1.5 bg-teal-600 rounded-full"></span>
+         <div className="flex items-center gap-4 text-brand-primary">
+            <span className="w-12 h-1.5 bg-brand-primary rounded-full"></span>
             <p className="text-[12px] font-black uppercase tracking-[0.4em]">Administrative Protocol Hub</p>
          </div>
          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-            <h1 className="text-6xl md:text-8xl font-black text-[#003366] uppercase tracking-tighter leading-none shrink-0">
+            <h1 className="text-6xl md:text-8xl font-black text-brand-primary uppercase tracking-tighter leading-none shrink-0">
                Control <br />
                <span className="text-slate-200">Sector.</span>
             </h1>
@@ -115,7 +115,7 @@ const AdminDashboard: React.FC = () => {
                  <button 
                    key={tab}
                    onClick={() => setActiveTab(tab)}
-                   className={`px-8 py-4 rounded-[24px] text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === tab ? "bg-[#003366] text-white shadow-2xl scale-[1.05]" : "text-slate-400 hover:text-[#003366] hover:bg-slate-50"}`}
+                   className={`px-8 py-4 rounded-[24px] text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeTab === tab ? "bg-brand-primary text-white shadow-2xl scale-[1.05]" : "text-slate-400 hover:text-brand-primary hover:bg-slate-50"}`}
                  >
                    {tab}
                  </button>
@@ -129,14 +129,14 @@ const AdminDashboard: React.FC = () => {
          
          {loading ? (
               <div className="py-40 flex flex-col items-center justify-center space-y-8">
-                 <div className="w-20 h-20 border-4 border-teal-600/10 border-t-teal-600 rounded-full animate-spin"></div>
+                 <div className="w-20 h-20 border-4 border-brand-primary/10 border-t-indigo-700 rounded-full animate-spin"></div>
                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-300">Synchronizing Hub Data...</p>
               </div>
          ) : (
             <div className="relative z-10 space-y-12">
                {selectedUser && (
                   <div className="fixed inset-0 z-120 flex items-center justify-center p-6">
-                     <div className="absolute inset-0 bg-[#003366]/40 backdrop-blur-md" onClick={() => setSelectedUser(null)}></div>
+                     <div className="absolute inset-0 bg-brand-primary/40 backdrop-blur-md" onClick={() => setSelectedUser(null)}></div>
                      <div className="relative z-10 w-full max-w-3xl rounded-[40px] border border-slate-100 bg-white p-8 md:p-10 shadow-2xl">
                         <div className="flex items-start justify-between gap-6">
                            <div className="flex items-center gap-5">
@@ -146,9 +146,9 @@ const AdminDashboard: React.FC = () => {
                                 alt={selectedUser.name}
                               />
                               <div>
-                                 <h3 className="text-2xl font-black uppercase tracking-tight text-[#003366]">{selectedUser.name}</h3>
+                                 <h3 className="text-2xl font-black uppercase tracking-tight text-brand-primary">{selectedUser.name}</h3>
                                  <p className="mt-1 text-sm text-slate-500">{selectedUser.email}</p>
-                                 <p className="mt-2 text-[10px] font-black uppercase tracking-widest text-teal-600">{selectedUser.role}</p>
+                                 <p className="mt-2 text-[10px] font-black uppercase tracking-widest text-brand-primary">{selectedUser.role}</p>
                               </div>
                            </div>
                            <button onClick={() => setSelectedUser(null)} className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-50 text-slate-500 hover:text-rose-500 transition-colors">
@@ -159,39 +159,39 @@ const AdminDashboard: React.FC = () => {
                         <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
                            <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
                               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Department</p>
-                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.department || "Not provided"}</p>
+                              <p className="mt-2 text-sm font-bold text-brand-primary">{selectedUser.department || "Not provided"}</p>
                            </div>
                            <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
                               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Level</p>
-                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.level || "Not provided"}</p>
+                              <p className="mt-2 text-sm font-bold text-brand-primary">{selectedUser.level || "Not provided"}</p>
                            </div>
                            <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
                               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Matric Number</p>
-                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.matricNumber || "Not provided"}</p>
+                              <p className="mt-2 text-sm font-bold text-brand-primary">{selectedUser.matricNumber || "Not provided"}</p>
                            </div>
                            <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
                               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Seller Status</p>
-                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.sellerStatus}</p>
+                              <p className="mt-2 text-sm font-bold text-brand-primary">{selectedUser.sellerStatus}</p>
                            </div>
                            <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
                               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Phone Number</p>
-                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.phoneNumber || "Not provided"}</p>
+                              <p className="mt-2 text-sm font-bold text-brand-primary">{selectedUser.phoneNumber || "Not provided"}</p>
                            </div>
                            <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
                               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Fintech Handle</p>
-                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.fintechHandles || "Not provided"}</p>
+                              <p className="mt-2 text-sm font-bold text-brand-primary">{selectedUser.fintechHandles || "Not provided"}</p>
                            </div>
                            <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
                               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Bank Name</p>
-                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.bankName || "Not provided"}</p>
+                              <p className="mt-2 text-sm font-bold text-brand-primary">{selectedUser.bankName || "Not provided"}</p>
                            </div>
                            <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5">
                               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Account Number</p>
-                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.accountNumber || "Not provided"}</p>
+                              <p className="mt-2 text-sm font-bold text-brand-primary">{selectedUser.accountNumber || "Not provided"}</p>
                            </div>
                            <div className="rounded-[24px] border border-slate-100 bg-slate-50 p-5 md:col-span-2">
                               <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Account Name</p>
-                              <p className="mt-2 text-sm font-bold text-[#003366]">{selectedUser.accountName || "Not provided"}</p>
+                              <p className="mt-2 text-sm font-bold text-brand-primary">{selectedUser.accountName || "Not provided"}</p>
                            </div>
                         </div>
                      </div>
@@ -203,9 +203,9 @@ const AdminDashboard: React.FC = () => {
                      <div className="flex items-end justify-between border-b-2 border-slate-50 pb-8">
                         <div className="flex items-center gap-4">
                            <span className="text-4xl font-black text-slate-100 tracking-tighter">01</span>
-                           <h2 className="text-3xl font-black text-[#003366] uppercase tracking-tighter">Asset Registry</h2>
+                           <h2 className="text-3xl font-black text-brand-primary uppercase tracking-tighter">Asset Registry</h2>
                         </div>
-                        <p className="text-[10px] font-black uppercase text-teal-600 tracking-widest animate-pulse">Live Feed Active</p>
+                        <p className="text-[10px] font-black uppercase text-brand-primary tracking-widest animate-pulse">Live Feed Active</p>
                      </div>
                      <div className="overflow-x-auto no-scrollbar">
                         <table className="w-full text-left">
@@ -224,7 +224,7 @@ const AdminDashboard: React.FC = () => {
                                        <div className="flex items-center gap-4">
                                           <img src={p.imageUrls[0]} className="w-16 h-16 rounded-2xl object-cover shadow-sm group-hover:scale-110 transition-transform" />
                                           <div className="overflow-hidden">
-                                             <p className="text-[15px] font-black text-[#003366] line-clamp-1 truncate leading-tight uppercase tracking-tight">{p.name}</p>
+                                             <p className="text-[15px] font-black text-brand-primary line-clamp-1 truncate leading-tight uppercase tracking-tight">{p.name}</p>
                                              <p className="text-[11px] text-slate-400 font-bold italic truncate leading-relaxed">ID: {p.$id.substring(0,8)}</p>
                                           </div>
                                        </div>
@@ -233,10 +233,10 @@ const AdminDashboard: React.FC = () => {
                                        <span className="px-4 py-1.5 bg-slate-50 text-slate-500 rounded-full text-[9px] font-black uppercase tracking-widest border border-slate-100 italic">{p.category}</span>
                                     </td>
                                     <td className="px-6 py-8">
-                                       <p className="text-xl font-black text-[#003366]">₦{p.price.toLocaleString()}</p>
+                                       <p className="text-xl font-black text-brand-primary">₦{p.price.toLocaleString()}</p>
                                     </td>
                                     <td className="px-6 py-8 text-right space-x-3">
-                                       <Link to={`/product/${p.$id}`} className="px-4 py-3 bg-slate-100 text-[#003366] rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white border border-slate-200 transition-all">Inspect</Link>
+                                       <Link to={`/product/${p.$id}`} className="px-4 py-3 bg-slate-100 text-brand-primary rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white border border-slate-200 transition-all">Inspect</Link>
                                        <button onClick={() => deleteProduct(p.$id)} className="px-4 py-3 bg-rose-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-rose-600 transition-all shadow-xl shadow-rose-900/10">Purge</button>
                                     </td>
                                  </tr>
@@ -252,26 +252,26 @@ const AdminDashboard: React.FC = () => {
                      <div className="flex items-end justify-between border-b-2 border-slate-50 pb-8">
                         <div className="flex items-center gap-4">
                            <span className="text-4xl font-black text-slate-100 tracking-tighter">02</span>
-                           <h2 className="text-3xl font-black text-[#003366] uppercase tracking-tighter">Verified Portfolios</h2>
+                           <h2 className="text-3xl font-black text-brand-primary uppercase tracking-tighter">Verified Portfolios</h2>
                         </div>
-                        <p className="text-[10px] font-black uppercase text-teal-600 tracking-widest italic animate-pulse">Vetting Phase</p>
+                        <p className="text-[10px] font-black uppercase text-brand-primary tracking-widest italic animate-pulse">Vetting Phase</p>
                      </div>
                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
                         {users.map(u => (
                            <div key={u.userId} className="bg-white p-10 rounded-[48px] border border-slate-50 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all group flex flex-col items-center text-center">
                               <div className="relative">
                                  <img src={u.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name)}&background=003366&color=fff`} className="w-24 h-24 rounded-[36px] shadow-2xl mb-8 group-hover:scale-110 transition-transform object-cover" />
-                                 <div className={`absolute -bottom-2 -right-2 w-10 h-10 rounded-2xl flex items-center justify-center text-white border-4 border-white ${u.sellerStatus === SellerStatus.VERIFIED ? 'bg-teal-500' : 'bg-slate-300'}`}>
+                                 <div className={`absolute -bottom-2 -right-2 w-10 h-10 rounded-2xl flex items-center justify-center text-white border-4 border-white ${u.sellerStatus === SellerStatus.VERIFIED ? 'bg-brand-primary' : 'bg-slate-300'}`}>
                                     <i className="fa-solid fa-shield-check text-xs"></i>
                                  </div>
                               </div>
                               <div className="space-y-2 mb-8">
-                                 <h3 className="text-lg font-black text-[#003366] uppercase tracking-tighter leading-none">{u.name}</h3>
+                                 <h3 className="text-lg font-black text-brand-primary uppercase tracking-tighter leading-none">{u.name}</h3>
                                  <p className="text-[10px] font-bold text-slate-400 tracking-widest uppercase italic">{u.department || "Academic Auditor"}</p>
                               </div>
                               <div className="w-full space-y-4">
                                  <div className={`w-full py-4 rounded-3xl text-[9px] font-black uppercase tracking-widest italic flex items-center justify-center gap-3 ${
-                                   u.sellerStatus === SellerStatus.VERIFIED ? 'bg-teal-50 text-teal-700' : 
+                                   u.sellerStatus === SellerStatus.VERIFIED ? 'bg-brand-surface text-brand-primary' : 
                                    u.sellerStatus === SellerStatus.PENDING ? 'bg-yellow-50 text-yellow-700' : 
                                    u.sellerStatus === SellerStatus.REJECTED ? 'bg-rose-50 text-rose-700' : 'bg-slate-50 text-slate-400'
                                  }`}>
@@ -282,14 +282,14 @@ const AdminDashboard: React.FC = () => {
                                  <div className="grid grid-cols-2 gap-3">
                                     <button
                                       onClick={() => setSelectedUser(u)}
-                                      className="col-span-2 py-4 bg-slate-50 border border-slate-200 text-[#003366] rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-white transition-all"
+                                      className="col-span-2 py-4 bg-slate-50 border border-slate-200 text-brand-primary rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-white transition-all"
                                     >
                                        View Details
                                     </button>
                                     <button
                                       onClick={() => handleSellerStatusUpdate(u, SellerStatus.VERIFIED)}
                                       disabled={u.sellerStatus === SellerStatus.VERIFIED || updatingSellerId === u.userId}
-                                      className="py-4 bg-[#003366] text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-50"
+                                      className="py-4 bg-brand-primary text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-50"
                                     >
                                        Authorize
                                     </button>
@@ -313,7 +313,7 @@ const AdminDashboard: React.FC = () => {
                      <div className="flex items-end justify-between border-b-2 border-slate-50 pb-8">
                         <div className="flex items-center gap-4">
                            <span className="text-4xl font-black text-slate-100 tracking-tighter">03</span>
-                           <h2 className="text-3xl font-black text-[#003366] uppercase tracking-tighter">Conflict Archive</h2>
+                           <h2 className="text-3xl font-black text-brand-primary uppercase tracking-tighter">Conflict Archive</h2>
                         </div>
                         <p className="text-[10px] font-black uppercase text-rose-500 tracking-widest italic animate-pulse">Critical Alerts ({reports.filter(r => r.status !== 'resolved').length})</p>
                      </div>
@@ -326,8 +326,8 @@ const AdminDashboard: React.FC = () => {
                                <div className="grow space-y-6">
                                   <div className="flex items-center justify-between gap-4 border-b border-slate-50 pb-4">
                                      <div className="flex items-center gap-4">
-                                        <h4 className="text-xl font-black text-[#003366] uppercase tracking-tighter">{r.reason}</h4>
-                                        <span className={`px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${r.status === 'resolved' ? 'bg-teal-100 text-teal-700' : r.status === 'investigating' ? 'bg-blue-100 text-blue-700' : 'bg-rose-100 text-rose-700'}`}>{r.status || 'Pending'}</span>
+                                        <h4 className="text-xl font-black text-brand-primary uppercase tracking-tighter">{r.reason}</h4>
+                                        <span className={`px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${r.status === 'resolved' ? 'bg-brand-surface text-brand-primary' : r.status === 'investigating' ? 'bg-brand-surface text-brand-primary' : 'bg-rose-100 text-rose-700'}`}>{r.status || 'Pending'}</span>
                                      </div>
                                      <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{new Date(r.createdAt).toLocaleString()}</p>
                                   </div>
@@ -336,15 +336,15 @@ const AdminDashboard: React.FC = () => {
                                      <div className="space-y-3 p-6 bg-slate-50 rounded-3xl border border-slate-100">
                                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Reporter (The Accuser)</p>
                                         <div>
-                                           <p className="text-sm font-black text-[#003366] uppercase">{r.reporterName}</p>
-                                           <p className="text-[10px] font-bold text-teal-600 uppercase italic">MATRIC: {(r as any).reporterMatric || 'N/A'}</p>
+                                           <p className="text-sm font-black text-brand-primary uppercase">{r.reporterName}</p>
+                                           <p className="text-[10px] font-bold text-brand-primary uppercase italic">MATRIC: {(r as any).reporterMatric || 'N/A'}</p>
                                            <p className="text-[10px] font-bold text-slate-400 uppercase">MAIL: {(r as any).reporterEmail || 'N/A'}</p>
                                         </div>
                                      </div>
                                      <div className="space-y-3 p-6 bg-rose-50/30 rounded-3xl border border-rose-100/30">
                                         <p className="text-[9px] font-black text-rose-400 uppercase tracking-widest">Reported (The Scammer/Target)</p>
                                         <div>
-                                           <p className="text-sm font-black text-[#003366] uppercase">{(r as any).reportedName || 'System Hub'}</p>
+                                           <p className="text-sm font-black text-brand-primary uppercase">{(r as any).reportedName || 'System Hub'}</p>
                                            <p className="text-[10px] font-bold text-rose-600 uppercase italic">MATRIC: {(r as any).reportedMatric || 'N/A'}</p>
                                            <p className="text-[10px] font-bold text-slate-400 uppercase">MAIL: {(r as any).reportedEmail || 'N/A'}</p>
                                         </div>
@@ -360,14 +360,14 @@ const AdminDashboard: React.FC = () => {
                                   <button 
                                     onClick={() => resolveReport(r.$id, 'investigating' as any)} 
                                     disabled={r.status === 'investigating' || r.status === 'resolved' || resolvingReportId === r.$id}
-                                    className="grow py-4 px-6 bg-blue-500 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-blue-500/20 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                                    className="grow py-4 px-6 bg-brand-primary text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-brand-primary/20 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
                                   >
                                      Investigate <i className="fa-solid fa-magnifying-glass"></i>
                                   </button>
                                   <button 
                                     onClick={() => resolveReport(r.$id, 'resolved')} 
                                     disabled={r.status === 'resolved' || resolvingReportId === r.$id}
-                                    className="grow py-4 px-6 bg-teal-500 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-teal-500/20 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                                    className="grow py-4 px-6 bg-brand-primary text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:brightness-110 shadow-lg shadow-brand-primary/20 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
                                   >
                                      Finalize Case <i className="fa-solid fa-check-double"></i>
                                   </button>
@@ -384,28 +384,28 @@ const AdminDashboard: React.FC = () => {
                      <div className="flex items-end justify-between border-b-2 border-slate-50 pb-8">
                         <div className="flex items-center gap-4">
                            <span className="text-4xl font-black text-slate-100 tracking-tighter">04</span>
-                           <h2 className="text-3xl font-black text-[#003366] uppercase tracking-tighter">Network Topology</h2>
+                           <h2 className="text-3xl font-black text-brand-primary uppercase tracking-tighter">Network Topology</h2>
                         </div>
-                        <p className="text-[10px] font-black uppercase text-teal-600 tracking-widest italic leading-none">Healthy Status</p>
+                        <p className="text-[10px] font-black uppercase text-brand-primary tracking-widest italic leading-none">Healthy Status</p>
                      </div>
                      
                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         <div className="bg-slate-50/50 p-10 rounded-[48px] border border-slate-100 space-y-6">
-                           <div className="w-14 h-14 bg-[#003366] rounded-2xl flex items-center justify-center text-white shadow-xl">
+                           <div className="w-14 h-14 bg-brand-primary rounded-2xl flex items-center justify-center text-white shadow-xl">
                               <i className="fa-solid fa-users text-xl"></i>
                            </div>
                            <div>
                               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Scholar Density</p>
-                              <h5 className="text-3xl font-black text-[#003366] tracking-tighter">{users.length}</h5>
+                              <h5 className="text-3xl font-black text-brand-primary tracking-tighter">{users.length}</h5>
                            </div>
                         </div>
                         <div className="bg-slate-50/50 p-10 rounded-[48px] border border-slate-100 space-y-6">
-                           <div className="w-14 h-14 bg-teal-600 rounded-2xl flex items-center justify-center text-white shadow-xl">
+                           <div className="w-14 h-14 bg-brand-primary rounded-2xl flex items-center justify-center text-white shadow-xl">
                               <i className="fa-solid fa-boxes-stacked text-xl"></i>
                            </div>
                            <div>
                               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Asset Volume</p>
-                              <h5 className="text-3xl font-black text-[#003366] tracking-tighter">{products.length}</h5>
+                              <h5 className="text-3xl font-black text-brand-primary tracking-tighter">{products.length}</h5>
                            </div>
                         </div>
                         <div className="bg-slate-50/50 p-10 rounded-[48px] border border-slate-100 space-y-6">
@@ -414,29 +414,29 @@ const AdminDashboard: React.FC = () => {
                            </div>
                            <div>
                               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Alert Trigger Rate</p>
-                              <h5 className="text-3xl font-black text-[#003366] tracking-tighter">{reports.length}</h5>
+                              <h5 className="text-3xl font-black text-brand-primary tracking-tighter">{reports.length}</h5>
                            </div>
                         </div>
-                        <div className="bg-[#003366] p-10 rounded-[48px] shadow-2xl space-y-6 relative overflow-hidden group">
+                        <div className="bg-brand-primary p-10 rounded-[48px] shadow-2xl space-y-6 relative overflow-hidden group">
                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-transform"></div>
-                           <div className="w-14 h-14 bg-teal-400 rounded-2xl flex items-center justify-center text-[#003366] shadow-xl">
+                           <div className="w-14 h-14 bg-brand-surface0 rounded-2xl flex items-center justify-center text-brand-primary shadow-xl">
                               <i className="fa-solid fa-shield-halved text-xl"></i>
                            </div>
                            <div>
-                              <p className="text-[10px] font-black text-teal-300 uppercase tracking-widest mb-1">Hub Security</p>
+                              <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Hub Security</p>
                               <h5 className="text-3xl font-black text-white tracking-tighter">LOCKED</h5>
                            </div>
                         </div>
                      </div>
 
-                     <div className="bg-[#003366] p-12 md:p-16 rounded-[64px] shadow-2xl relative overflow-hidden text-center md:text-left">
+                     <div className="bg-brand-primary p-12 md:p-16 rounded-[64px] shadow-2xl relative overflow-hidden text-center md:text-left">
                         <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_30%,rgba(20,184,166,0.1),transparent)]"></div>
                         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
                            <div className="space-y-6">
                               <h4 className="text-4xl font-black text-white uppercase tracking-tighter leading-none">Administrative <br /> Synchronization.</h4>
-                              <p className="text-teal-400/60 font-medium text-sm leading-relaxed max-w-md italic">The UI DLC Hub control sector is fully operational. All scholarly transactions, asset listings, and conflict resolutions are being audited in real-time by the administrative protocol.</p>
+                              <p className="text-indigo-500/60 font-medium text-sm leading-relaxed max-w-md italic">The UI DLC Hub control sector is fully operational. All scholarly transactions, asset listings, and conflict resolutions are being audited in real-time by the administrative protocol.</p>
                            </div>
-                           <button onClick={() => fetchAdminData()} className="px-10 py-6 bg-teal-600 text-white rounded-[28px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-teal-700/40 hover:brightness-110 active:scale-95 transition-all">Recalibrate Registry</button>
+                           <button onClick={() => fetchAdminData()} className="px-10 py-6 bg-brand-primary text-white rounded-[28px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-indigo-800/40 hover:brightness-110 active:scale-95 transition-all">Recalibrate Registry</button>
                         </div>
                      </div>
                   </div>

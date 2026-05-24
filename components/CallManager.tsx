@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect, useRef } from 'react';
 import { client, databases } from '../lib/appwrite';
 import { useAuth } from '../App';
@@ -322,13 +322,13 @@ const CallManager: React.FC = () => {
                             {incomingCall ? "Incoming call" : (callStatus === 'connected' ? "Active Connection" : "Calling...")}
                         </h2>
                     </div>
-                    <p className="text-teal-400 font-bold text-sm md:text-lg uppercase tracking-widest">
+                    <p className="text-indigo-500 font-bold text-sm md:text-lg uppercase tracking-widest">
                         {callStatus === 'connected' ? displayDuration(liveDuration) : (incomingCall ? "Voice Call" : "Linking Terminals...")}
                     </p>
                 </div>
 
                 <div className="relative flex items-center justify-center">
-                    <div className={`absolute w-48 h-48 md:w-64 md:h-64 bg-teal-500/20 rounded-full ${callStatus !== 'connected' ? 'animate-ping' : ''} duration-3000`}></div>
+                    <div className={`absolute w-48 h-48 md:w-64 md:h-64 bg-brand-primary/20 rounded-full ${callStatus !== 'connected' ? 'animate-ping' : ''} duration-3000`}></div>
                     <div className="relative w-44 h-44 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-white/20 shadow-2xl">
                         <img src={`https://ui-avatars.com/api/?name=${incomingCall ? "INCOMING" : (callStatus === 'connected' ? "ACTIVE" : "STUDENT")}&background=075e54&color=fff&size=512&bold=true`} className="w-full h-full object-cover" />
                     </div>
@@ -346,7 +346,7 @@ const CallManager: React.FC = () => {
                     {incomingCall ? (
                         <div className="flex gap-4">
                             <button onClick={() => endCall(true)} className="w-16 h-16 rounded-full bg-rose-500 text-white flex items-center shadow-lg justify-center"><i className="fa-solid fa-phone-slash text-2xl"></i></button>
-                            <button onClick={answerCall} className="w-16 h-16 rounded-full bg-teal-500 text-white flex items-center shadow-lg justify-center animate-bounce"><i className="fa-solid fa-phone text-2xl"></i></button>
+                            <button onClick={answerCall} className="w-16 h-16 rounded-full bg-brand-primary text-white flex items-center shadow-lg justify-center animate-bounce"><i className="fa-solid fa-phone text-2xl"></i></button>
                         </div>
                     ) : (
                         <button onClick={() => endCall(true)} className="w-20 h-20 rounded-full bg-rose-600 text-white flex items-center shadow-xl justify-center hover:scale-110 transition-transform"><i className="fa-solid fa-phone-slash text-2xl"></i></button>

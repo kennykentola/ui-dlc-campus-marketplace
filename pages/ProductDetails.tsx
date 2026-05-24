@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Product, UserProfile, Review, DeliveryMethod, ListingType, Transaction, TransactionStatus } from "../types";
@@ -133,7 +133,7 @@ const ProductDetails: React.FC = () => {
     finally { setSubmittingReview(false); }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-white"><div className="w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div></div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-white"><div className="w-12 h-12 border-4 border-brand-primary border-t-transparent rounded-full animate-spin"></div></div>;
   if (!product) return <div className="min-h-screen pt-40 text-center uppercase font-black text-slate-300">Asset Not Found.</div>;
 
   const isFavorite = user?.favorites?.includes(product.$id);
@@ -159,7 +159,7 @@ const ProductDetails: React.FC = () => {
                   >
                     <i className={`${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart text-2xl`}></i>
                   </button>
-                  <button className="w-14 h-14 bg-white/90 dark:bg-slate-800/90 backdrop-blur text-slate-400 dark:text-slate-500 rounded-2xl flex items-center justify-center transition-all shadow-2xl hover:text-blue-600 dark:hover:text-blue-400 border-2 border-white dark:border-slate-700 active:scale-90">
+                  <button className="w-14 h-14 bg-white/90 dark:bg-slate-800/90 backdrop-blur text-slate-400 dark:text-slate-500 rounded-2xl flex items-center justify-center transition-all shadow-2xl hover:text-brand-primary dark:hover:text-blue-400 border-2 border-white dark:border-slate-700 active:scale-90">
                     <i className="fa-solid fa-share-nodes text-2xl"></i>
                   </button>
                   <button className="w-14 h-14 bg-white/90 dark:bg-slate-800/90 backdrop-blur text-slate-400 dark:text-slate-500 rounded-2xl flex items-center justify-center transition-all shadow-2xl hover:text-rose-600 border-2 border-white dark:border-slate-700 active:scale-90">
@@ -170,7 +170,7 @@ const ProductDetails: React.FC = () => {
                 {product.imageUrls.length > 1 && (
                   <div className="absolute bottom-6 left-6 right-6 flex gap-2 overflow-x-auto no-scrollbar py-2">
                     {product.imageUrls.map((url, i) => (
-                      <button key={i} onClick={() => setActiveImage(i)} className={`shrink-0 w-16 h-12 rounded-xl border-2 transition-all overflow-hidden ${activeImage === i ? 'border-blue-600 scale-105 shadow-lg' : 'border-white/50 opacity-60'}`}>
+                      <button key={i} onClick={() => setActiveImage(i)} className={`shrink-0 w-16 h-12 rounded-xl border-2 transition-all overflow-hidden ${activeImage === i ? 'border-brand-primary scale-105 shadow-lg' : 'border-white/50 opacity-60'}`}>
                         <img src={url} className="w-full h-full object-cover" alt="Thumb" />
                       </button>
                     ))}
@@ -180,25 +180,25 @@ const ProductDetails: React.FC = () => {
 
               <button
                 onClick={handleQuickChat}
-                className="w-full bg-blue-700 text-white py-6 rounded-[28px] font-black text-xl shadow-2xl shadow-blue-200 dark:shadow-none hover:bg-blue-800 transition transform active:scale-[0.98] flex items-center justify-center gap-4"
+                className="w-full bg-brand-primary text-white py-6 rounded-[28px] font-black text-xl shadow-2xl shadow-blue-200 dark:shadow-none hover:bg-brand-primary transition transform active:scale-[0.98] flex items-center justify-center gap-4"
               >
                 <i className="fa-solid fa-comments text-2xl"></i>
                 CONTACT SELLER NOW
               </button>
 
-              <div className="p-6 bg-blue-50/50 dark:bg-blue-900/10 rounded-3xl border border-blue-100 dark:border-blue-900/30 shadow-sm">
-                <h4 className="text-[10px] font-black text-blue-800 dark:text-blue-400 uppercase tracking-[0.2em] mb-4 flex items-center">
+              <div className="p-6 bg-brand-surface dark:bg-brand-primary/10 rounded-3xl border border-indigo-100 dark:border-indigo-900/30 shadow-sm">
+                <h4 className="text-[10px] font-black text-brand-primary dark:text-blue-400 uppercase tracking-[0.2em] mb-4 flex items-center">
                   <i className="fa-solid fa-shield-halved mr-2 text-sm"></i> UI Safety Protocols
                 </h4>
                 <ul className="text-xs text-slate-600 dark:text-slate-400 space-y-3 font-medium">
                   <li className="flex items-start">
-                    <span className="text-blue-500 font-black mr-2">01</span> Meet at the DLC Office or Faculty area during daylight.
+                    <span className="text-brand-primary font-black mr-2">01</span> Meet at the DLC Office or Faculty area during daylight.
                   </li>
                   <li className="flex items-start">
-                    <span className="text-blue-500 font-black mr-2">02</span> Inspect the item thoroughly before any payment.
+                    <span className="text-brand-primary font-black mr-2">02</span> Inspect the item thoroughly before any payment.
                   </li>
                   <li className="flex items-start">
-                    <span className="text-blue-500 font-black mr-2">03</span> Report any suspicious activity to the Admin Panel.
+                    <span className="text-brand-primary font-black mr-2">03</span> Report any suspicious activity to the Admin Panel.
                   </li>
                 </ul>
               </div>
@@ -208,19 +208,19 @@ const ProductDetails: React.FC = () => {
             <div className="flex flex-col">
               <div className="mb-8">
                 <div className="flex items-center space-x-3 mb-4 flex-wrap gap-y-2">
-                  <span className="inline-block px-4 py-1.5 bg-blue-700 text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-blue-100">
+                  <span className="inline-block px-4 py-1.5 bg-brand-primary text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-indigo-100">
                     {product.category}
                   </span>
                   <span className={`px-4 py-1.5 ${product.isNegotiable ? 'bg-emerald-500' : 'bg-slate-400'} text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg ${product.isNegotiable ? 'shadow-emerald-100' : ''}`}>
                     {product.isNegotiable ? 'NEGOTIABLE' : 'FIXED PRICE'}
                   </span>
                   {product.listingType && product.listingType !== ListingType.NORMAL && (
-                    <span className="px-4 py-1.5 bg-indigo-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg">
+                    <span className="px-4 py-1.5 bg-brand-primary text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg">
                       {product.listingType}
                     </span>
                   )}
                   {product.transactionType === 'knowledge_barter' && (
-                    <span className="px-4 py-1.5 bg-indigo-500 text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-indigo-100">
+                    <span className="px-4 py-1.5 bg-brand-surface0 text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-indigo-100">
                       STUDY NODE BARTER
                     </span>
                   )}
@@ -230,17 +230,17 @@ const ProductDetails: React.FC = () => {
                     </span>
                   )}
                   {product.isSharedLogistics && (
-                    <span className="px-4 py-1.5 bg-orange-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-orange-100 flex items-center gap-2">
+                    <span className="px-4 py-1.5 bg-amber-500 text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-orange-100 flex items-center gap-2">
                       <i className="fa-solid fa-truck-fast text-[11px]"></i> SHARED COURIER
                     </span>
                   )}
                 </div>
-                <h1 className="text-5xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight capitalize">
+                <h1 className="text-5xl font-black text-brand-ink dark:text-white leading-[1.1] tracking-tight capitalize">
                   {product.name}
                 </h1>
                 <div className="mt-8 flex flex-col gap-5">
                   <div className="flex flex-col">
-                    <p className="text-5xl font-black text-blue-800 dark:text-blue-400 tracking-tighter">
+                    <p className="text-5xl font-black text-brand-primary dark:text-blue-400 tracking-tighter">
                       ₦{product.price.toLocaleString()}
                     </p>
                   </div>
@@ -254,8 +254,8 @@ const ProductDetails: React.FC = () => {
                 </p>
 
                 {product.exchangeTerms && (
-                  <div className="mt-6 p-4 bg-indigo-50 border border-indigo-100 rounded-2xl">
-                    <p className="text-[9px] font-black text-indigo-600 uppercase tracking-widest mb-2">Exchange Protocol</p>
+                  <div className="mt-6 p-4 bg-brand-surface border border-indigo-100 rounded-2xl">
+                    <p className="text-[9px] font-black text-brand-primary uppercase tracking-widest mb-2">Exchange Protocol</p>
                     <p className="text-xs font-bold text-slate-700 italic">"{product.exchangeTerms}"</p>
                   </div>
                 )}
@@ -271,7 +271,7 @@ const ProductDetails: React.FC = () => {
                     />
                     <div>
                       <div className="flex items-center space-x-3">
-                        <p className="font-black text-slate-900 dark:text-white text-xl leading-none">{seller?.name || "Registry Associate"}</p>
+                        <p className="font-black text-brand-ink dark:text-white text-xl leading-none">{seller?.name || "Registry Associate"}</p>
                         <div className="bg-emerald-500 text-white text-[8px] font-black px-2.5 py-1 rounded-full flex items-center animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.4)]">
                           <i className="fa-solid fa-circle-check mr-1.5"></i> VERIFIED SELLER
                         </div>
@@ -280,10 +280,10 @@ const ProductDetails: React.FC = () => {
                         <div className="flex text-yellow-400 gap-0.5">
                           {[...Array(5)].map((_, i) => {
                             const avg = reviews.length > 0 ? reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length : 5;
-                            return <i key={i} className={`fa-solid fa-star text-[10px] ${i < Math.round(avg) ? 'text-yellow-400' : 'text-slate-200 dark:text-slate-800'}`}></i>;
+                            return <i key={i} className={`fa-solid fa-star text-[10px] ${i < Math.round(avg) ? 'text-yellow-400' : 'text-slate-200 dark:text-brand-ink'}`}></i>;
                           })}
                         </div>
-                        <span className="text-slate-900 dark:text-white font-black text-xs">
+                        <span className="text-brand-ink dark:text-white font-black text-xs">
                           {reviews.length > 0 ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1) : "5.0"}
                         </span>
                         <span className="text-slate-400 dark:text-slate-500 font-black text-[9px] uppercase tracking-widest">({reviews.length} reviews)</span>
@@ -296,11 +296,11 @@ const ProductDetails: React.FC = () => {
                 <div className="grid grid-cols-2 gap-6 pt-6 border-t border-slate-200/50 dark:border-slate-700/50">
                   <div className="space-y-1.5">
                     <h4 className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">Department</h4>
-                    <p className="text-xs font-black text-slate-800 dark:text-slate-300">{seller?.department || "Academic Auditor"}</p>
+                    <p className="text-xs font-black text-brand-ink dark:text-slate-300">{seller?.department || "Academic Auditor"}</p>
                   </div>
                   <div className="space-y-1.5">
                     <h4 className="text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-widest">Regional Hub Base</h4>
-                    <p className="text-xs font-black text-[#003366] dark:text-teal-400 uppercase tracking-tight">
+                    <p className="text-xs font-black text-brand-primary dark:text-indigo-500 uppercase tracking-tight">
                       {product.learningHub || "Ibadan Hub (DLC)"}
                     </p>
                   </div>
@@ -309,7 +309,7 @@ const ProductDetails: React.FC = () => {
                 <div className="flex space-x-4 pt-4">
                   <button
                     onClick={initiateEscrow}
-                    className="flex-1 bg-blue-700 text-white py-5 rounded-2xl font-black text-sm shadow-xl shadow-blue-100 dark:shadow-none hover:bg-blue-800 transition active:scale-[0.98]"
+                    className="flex-1 bg-brand-primary text-white py-5 rounded-2xl font-black text-sm shadow-xl shadow-indigo-100 dark:shadow-none hover:bg-brand-primary transition active:scale-[0.98]"
                   >
                     Reserve Now
                   </button>
@@ -329,23 +329,23 @@ const ProductDetails: React.FC = () => {
         <section className="mt-40 pt-40 container mx-auto px-6 max-w-7xl border-t border-slate-100 space-y-20">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-10">
             <div className="space-y-3 px-4">
-              <p className="text-[10px] font-black text-teal-600 uppercase tracking-widest">Registry Feedback</p>
-              <h2 className="text-5xl font-black text-[#003366] dark:text-white uppercase tracking-tighter leading-none">Activity Feed ({reviews.length}).</h2>
+              <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest">Registry Feedback</p>
+              <h2 className="text-5xl font-black text-brand-primary dark:text-white uppercase tracking-tighter leading-none">Activity Feed ({reviews.length}).</h2>
             </div>
 
             {canReview && (
               <div className="bg-slate-50 dark:bg-slate-800 p-10 rounded-[48px] border border-slate-100 dark:border-slate-700 max-w-xl w-full">
                 <form onSubmit={postReview} className="space-y-6">
-                  <h3 className="text-xs font-black text-[#003366] dark:text-white uppercase tracking-widest mb-6">Archive New Feedback</h3>
+                  <h3 className="text-xs font-black text-brand-primary dark:text-white uppercase tracking-widest mb-6">Archive New Feedback</h3>
                   <div className="flex gap-4">
                     {[1, 2, 3, 4, 5].map(s => (
-                      <button key={s} type="button" onClick={() => setRating(s)} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${rating >= s ? 'bg-[#003366] text-teal-400' : 'bg-white dark:bg-slate-700 text-slate-200'}`}>
+                      <button key={s} type="button" onClick={() => setRating(s)} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${rating >= s ? 'bg-brand-primary text-indigo-500' : 'bg-white dark:bg-slate-700 text-slate-200'}`}>
                         <i className="fa-solid fa-star"></i>
                       </button>
                     ))}
                   </div>
-                  <textarea placeholder="Document your encounter with this asset..." className="w-full h-32 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[28px] px-8 py-5 text-sm font-medium outline-none focus:ring-4 focus:ring-teal-500/10 transition-all shadow-sm resize-none" value={comment} onChange={e => setComment(e.target.value)} required />
-                  <button className="w-full py-5 bg-[#003366] text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-blue-900/10 hover:brightness-110 active:scale-95 transition-all">Transmit Feedback</button>
+                  <textarea placeholder="Document your encounter with this asset..." className="w-full h-32 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[28px] px-8 py-5 text-sm font-medium outline-none focus:ring-4 focus:ring-indigo-600/10 transition-all shadow-sm resize-none" value={comment} onChange={e => setComment(e.target.value)} required />
+                  <button className="w-full py-5 bg-brand-primary text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-brand-primary/10 hover:brightness-110 active:scale-95 transition-all">Transmit Feedback</button>
                 </form>
               </div>
             )}
@@ -355,18 +355,18 @@ const ProductDetails: React.FC = () => {
             {reviews.map(r => (
               <div key={r.$id} className="bg-white dark:bg-slate-900 border border-slate-50 dark:border-slate-800 p-10 rounded-[48px] shadow-sm space-y-6 flex flex-col hover:shadow-xl transition-all">
                 <div className="flex items-center justify-between">
-                  <div className="flex gap-1 text-teal-500">
+                  <div className="flex gap-1 text-brand-primary">
                     {[...Array(5)].map((_, i) => <i key={i} className={`fa-solid fa-star text-[9px] ${i < r.rating ? 'opacity-100' : 'opacity-10'}`}></i>)}
                   </div>
                   <span className="text-[9px] font-black text-slate-200 dark:text-slate-700 uppercase tracking-widest italic">{new Date(r.createdAt || "").toLocaleDateString()}</span>
                 </div>
                 <p className="text-sm font-medium text-slate-700 dark:text-slate-300 leading-relaxed italic grow">"{r.comment}"</p>
                 <div className="pt-6 border-t border-slate-50 dark:border-slate-800 flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-[#003366] dark:text-teal-400 text-[10px] font-black">
+                  <div className="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-brand-primary dark:text-indigo-500 text-[10px] font-black">
                     {r.buyerName.charAt(0)}
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-[#003366] dark:text-white uppercase tracking-tighter leading-none">{r.buyerName}</p>
+                    <p className="text-[10px] font-black text-brand-primary dark:text-white uppercase tracking-tighter leading-none">{r.buyerName}</p>
                     <p className="text-[8px] font-bold text-slate-300 dark:text-slate-500 uppercase tracking-widest mt-1">Scholarly Buyer</p>
                   </div>
                 </div>
@@ -391,8 +391,8 @@ const ProductDetails: React.FC = () => {
         {relatedProducts.length > 0 && (
           <section className="space-y-12 pt-40 container mx-auto px-6 max-w-7xl border-t border-slate-100 dark:border-slate-800">
             <div className="px-4">
-              <p className="text-[10px] font-black text-teal-600 uppercase tracking-widest mb-3">Registry Expansion</p>
-              <h2 className="text-4xl font-black text-[#003366] dark:text-white uppercase tracking-tighter leading-none">Hub Recommendations.</h2>
+              <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest mb-3">Registry Expansion</p>
+              <h2 className="text-4xl font-black text-brand-primary dark:text-white uppercase tracking-tighter leading-none">Hub Recommendations.</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-4">
               {relatedProducts.map(p => <ProductCard key={p.$id} product={p} />)}

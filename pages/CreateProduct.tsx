@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
@@ -115,12 +115,12 @@ const CreateProduct: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-6">
+    <div className="min-h-screen bg-transparent py-12 px-6">
       <div className="container mx-auto max-w-4xl">
         <div className="bg-white dark:bg-slate-900 p-8 md:p-12 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none animate-fadeIn">
           <div className="flex items-center justify-between mb-2">
-            <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight uppercase">Sell an Item</h1>
-            <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded-2xl flex items-center justify-center font-black">
+            <h1 className="text-4xl font-black text-brand-ink dark:text-white tracking-tight uppercase">Sell an Item</h1>
+            <div className="w-12 h-12 bg-brand-surface dark:bg-brand-primary/20 text-brand-primary dark:text-blue-400 rounded-2xl flex items-center justify-center font-black">
               <i className="fa-solid fa-shop"></i>
             </div>
           </div>
@@ -134,7 +134,7 @@ const CreateProduct: React.FC = () => {
               <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-1">Title of Item</label>
               <input
                 required
-                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 text-xl font-bold focus:outline-none focus:ring-4 focus:ring-blue-700/10 focus:bg-white dark:focus:bg-slate-700 dark:text-white transition shadow-sm"
+                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 text-xl font-bold focus:outline-none focus:ring-4 focus:ring-indigo-700/10 focus:bg-white dark:focus:bg-slate-700 dark:text-white transition shadow-sm"
                 placeholder="e.g. Casio fx-991EX Calculator (Brand New)"
                 type="text"
                 value={name}
@@ -149,7 +149,7 @@ const CreateProduct: React.FC = () => {
                 <div className="relative">
                   <select
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 font-bold text-slate-700 dark:text-white focus:outline-none focus:ring-4 focus:ring-blue-700/10 transition cursor-pointer appearance-none shadow-sm"
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 font-bold text-slate-700 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-700/10 transition cursor-pointer appearance-none shadow-sm"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                   >
@@ -174,7 +174,7 @@ const CreateProduct: React.FC = () => {
                       onClick={() => setTransactionType(type as TransactionType)}
                       className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
                         transactionType === type 
-                          ? 'bg-blue-700 text-white shadow-lg' 
+                          ? 'bg-brand-primary text-white shadow-lg' 
                           : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
                       }`}
                     >
@@ -192,7 +192,7 @@ const CreateProduct: React.FC = () => {
                 <div className="relative">
                   <select
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 font-bold text-slate-700 dark:text-white focus:outline-none focus:ring-4 focus:ring-blue-700/10 transition cursor-pointer appearance-none shadow-sm"
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 font-bold text-slate-700 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-700/10 transition cursor-pointer appearance-none shadow-sm"
                     value={learningHub}
                     onChange={(e) => setLearningHub(e.target.value as LearningHub)}
                   >
@@ -210,7 +210,7 @@ const CreateProduct: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsExamWeekSafe(!isExamWeekSafe)}
-                  className={`flex flex-col items-center justify-center p-4 rounded-3xl border transition-all h-[76px] ${isExamWeekSafe ? 'bg-indigo-50 border-indigo-200 text-indigo-700 shadow-lg' : 'bg-slate-50 border-slate-100 text-slate-400'}`}
+                  className={`flex flex-col items-center justify-center p-4 rounded-3xl border transition-all h-[76px] ${isExamWeekSafe ? 'bg-brand-surface border-indigo-200 text-brand-primary shadow-lg' : 'bg-slate-50 border-slate-100 text-slate-400'}`}
                 >
                   <i className={`fa-solid fa-calendar-day mb-1 ${isExamWeekSafe ? 'animate-bounce' : ''}`}></i>
                   <span className="text-[8px] font-black uppercase tracking-widest leading-none">Exam Week Safe</span>
@@ -218,7 +218,7 @@ const CreateProduct: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsSharedLogistics(!isSharedLogistics)}
-                  className={`flex flex-col items-center justify-center p-4 rounded-3xl border transition-all h-[76px] ${isSharedLogistics ? 'bg-orange-50 border-orange-200 text-orange-700 shadow-lg' : 'bg-slate-50 border-slate-100 text-slate-400'}`}
+                  className={`flex flex-col items-center justify-center p-4 rounded-3xl border transition-all h-[76px] ${isSharedLogistics ? 'bg-orange-50 border-orange-200 text-brand-secondary shadow-lg' : 'bg-slate-50 border-slate-100 text-slate-400'}`}
                 >
                   <i className="fa-solid fa-truck-ramp-box mb-1"></i>
                   <span className="text-[8px] font-black uppercase tracking-widest leading-none">Shared Courier</span>
@@ -234,7 +234,7 @@ const CreateProduct: React.FC = () => {
                   <span className="absolute left-6 top-1/2 -translate-y-1/2 text-xl font-black text-slate-300 dark:text-slate-600">₦</span>
                   <input
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-12 py-4 text-xl font-black focus:outline-none focus:ring-4 focus:ring-blue-700/10 dark:text-white transition shadow-sm"
+                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-12 py-4 text-xl font-black focus:outline-none focus:ring-4 focus:ring-indigo-700/10 dark:text-white transition shadow-sm"
                     placeholder="0"
                     type="number"
                     value={price}
@@ -250,7 +250,7 @@ const CreateProduct: React.FC = () => {
                       <i className="fa-solid fa-handshake"></i>
                     </div>
                     <div>
-                      <p className="text-xs font-black text-slate-800 dark:text-white uppercase tracking-wider">Negotiable</p>
+                      <p className="text-xs font-black text-brand-ink dark:text-white uppercase tracking-wider">Negotiable</p>
                       <p className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase">Willing to haggle</p>
                     </div>
                   </div>
@@ -272,7 +272,7 @@ const CreateProduct: React.FC = () => {
                 <textarea
                   rows={5}
                   required
-                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-5 focus:outline-none focus:ring-4 focus:ring-blue-700/10 focus:bg-white dark:focus:bg-slate-700 dark:text-white transition resize-none leading-relaxed text-base"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-5 focus:outline-none focus:ring-4 focus:ring-indigo-700/10 focus:bg-white dark:focus:bg-slate-700 dark:text-white transition resize-none leading-relaxed text-base"
                   placeholder="Describe the item condition honestly. Mention if there's any receipt or warranty remaining."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -283,7 +283,7 @@ const CreateProduct: React.FC = () => {
                 <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-1">Exchange Protocol (Optional)</label>
                 <textarea
                   rows={5}
-                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-5 focus:outline-none focus:ring-4 focus:ring-blue-700/10 focus:bg-white dark:focus:bg-slate-700 dark:text-white transition resize-none leading-relaxed text-base"
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-5 focus:outline-none focus:ring-4 focus:ring-indigo-700/10 focus:bg-white dark:focus:bg-slate-700 dark:text-white transition resize-none leading-relaxed text-base"
                   placeholder="e.g. Willing to swap for a scientific calculator plus cash balance."
                   value={exchangeTerms}
                   onChange={(e) => setExchangeTerms(e.target.value)}
@@ -292,7 +292,7 @@ const CreateProduct: React.FC = () => {
             </div>
 
             {/* Delivery Methods Hub */}
-            <div className="space-y-6 bg-slate-50/50 dark:bg-blue-900/5 p-8 rounded-4xl border border-slate-100 dark:border-slate-800">
+            <div className="space-y-6 bg-slate-50/50 dark:bg-brand-primary/5 p-8 rounded-4xl border border-slate-100 dark:border-slate-800">
                <div>
                   <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] block">Logistics Hub Protocols</label>
                   <p className="text-[10px] text-slate-400 dark:text-slate-600 font-bold mt-1 uppercase">Select at least one secure exchange protocol</p>
@@ -305,7 +305,7 @@ const CreateProduct: React.FC = () => {
                       onClick={() => toggleDelivery(method)}
                       className={`px-6 py-4 rounded-[24px] border transition-all flex items-center gap-3 ${
                         selectedDeliveries.includes(method)
-                          ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 shadow-lg'
+                          ? 'border-brand-primary bg-brand-surface dark:bg-brand-primary/20 text-brand-primary dark:text-blue-400 shadow-lg'
                           : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800 text-slate-400'
                       }`}
                     >
@@ -339,7 +339,7 @@ const CreateProduct: React.FC = () => {
                 ))}
                 
                 {images.length < 5 && (
-                  <label className="aspect-square flex flex-col items-center justify-center border-3 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all cursor-pointer group shadow-sm">
+                  <label className="aspect-square flex flex-col items-center justify-center border-3 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl bg-white dark:bg-slate-800 hover:bg-brand-surface dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-brand-primary transition-all cursor-pointer group shadow-sm">
                     <div className="w-12 h-12 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition duration-300">
                       <i className="fa-solid fa-camera text-slate-300 dark:text-slate-600 text-xl"></i>
                     </div>
@@ -359,14 +359,14 @@ const CreateProduct: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigate("/")}
-                className="w-full sm:w-auto px-12 py-5 font-black text-slate-400 dark:text-slate-500 hover:text-slate-800 dark:hover:text-white transition uppercase tracking-widest text-sm"
+                className="w-full sm:w-auto px-12 py-5 font-black text-slate-400 dark:text-slate-500 hover:text-brand-ink dark:hover:text-white transition uppercase tracking-widest text-sm"
               >
                 Discard
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full sm:grow bg-blue-700 text-white py-5 rounded-[28px] font-black text-lg shadow-2xl shadow-blue-200 dark:shadow-none hover:bg-blue-800 transition transform active:scale-[0.98] disabled:opacity-50 uppercase tracking-widest"
+                className="w-full sm:grow bg-brand-primary text-white py-5 rounded-[28px] font-black text-lg shadow-2xl shadow-blue-200 dark:shadow-none hover:bg-brand-primary transition transform active:scale-[0.98] disabled:opacity-50 uppercase tracking-widest"
               >
                 {loading ? 'Transmitting Asset...' : 'Publish to Marketplace'}
               </button>

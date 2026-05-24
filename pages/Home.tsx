@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
 import { Product, UserRole, LearningHub, BuyerRequest } from "../types";
@@ -58,15 +58,15 @@ const Home: React.FC = () => {
   const featuredProducts = filteredProducts.slice(0, 3);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#f7fafc] pb-32 pt-28 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-linear-to-b from-teal-50 via-white to-transparent dark:from-slate-900 dark:via-slate-950 dark:to-transparent" />
-      <div className="pointer-events-none absolute left-0 top-24 h-72 w-72 rounded-full bg-[#003366]/5 blur-3xl dark:bg-[#003366]/15" />
-      <div className="pointer-events-none absolute right-0 top-40 h-80 w-80 rounded-full bg-[#14b8a6]/10 blur-3xl dark:bg-[#14b8a6]/10" />
+    <div className="relative min-h-screen overflow-x-hidden bg-[#f7fafc] pb-32 pt-28 text-brand-ink dark:text-slate-100">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-linear-to-b from-indigo-50 via-white to-transparent dark:from-slate-900 dark:via-slate-950 dark:to-transparent" />
+      <div className="pointer-events-none absolute left-0 top-24 h-72 w-72 rounded-full bg-brand-primary/5 blur-3xl dark:bg-brand-primary/15" />
+      <div className="pointer-events-none absolute right-0 top-40 h-80 w-80 rounded-full bg-brand-secondary/10 blur-3xl dark:bg-brand-secondary/10" />
 
       <div className="container relative mx-auto max-w-7xl space-y-16 px-4 sm:px-6 lg:px-8">
         <section className="grid items-center gap-12 rounded-[40px] border border-slate-200/80 bg-white/90 p-8 shadow-[0_32px_90px_-48px_rgba(15,23,42,0.32)] backdrop-blur-sm md:p-12 lg:grid-cols-[1.2fr_0.8fr] dark:border-slate-800 dark:bg-slate-900/85">
           <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.22em] text-teal-800 dark:border-teal-900/50 dark:bg-teal-950/40 dark:text-teal-300">
+            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-brand-surface px-4 py-2 text-[11px] font-medium uppercase tracking-[0.22em] text-brand-primary dark:border-indigo-950/50 dark:bg-indigo-950/40 dark:text-indigo-400">
               UI DLC marketplace
             </div>
 
@@ -84,13 +84,13 @@ const Home: React.FC = () => {
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
                 to={user ? "/sell" : "/register"}
-                className="inline-flex items-center justify-center rounded-2xl bg-[#003366] px-6 py-4 text-sm font-medium text-white shadow-lg shadow-blue-900/10 transition hover:brightness-110 active:scale-[0.98]"
+                className="inline-flex items-center justify-center rounded-2xl bg-brand-primary px-6 py-4 text-sm font-medium text-white shadow-lg shadow-brand-primary/10 transition hover:brightness-110 active:scale-[0.98]"
               >
                 {user ? "List an item" : "Create account"}
               </Link>
               <Link
                 to="/messages"
-                className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-4 text-sm font-medium text-slate-700 transition hover:border-teal-200 hover:text-teal-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-teal-900/50 dark:hover:text-teal-300"
+                className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-4 text-sm font-medium text-slate-700 transition hover:border-indigo-200 hover:text-brand-primary dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-indigo-950/50 dark:hover:text-indigo-400"
               >
                 Open chat
               </Link>
@@ -113,7 +113,7 @@ const Home: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Search by product name"
-                  className="w-full rounded-[24px] border border-slate-200 bg-slate-50 py-4 pl-12 pr-4 text-base text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-teal-300 focus:bg-white focus:ring-4 focus:ring-teal-100 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-teal-800 dark:focus:ring-teal-950"
+                  className="w-full rounded-[24px] border border-slate-200 bg-slate-50 py-4 pl-12 pr-4 text-base text-brand-ink outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-indigo-900 dark:focus:ring-indigo-950"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -125,7 +125,7 @@ const Home: React.FC = () => {
                 </span>
                 <i className="fa-solid fa-location-dot pointer-events-none absolute left-5 top-[3.35rem] -translate-y-1/2 text-slate-400" />
                 <select
-                  className="w-full appearance-none rounded-[24px] border border-slate-200 bg-slate-50 py-4 pl-12 pr-10 text-base text-slate-900 outline-none transition focus:border-teal-300 focus:bg-white focus:ring-4 focus:ring-teal-100 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-teal-800 dark:focus:ring-teal-950"
+                  className="w-full appearance-none rounded-[24px] border border-slate-200 bg-slate-50 py-4 pl-12 pr-10 text-base text-brand-ink outline-none transition focus:border-indigo-400 focus:bg-white focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-indigo-900 dark:focus:ring-indigo-950"
                   value={selectedHub}
                   onChange={(e) => setSelectedHub(e.target.value)}
                 >
@@ -141,7 +141,7 @@ const Home: React.FC = () => {
                 <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">
                   Available now
                 </p>
-                <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+                <p className="mt-2 text-3xl font-bold tracking-tight text-brand-ink dark:text-white">
                   {products.length}
                 </p>
                 <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
@@ -152,19 +152,19 @@ const Home: React.FC = () => {
           </div>
 
           <div className="grid gap-4">
-            <div className="relative overflow-hidden rounded-[32px] border border-slate-200 bg-linear-to-br from-slate-50 via-white to-teal-50 p-6 shadow-[0_28px_70px_-44px_rgba(15,23,42,0.38)] dark:border-slate-800 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900">
-              <div className="pointer-events-none absolute -right-10 top-8 h-40 w-40 rounded-full bg-teal-100/70 blur-3xl dark:bg-teal-900/20" />
+            <div className="relative overflow-hidden rounded-[32px] border border-slate-200 bg-linear-to-br from-slate-50 via-white to-indigo-50 p-6 shadow-[0_28px_70px_-44px_rgba(15,23,42,0.38)] dark:border-slate-800 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900">
+              <div className="pointer-events-none absolute -right-10 top-8 h-40 w-40 rounded-full bg-brand-surface/70 blur-3xl dark:bg-indigo-950/20" />
               <div className="relative">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
                     <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-slate-400">
                       Marketplace preview
                     </p>
-                    <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+                    <h2 className="mt-2 text-2xl font-bold tracking-tight text-brand-ink dark:text-white">
                       Built for fast campus exchange
                     </h2>
                   </div>
-                  <span className="rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-medium text-teal-700 dark:border-teal-900/50 dark:bg-teal-950/40 dark:text-teal-300">
+                  <span className="rounded-full border border-indigo-200 bg-brand-surface px-3 py-1 text-xs font-medium text-brand-primary dark:border-indigo-950/50 dark:bg-indigo-950/40 dark:text-indigo-400">
                     Student to student
                   </span>
                 </div>
@@ -187,7 +187,7 @@ const Home: React.FC = () => {
                 </p>
               </div>
 
-              <div className="rounded-[28px] bg-linear-to-br from-[#003366] to-[#0f766e] p-5 text-white shadow-[0_32px_80px_-36px_rgba(0,51,102,0.55)]">
+              <div className="rounded-[28px] bg-linear-to-br from-brand-primary to-[#312E81] p-5 text-white shadow-[0_32px_80px_-36px_rgba(3,34,33,0.55)]">
                 <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-white/70">
                   Quick start
                 </p>
@@ -196,7 +196,7 @@ const Home: React.FC = () => {
                 </p>
                 <button
                   onClick={() => navigate(user ? "/sell" : "/login")}
-                  className="mt-4 inline-flex items-center justify-center rounded-2xl bg-white px-4 py-3 text-sm font-medium text-[#003366] transition hover:bg-slate-100 active:scale-[0.98]"
+                  className="mt-4 inline-flex items-center justify-center rounded-2xl bg-white px-4 py-3 text-sm font-medium text-brand-primary transition hover:bg-slate-100 active:scale-[0.98]"
                 >
                   {user ? "Create listing" : "Sign in to start"}
                 </button>
@@ -210,17 +210,17 @@ const Home: React.FC = () => {
           <section className="space-y-10 animate-fadeIn">
             <div className="flex items-end justify-between gap-4 px-4 overflow-hidden">
               <div className="space-y-4">
-                 <div className="inline-flex items-center gap-2 rounded-full border border-[#003366]/10 bg-slate-50 px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#003366] dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400 shadow-sm animate-pulse">
-                    <i className="fa-solid fa-bullhorn text-teal-600"></i> Localized Requirements
+                 <div className="inline-flex items-center gap-2 rounded-full border border-brand-primary/10 bg-slate-50 px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400 shadow-sm animate-pulse">
+                    <i className="fa-solid fa-bullhorn text-brand-primary"></i> Localized Requirements
                  </div>
-                 <h2 className="text-4xl font-black text-[#003366] dark:text-white uppercase tracking-tighter leading-none">
+                 <h2 className="text-4xl font-black text-brand-primary dark:text-white uppercase tracking-tighter leading-none">
                    Campus Noticeboard.
                  </h2>
                  <p className="text-[10px] text-slate-300 dark:text-slate-600 font-bold uppercase tracking-[0.4em] italic leading-none pl-1">
                     Demand-Side Academic Activity Log
                  </p>
               </div>
-              <Link to="/requests" className="hidden sm:inline-flex items-center gap-2 text-[#003366] dark:text-teal-400 text-[10px] font-black uppercase tracking-widest hover:gap-4 transition-all">
+              <Link to="/requests" className="hidden sm:inline-flex items-center gap-2 text-brand-primary dark:text-indigo-500 text-[10px] font-black uppercase tracking-widest hover:gap-4 transition-all">
                 Full Registry <i className="fa-solid fa-arrow-right-long"></i>
               </Link>
             </div>
@@ -230,20 +230,20 @@ const Home: React.FC = () => {
                 <div key={i} className="bg-white dark:bg-slate-900 border border-slate-50 dark:border-slate-800 p-8 rounded-[40px] shadow-sm hover:shadow-xl transition-all group flex flex-col justify-between container">
                    <div className="space-y-4">
                       <div className="flex justify-between items-start">
-                         <div className="w-10 h-10 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-[#003366] dark:text-teal-400 shadow-inner group-hover:scale-110 transition-transform">
+                         <div className="w-10 h-10 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-brand-primary dark:text-indigo-500 shadow-inner group-hover:scale-110 transition-transform">
                             <i className="fa-solid fa-magnifying-glass text-xs"></i>
                          </div>
                          {req.budget > 0 && (
-                           <span className="text-teal-600 font-black text-xs italic">₦{req.budget.toLocaleString()}</span>
+                           <span className="text-brand-primary font-black text-xs italic">₦{req.budget.toLocaleString()}</span>
                          )}
                       </div>
-                      <h3 className="text-lg font-black text-[#003366] dark:text-white uppercase leading-tight group-hover:text-teal-600 transition-colors line-clamp-1">{req.itemNeeded}</h3>
+                      <h3 className="text-lg font-black text-brand-primary dark:text-white uppercase leading-tight group-hover:text-brand-primary transition-colors line-clamp-1">{req.itemNeeded}</h3>
                       <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium leading-relaxed italic line-clamp-2">{req.description}</p>
                    </div>
                    
                    <div className="mt-8 pt-6 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between">
-                      <p className="text-[9px] font-black text-[#003366] dark:text-slate-400 uppercase tracking-tighter">By {req.userName.split(' ')[0]}</p>
-                      <Link to={`/messages?with=${req.userId}&product=request_${req.$id}`} className="text-teal-600 dark:text-teal-400 text-[10px] font-bold uppercase tracking-widest hover:underline">I Have This</Link>
+                      <p className="text-[9px] font-black text-brand-primary dark:text-slate-400 uppercase tracking-tighter">By {req.userName.split(' ')[0]}</p>
+                      <Link to={`/messages?with=${req.userId}&product=request_${req.$id}`} className="text-brand-primary dark:text-indigo-500 text-[10px] font-bold uppercase tracking-widest hover:underline">I Have This</Link>
                    </div>
                 </div>
               ))}
@@ -254,7 +254,7 @@ const Home: React.FC = () => {
         <section className="space-y-8">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="space-y-3">
-              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-teal-700 dark:text-teal-300">
+              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-brand-primary dark:text-indigo-400">
                 Browse marketplace
               </p>
               <h2 className="text-3xl font-bold tracking-tight text-slate-950 md:text-4xl dark:text-white">
@@ -268,7 +268,7 @@ const Home: React.FC = () => {
 
             <div className="rounded-[24px] border border-slate-200 bg-white px-5 py-4 text-sm text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
               Showing{" "}
-              <span className="font-semibold text-slate-900 dark:text-white">
+              <span className="font-semibold text-brand-ink dark:text-white">
                 {filteredProducts.length}
               </span>{" "}
               result{filteredProducts.length === 1 ? "" : "s"}
@@ -280,8 +280,8 @@ const Home: React.FC = () => {
               onClick={() => setSelectedCategory("All")}
               className={`whitespace-nowrap rounded-2xl px-5 py-3 text-sm font-medium transition ${
                 selectedCategory === "All"
-                  ? "bg-[#003366] text-white"
-                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+                  ? "bg-brand-primary text-white"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-brand-ink dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
               }`}
             >
               All
@@ -292,8 +292,8 @@ const Home: React.FC = () => {
                 onClick={() => setSelectedCategory(category)}
                 className={`whitespace-nowrap rounded-2xl px-5 py-3 text-sm font-medium transition ${
                   selectedCategory === category
-                    ? "bg-teal-600 text-white"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+                    ? "bg-brand-primary text-white"
+                    : "text-slate-600 hover:bg-slate-50 hover:text-brand-ink dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                 }`}
               >
                 {category}
@@ -306,10 +306,10 @@ const Home: React.FC = () => {
           <section className="space-y-10">
             <div className="flex items-end justify-between gap-4">
               <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.3em] text-teal-600">
+                <p className="text-[11px] font-black uppercase tracking-[0.3em] text-brand-primary">
                   Curated Assets
                 </p>
-                <h2 className="mt-4 text-4xl font-black tracking-tight text-[#003366] uppercase leading-none">
+                <h2 className="mt-4 text-4xl font-black tracking-tight text-brand-primary uppercase leading-none">
                   Featured Picks.
                 </h2>
               </div>
@@ -322,7 +322,7 @@ const Home: React.FC = () => {
               {featuredProducts.map((product) => (
                 <div
                   key={product.$id}
-                  className="group relative flex flex-col rounded-[48px] border border-slate-100 bg-white p-4 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-teal-500/10 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900"
+                  className="group relative flex flex-col rounded-[48px] border border-slate-100 bg-white p-4 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-brand-primary/10 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900"
                 >
                   {/* Navigation Layer */}
                   <Link to={`/product/${product.$id}`} className="flex flex-col grow group/card">
@@ -337,10 +337,10 @@ const Home: React.FC = () => {
                       
                       {/* Badge Protocol Cluster */}
                       <div className="absolute top-4 left-4 flex flex-col gap-2">
-                         <span className="px-5 py-2 bg-white rounded-full text-[9px] font-black text-[#003366] uppercase shadow-sm">
+                         <span className="px-5 py-2 bg-white rounded-full text-[9px] font-black text-brand-primary uppercase shadow-sm">
                             {product.category}
                          </span>
-                         <span className={`px-4 py-1.5 ${product.isNegotiable === false ? 'bg-slate-50 text-slate-400' : 'bg-brand-green text-white'} rounded-full text-[8px] font-black uppercase shadow-sm`}>
+                         <span className={`px-4 py-1.5 ${product.isNegotiable === false ? 'bg-slate-50 text-slate-400' : 'bg-hub-indigo text-white'} rounded-full text-[8px] font-black uppercase shadow-sm`}>
                             {product.isNegotiable === false ? 'Fixed Price' : 'Negotiable'}
                          </span>
                       </div>
@@ -349,7 +349,7 @@ const Home: React.FC = () => {
                     {/* Core Metadata Sector */}
                     <div className="flex grow flex-col px-4 py-8 space-y-4">
                       <div className="space-y-2">
-                        <h3 className="text-xl font-extrabold tracking-tight text-[#003366] transition-colors group-hover/card:text-teal-600 dark:text-white capitalize">
+                        <h3 className="text-xl font-extrabold tracking-tight text-brand-primary transition-colors group-hover/card:text-brand-primary dark:text-white capitalize">
                           {product.name}
                         </h3>
                         <p className="text-[12px] font-medium leading-relaxed text-slate-400 line-clamp-2 italic">
@@ -364,12 +364,12 @@ const Home: React.FC = () => {
                         <p className="text-[9px] font-black uppercase tracking-widest text-slate-300">
                           Price
                         </p>
-                        <p className="text-xl font-black text-[#003366] dark:text-teal-300">
+                        <p className="text-xl font-black text-brand-primary dark:text-indigo-400">
                           ₦{product.price.toLocaleString()}
                         </p>
                       </div>
                       <div className="text-right space-y-1">
-                        <p className="text-[10px] font-black text-[#003366] uppercase leading-none">
+                        <p className="text-[10px] font-black text-brand-primary uppercase leading-none">
                           {product.sellerName.split(' ')[0]}
                         </p>
                         <p className="text-[8px] font-black text-slate-300 uppercase italic">
@@ -380,7 +380,7 @@ const Home: React.FC = () => {
 
                     <Link
                       to={`/messages?with=${product.sellerId}&product=${product.$id}`}
-                      className="w-full h-16 mt-4 flex items-center justify-center gap-4 bg-[#050505] text-white rounded-[24px] text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl transition-all hover:bg-teal-600 scale-100 active:scale-95"
+                      className="w-full h-16 mt-4 flex items-center justify-center gap-4 bg-[#050505] text-white rounded-[24px] text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl transition-all hover:bg-brand-primary scale-100 active:scale-95"
                     >
                       <i className="fa-solid fa-comments text-lg"></i>
                       Quick Chat
@@ -412,7 +412,7 @@ const Home: React.FC = () => {
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500">
                 <i className="fa-solid fa-box-open text-xl"></i>
               </div>
-              <h3 className="mt-6 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+              <h3 className="mt-6 text-2xl font-bold tracking-tight text-brand-ink dark:text-white">
                 No products match this filter.
               </h3>
               <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-slate-500 dark:text-slate-400">
@@ -424,7 +424,7 @@ const Home: React.FC = () => {
                   setSearchTerm("");
                   setSelectedCategory("All");
                 }}
-                className="mt-6 inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-teal-200 hover:text-teal-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-teal-900/50 dark:hover:text-teal-300"
+                className="mt-6 inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-indigo-200 hover:text-brand-primary dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-indigo-950/50 dark:hover:text-indigo-400"
               >
                 Reset filters
               </button>

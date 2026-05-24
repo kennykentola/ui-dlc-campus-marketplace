@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
@@ -93,19 +93,19 @@ const Checkout: React.FC = () => {
 
   if (loading) return (
      <div className="flex flex-col items-center justify-center min-h-screen pt-32 bg-slate-50 dark:bg-slate-950">
-        <div className="w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-4 text-[10px] font-black text-[#003366] dark:text-teal-400 uppercase tracking-widest">Accessing Hub Protocols...</p>
+        <div className="w-12 h-12 border-4 border-brand-primary border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-[10px] font-black text-brand-primary dark:text-indigo-500 uppercase tracking-widest">Accessing Hub Protocols...</p>
      </div>
   );
 
   return (
-    <div className="bg-slate-50 dark:bg-slate-950 min-h-screen pt-40 pb-40 relative px-6 overflow-hidden">
+    <div className="bg-slate-50 min-h-screen pt-40 pb-40 relative px-6 overflow-hidden">
       <div className="gradient-blob blob-teal opacity-[0.05]"></div>
       
       <main className="max-w-xl mx-auto space-y-12 relative z-10">
          <div className="text-center space-y-4">
-            <h1 className="text-4xl font-black text-[#003366] dark:text-white uppercase tracking-tighter">
-              Escrow <span className="text-teal-600">Protocol.</span>
+            <h1 className="text-4xl font-black text-brand-primary dark:text-white uppercase tracking-tighter">
+              Escrow <span className="text-brand-primary">Protocol.</span>
             </h1>
             <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-[0.4em] italic">
               Secure Campus Trade - Node ID: {product?.$id?.slice(-8)}
@@ -115,7 +115,7 @@ const Checkout: React.FC = () => {
          {/* Protocol Progress Bar */}
          <div className="flex items-center gap-4 bg-white dark:bg-slate-900 p-6 rounded-[32px] border border-slate-100 dark:border-slate-800 shadow-sm">
             {[1, 2, 3].map(i => (
-               <div key={i} className={`grow h-2 rounded-full transition-all duration-700 ${step >= i ? 'bg-teal-600' : 'bg-slate-100 dark:bg-slate-800'}`}></div>
+               <div key={i} className={`grow h-2 rounded-full transition-all duration-700 ${step >= i ? 'bg-brand-primary' : 'bg-slate-100 dark:bg-slate-800'}`}></div>
             ))}
          </div>
 
@@ -128,46 +128,46 @@ const Checkout: React.FC = () => {
                     alt="Pr" 
                   />
                   <div>
-                     <h2 className="text-xl font-black text-[#003366] dark:text-white uppercase tracking-tight">{product?.name}</h2>
-                     <p className="text-2xl font-black text-teal-600 tracking-tight">₦{product?.price.toLocaleString()}</p>
+                     <h2 className="text-xl font-black text-brand-primary dark:text-white uppercase tracking-tight">{product?.name}</h2>
+                     <p className="text-2xl font-black text-brand-primary tracking-tight">₦{product?.price.toLocaleString()}</p>
                   </div>
                </div>
 
                <div className="space-y-8">
                   <div className="space-y-3">
                      <p className="text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest">Authorized Seller Details</p>
-                     <p className="text-lg font-black text-[#003366] dark:text-white uppercase">{seller?.name || "Verified Scholar"}</p>
+                     <p className="text-lg font-black text-brand-primary dark:text-white uppercase">{seller?.name || "Verified Scholar"}</p>
                   </div>
 
                   <div className="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-[32px] border border-slate-100 dark:border-slate-800 space-y-6">
                      <div className="space-y-2">
-                        <p className="text-[9px] font-black text-teal-600 uppercase tracking-widest leading-none">Bank Institution</p>
-                        <p className="text-lg font-black text-[#003366] dark:text-white uppercase">{seller?.bankName || "Access Bank (Hub Default)"}</p>
+                        <p className="text-[9px] font-black text-brand-primary uppercase tracking-widest leading-none">Bank Institution</p>
+                        <p className="text-lg font-black text-brand-primary dark:text-white uppercase">{seller?.bankName || "Access Bank (Hub Default)"}</p>
                      </div>
                      <div className="space-y-1">
-                        <p className="text-[9px] font-black text-teal-600 uppercase tracking-widest leading-none">Account Node Number</p>
+                        <p className="text-[9px] font-black text-brand-primary uppercase tracking-widest leading-none">Account Node Number</p>
                         <div className="flex items-center justify-between">
-                           <p className="text-2xl font-black text-[#003366] dark:text-white tracking-tighter">{seller?.accountNumber || "0123456789"}</p>
+                           <p className="text-2xl font-black text-brand-primary dark:text-white tracking-tighter">{seller?.accountNumber || "0123456789"}</p>
                            <button 
                              onClick={() => {
                                navigator.clipboard.writeText(seller?.accountNumber || "0123456789");
                                alert("Account node copied to clipboard.");
                              }}
-                             className="text-teal-600 hover:scale-110 transition-transform"
+                             className="text-brand-primary hover:scale-110 transition-transform"
                            >
                              <i className="fa-solid fa-copy"></i>
                            </button>
                         </div>
                      </div>
                      <div className="space-y-1">
-                        <p className="text-[9px] font-black text-teal-600 uppercase tracking-widest leading-none">Beneficiary Identity</p>
+                        <p className="text-[9px] font-black text-brand-primary uppercase tracking-widest leading-none">Beneficiary Identity</p>
                         <p className="text-md font-bold text-slate-500 dark:text-slate-400 uppercase">{seller?.accountName || "UI DLC SCHOLAR"}</p>
                      </div>
                   </div>
 
-                  <div className="p-6 bg-teal-50 dark:bg-teal-900/10 border border-teal-100 dark:border-teal-900/30 rounded-3xl flex items-center gap-4">
-                     <i className="fa-solid fa-circle-info text-teal-600"></i>
-                     <p className="text-[9px] text-teal-800 dark:text-teal-400 font-bold uppercase tracking-widest leading-relaxed">
+                  <div className="p-6 bg-brand-surface dark:bg-indigo-950/10 border border-indigo-100 dark:border-indigo-950/30 rounded-3xl flex items-center gap-4">
+                     <i className="fa-solid fa-circle-info text-brand-primary"></i>
+                     <p className="text-[9px] text-brand-primary dark:text-indigo-500 font-bold uppercase tracking-widest leading-relaxed">
                        Please transmit payment using the details above, then initiate the verification protocol in the next step.
                      </p>
                   </div>
@@ -175,7 +175,7 @@ const Checkout: React.FC = () => {
 
                <button 
                   onClick={() => setStep(2)}
-                  className="w-full py-6 bg-[#003366] text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-blue-900/10 hover:brightness-110 transition-all active:scale-95 flex items-center justify-center gap-4"
+                  className="w-full py-6 bg-brand-primary text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-brand-primary/10 hover:brightness-110 transition-all active:scale-95 flex items-center justify-center gap-4"
                >
                   I have Transmitted Payment
                   <i className="fa-solid fa-arrow-right"></i>
@@ -186,21 +186,21 @@ const Checkout: React.FC = () => {
          {step === 2 && (
             <div className="bg-white dark:bg-slate-900 rounded-[48px] p-10 md:p-14 border border-slate-100 dark:border-slate-800 shadow-2xl animate-slideUp space-y-12 text-center">
                <div className="space-y-4">
-                  <h2 className="text-2xl font-black text-[#003366] dark:text-white uppercase tracking-tighter">Submit Evidence.</h2>
+                  <h2 className="text-2xl font-black text-brand-primary dark:text-white uppercase tracking-tighter">Submit Evidence.</h2>
                   <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-[0.3em] italic">Visual Verification Node Required</p>
                </div>
 
                <div className="space-y-8">
-                  <label className={`w-full aspect-video rounded-[32px] border-2 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer group ${receipt ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/10' : 'border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 hover:border-teal-600/30'}`}>
+                  <label className={`w-full aspect-video rounded-[32px] border-2 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer group ${receipt ? 'border-brand-primary bg-brand-surface dark:bg-indigo-950/10' : 'border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 hover:border-brand-primary/30'}`}>
                      {receipt ? (
                         <div className="space-y-4">
-                           <i className="fa-solid fa-circle-check text-4xl text-teal-500"></i>
-                           <p className="text-[10px] font-black text-teal-600 uppercase tracking-widest">{receipt.name}</p>
+                           <i className="fa-solid fa-circle-check text-4xl text-brand-primary"></i>
+                           <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest">{receipt.name}</p>
                            <button onClick={(e) => { e.stopPropagation(); setReceipt(null); }} className="text-[9px] font-black text-rose-400 uppercase tracking-widest border border-rose-100 dark:border-rose-900/30 px-4 py-2 rounded-xl bg-white dark:bg-slate-800">Replace Evidence</button>
                         </div>
                      ) : (
                         <>
-                           <i className="fa-solid fa-cloud-arrow-up text-4xl text-slate-200 dark:text-slate-700 group-hover:scale-110 group-hover:text-teal-600 transition-all"></i>
+                           <i className="fa-solid fa-cloud-arrow-up text-4xl text-slate-200 dark:text-slate-700 group-hover:scale-110 group-hover:text-brand-primary transition-all"></i>
                            <span className="mt-4 text-[10px] font-black text-slate-300 dark:text-slate-600 uppercase tracking-widest">Drop Screenshot Here</span>
                         </>
                      )}
@@ -211,7 +211,7 @@ const Checkout: React.FC = () => {
                      <button 
                         onClick={submitProof}
                         disabled={!receipt || uploading}
-                        className="w-full py-6 bg-teal-600 text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-teal-500/20 hover:brightness-110 transition-all active:scale-95 flex items-center justify-center gap-4 disabled:opacity-50"
+                        className="w-full py-6 bg-brand-primary text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-brand-primary/20 hover:brightness-110 transition-all active:scale-95 flex items-center justify-center gap-4 disabled:opacity-50"
                      >
                         {uploading ? "Transmitting Node..." : "Initiate Verification Protocol"}
                         <i className="fa-solid fa-paper-plane"></i>
@@ -224,11 +224,11 @@ const Checkout: React.FC = () => {
 
          {step === 3 && (
             <div className="bg-white dark:bg-slate-900 rounded-[48px] p-10 md:p-14 border border-slate-100 dark:border-slate-800 shadow-2xl animate-float space-y-12 text-center">
-               <div className="w-24 h-24 bg-teal-500 rounded-[32px] flex items-center justify-center text-white text-4xl mx-auto shadow-2xl shadow-teal-500/40">
+               <div className="w-24 h-24 bg-brand-primary rounded-[32px] flex items-center justify-center text-white text-4xl mx-auto shadow-2xl shadow-brand-primary/40">
                   <i className="fa-solid fa-handshake"></i>
                </div>
                <div className="space-y-6">
-                  <h2 className="text-3xl font-black text-[#003366] dark:text-white uppercase tracking-tighter leading-none">Protocol Initiated.</h2>
+                  <h2 className="text-3xl font-black text-brand-primary dark:text-white uppercase tracking-tighter leading-none">Protocol Initiated.</h2>
                   <p className="text-[12px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed italic max-w-sm mx-auto">
                     Your payment verification request has been transmitted to the seller registry. The asset status will be updated upon seller confirmation.
                   </p>
@@ -237,7 +237,7 @@ const Checkout: React.FC = () => {
                <div className="pt-12 border-t border-slate-50 dark:border-slate-800 space-y-4">
                   <button 
                      onClick={() => navigate("/")}
-                     className="w-full py-6 bg-[#003366] text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-blue-900/10 hover:brightness-110 transition-all active:scale-95"
+                     className="w-full py-6 bg-brand-primary text-white rounded-[24px] font-black text-[12px] uppercase tracking-widest shadow-2xl shadow-brand-primary/10 hover:brightness-110 transition-all active:scale-95"
                   >
                      Return to Hub Central
                   </button>
