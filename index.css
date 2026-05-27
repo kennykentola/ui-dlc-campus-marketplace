@@ -67,15 +67,13 @@ body {
   color: var(--brand-surface);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(to bottom right, var(--brand-primary), var(--brand-secondary));
-  background-attachment: fixed;
+  background-color: #003366;
   overflow-x: hidden;
 }
 
 html.dark body {
   color: #e2e8f0;
-  background: linear-gradient(to bottom right, var(--brand-ink), var(--brand-primary));
-  background-attachment: fixed;
+  background-color: #002244;
 }
 
 * {
@@ -276,7 +274,7 @@ select:focus {
 }
 
 .bg-hub-gradient-light {
-  background: linear-gradient(to bottom right, var(--brand-primary), var(--brand-secondary));
+  background-color: #003366;
 }
 
 .bg-whatsapp-pattern {
