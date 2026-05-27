@@ -235,7 +235,9 @@ const Profile: React.FC = () => {
               <span className="text-[#003366] font-black text-xs">DLC</span>
             </div>
           </div>
-          <h1 className="text-xl md:text-2xl font-medium tracking-wide">Student Portal</h1>
+          <h1 className="text-xl md:text-2xl font-medium tracking-wide">
+            {user.role === "admin" ? "Administrator Dashboard" : "Student Portal"}
+          </h1>
         </div>
         <Link to="/" className="text-white hover:text-slate-300 transition-colors px-4 py-2 text-sm font-bold bg-white/10 rounded-lg">
           Exit Portal
