@@ -258,8 +258,13 @@ select:focus {
   @apply w-full rounded-[24px] border border-slate-200 bg-[#f8fafc] px-6 py-4 text-sm text-[#0f172a] shadow-sm transition-all placeholder:text-slate-400 focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/10;
 }
 
-.nav-glass {
-  @apply bg-white/80 backdrop-blur-xl;
+.glass-panel {
+  @apply bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl;
+}
+
+.btn-gold {
+  @apply inline-flex items-center justify-center rounded-2xl bg-[#F5A623] px-6 py-4 text-[13px] font-black uppercase tracking-[0.15em] text-[#003366] shadow-[0_8px_30px_rgba(245,166,35,0.3)] transition-all hover:bg-[#FFAA00] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(245,166,35,0.4)] active:scale-[0.98];
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .card-title {

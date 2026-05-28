@@ -118,24 +118,24 @@ const CreateProduct: React.FC = () => {
   return (
     <div className="min-h-screen bg-transparent py-12 px-6">
       <div className="container mx-auto max-w-4xl">
-        <div className="bg-white dark:bg-slate-900 p-8 md:p-12 rounded-[40px] border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none animate-fadeIn">
+        <div className="glass-panel p-8 md:p-12 rounded-[40px] animate-fadeIn">
           <div className="flex items-center justify-between mb-2">
-            <h1 className="text-4xl font-black text-brand-ink dark:text-white tracking-tight uppercase">Sell an Item</h1>
-            <div className="w-12 h-12 bg-brand-surface dark:bg-brand-primary/20 text-brand-primary dark:text-blue-400 rounded-2xl flex items-center justify-center font-black">
+            <h1 className="text-4xl font-black text-white tracking-tight uppercase">Sell an Item</h1>
+            <div className="w-12 h-12 bg-white/10 text-[#F5A623] rounded-2xl flex items-center justify-center font-black border border-white/20">
               <i className="fa-solid fa-shop"></i>
             </div>
           </div>
-          <p className="text-slate-500 dark:text-slate-400 mb-10 text-lg italic">
+          <p className="text-slate-300 mb-10 text-lg italic">
             Detailed descriptions and clear photos help you sell faster to UI DLC students.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-10">
             {/* Title Section */}
             <div className="space-y-4">
-              <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-1">Title of Item</label>
+              <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] ml-1">Title of Item</label>
               <input
                 required
-                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 text-xl font-bold focus:outline-none focus:ring-4 focus:ring-indigo-700/10 focus:bg-white dark:focus:bg-slate-700 dark:text-white transition shadow-sm"
+                className="w-full bg-black/20 border border-white/10 rounded-2xl px-6 py-4 text-xl font-bold focus:outline-none focus:ring-4 focus:ring-[#F5A623]/20 focus:bg-black/40 text-white transition shadow-inner placeholder:text-white/30"
                 placeholder="e.g. Casio fx-991EX Calculator (Brand New)"
                 type="text"
                 value={name}
@@ -146,12 +146,12 @@ const CreateProduct: React.FC = () => {
             {/* Grid for Category and Transaction Type */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-1">Category</label>
+                <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] ml-1">Category</label>
                 <div className="relative">
                   <select
                     aria-label="Category"
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 font-bold text-slate-700 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-700/10 transition cursor-pointer appearance-none shadow-sm"
+                    className="w-full bg-black/20 border border-white/10 rounded-2xl px-6 py-4 font-bold text-white focus:outline-none focus:ring-4 focus:ring-[#F5A623]/20 transition cursor-pointer appearance-none shadow-inner [&>option]:bg-[#003366]"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                   >
@@ -167,8 +167,8 @@ const CreateProduct: React.FC = () => {
               </div>
 
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-1">Transaction Type</label>
-                <div className="flex bg-slate-50 dark:bg-slate-800 rounded-2xl p-1.5 border border-slate-200 dark:border-slate-700 shadow-sm flex-wrap gap-1">
+                <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] ml-1">Transaction Type</label>
+                <div className="flex bg-black/20 rounded-2xl p-1.5 border border-white/10 shadow-inner flex-wrap gap-1">
                   {['sale', 'exchange', 'both', 'knowledge_barter'].map((type) => (
                     <button
                       key={type}
@@ -176,8 +176,8 @@ const CreateProduct: React.FC = () => {
                       onClick={() => setTransactionType(type as TransactionType)}
                       className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
                         transactionType === type 
-                          ? 'bg-brand-primary text-white shadow-lg' 
-                          : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
+                          ? 'bg-[#F5A623] text-[#003366] shadow-lg' 
+                          : 'text-slate-400 hover:text-white hover:bg-white/5'
                       }`}
                     >
                       {type.replace('_', ' ')}
@@ -190,12 +190,12 @@ const CreateProduct: React.FC = () => {
             {/* DLC Learning Hub Node Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-1">Learning Hub (Primary Base)</label>
+                <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] ml-1">Learning Hub (Primary Base)</label>
                 <div className="relative">
                   <select
                     aria-label="Learning Hub"
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 font-bold text-slate-700 dark:text-white focus:outline-none focus:ring-4 focus:ring-indigo-700/10 transition cursor-pointer appearance-none shadow-sm"
+                    className="w-full bg-black/20 border border-white/10 rounded-2xl px-6 py-4 font-bold text-white focus:outline-none focus:ring-4 focus:ring-[#F5A623]/20 transition cursor-pointer appearance-none shadow-inner [&>option]:bg-[#003366]"
                     value={learningHub}
                     onChange={(e) => setLearningHub(e.target.value as LearningHub)}
                   >
@@ -213,7 +213,7 @@ const CreateProduct: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsExamWeekSafe(!isExamWeekSafe)}
-                  className={`flex flex-col items-center justify-center p-4 rounded-3xl border transition-all h-[76px] ${isExamWeekSafe ? 'bg-brand-surface border-indigo-200 text-brand-primary shadow-lg' : 'bg-slate-50 border-slate-100 text-slate-400'}`}
+                  className={`flex flex-col items-center justify-center p-4 rounded-3xl border transition-all h-[76px] ${isExamWeekSafe ? 'bg-amber-500/20 border-amber-500/50 text-amber-400 shadow-lg' : 'bg-black/20 border-white/10 text-slate-400 hover:bg-white/5'}`}
                 >
                   <i className={`fa-solid fa-calendar-day mb-1 ${isExamWeekSafe ? 'animate-bounce' : ''}`}></i>
                   <span className="text-[8px] font-black uppercase tracking-widest leading-none">Exam Week Safe</span>
@@ -221,7 +221,7 @@ const CreateProduct: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsSharedLogistics(!isSharedLogistics)}
-                  className={`flex flex-col items-center justify-center p-4 rounded-3xl border transition-all h-[76px] ${isSharedLogistics ? 'bg-orange-50 border-orange-200 text-brand-secondary shadow-lg' : 'bg-slate-50 border-slate-100 text-slate-400'}`}
+                  className={`flex flex-col items-center justify-center p-4 rounded-3xl border transition-all h-[76px] ${isSharedLogistics ? 'bg-blue-500/20 border-blue-500/50 text-blue-400 shadow-lg' : 'bg-black/20 border-white/10 text-slate-400 hover:bg-white/5'}`}
                 >
                   <i className="fa-solid fa-truck-ramp-box mb-1"></i>
                   <span className="text-[8px] font-black uppercase tracking-widest leading-none">Shared Courier</span>
@@ -232,12 +232,12 @@ const CreateProduct: React.FC = () => {
             {/* Price section with Negotiable toggle */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-1">Selling Price (₦)</label>
+                <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] ml-1">Selling Price (₦)</label>
                 <div className="relative">
-                  <span className="absolute left-6 top-1/2 -translate-y-1/2 text-xl font-black text-slate-300 dark:text-slate-600">₦</span>
+                  <span className="absolute left-6 top-1/2 -translate-y-1/2 text-xl font-black text-[#F5A623]">₦</span>
                   <input
                     required
-                    className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-12 py-4 text-xl font-black focus:outline-none focus:ring-4 focus:ring-indigo-700/10 dark:text-white transition shadow-sm"
+                    className="w-full bg-black/20 border border-white/10 rounded-2xl px-12 py-4 text-xl font-black focus:outline-none focus:ring-4 focus:ring-[#F5A623]/20 text-white transition shadow-inner placeholder:text-white/30"
                     placeholder="0"
                     type="number"
                     value={price}
@@ -246,22 +246,22 @@ const CreateProduct: React.FC = () => {
                 </div>
               </div>
 
-              <div className={`p-6 rounded-3xl mt-4 sm:mt-0 border transition-all ${isNegotiable ? 'bg-emerald-50/50 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-900/30' : 'bg-slate-50 border-slate-100 dark:bg-slate-800/50 dark:border-slate-800'}`}>
+              <div className={`p-6 rounded-3xl mt-4 sm:mt-0 border transition-all ${isNegotiable ? 'bg-emerald-500/20 border-emerald-500/30' : 'bg-black/20 border-white/10'}`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all ${isNegotiable ? 'bg-emerald-500 text-white shadow-emerald-200' : 'bg-slate-200 text-slate-400 shadow-none'}`}>
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all ${isNegotiable ? 'bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.4)]' : 'bg-white/10 text-slate-400'}`}>
                       <i className="fa-solid fa-handshake"></i>
                     </div>
                     <div>
-                      <p className="text-xs font-black text-brand-ink dark:text-white uppercase tracking-wider">Negotiable</p>
-                      <p className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase">Willing to haggle</p>
+                      <p className="text-xs font-black text-white uppercase tracking-wider">Negotiable</p>
+                      <p className="text-[9px] text-slate-400 font-bold uppercase">Willing to haggle</p>
                     </div>
                   </div>
                   <button 
                     type="button" 
                     aria-label="Toggle negotiable status"
                     onClick={() => setIsNegotiable(!isNegotiable)}
-                    className={`w-12 h-6 rounded-full transition-all relative ${isNegotiable ? 'bg-emerald-500' : 'bg-slate-200'}`}
+                    className={`w-12 h-6 rounded-full transition-all relative ${isNegotiable ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.6)]' : 'bg-white/20'}`}
                   >
                     <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-all shadow-sm ${isNegotiable ? 'left-6.5' : 'left-0.5'}`}></div>
                   </button>
@@ -272,11 +272,11 @@ const CreateProduct: React.FC = () => {
             {/* Description and Exchange Terms */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-1">Item Details & Condition</label>
+                <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] ml-1">Item Details & Condition</label>
                 <textarea
                   rows={5}
                   required
-                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-5 focus:outline-none focus:ring-4 focus:ring-indigo-700/10 focus:bg-white dark:focus:bg-slate-700 dark:text-white transition resize-none leading-relaxed text-base"
+                  className="w-full bg-black/20 border border-white/10 rounded-2xl px-6 py-5 focus:outline-none focus:ring-4 focus:ring-[#F5A623]/20 focus:bg-black/40 text-white transition resize-none leading-relaxed text-base shadow-inner placeholder:text-white/30"
                   placeholder="Describe the item condition honestly. Mention if there's any receipt or warranty remaining."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -284,10 +284,10 @@ const CreateProduct: React.FC = () => {
               </div>
 
               <div className="space-y-4">
-                <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] ml-1">Exchange Protocol (Optional)</label>
+                <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] ml-1">Exchange Protocol (Optional)</label>
                 <textarea
                   rows={5}
-                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-5 focus:outline-none focus:ring-4 focus:ring-indigo-700/10 focus:bg-white dark:focus:bg-slate-700 dark:text-white transition resize-none leading-relaxed text-base"
+                  className="w-full bg-black/20 border border-white/10 rounded-2xl px-6 py-5 focus:outline-none focus:ring-4 focus:ring-[#F5A623]/20 focus:bg-black/40 text-white transition resize-none leading-relaxed text-base shadow-inner placeholder:text-white/30"
                   placeholder="e.g. Willing to swap for a scientific calculator plus cash balance."
                   value={exchangeTerms}
                   onChange={(e) => setExchangeTerms(e.target.value)}
@@ -296,10 +296,10 @@ const CreateProduct: React.FC = () => {
             </div>
 
             {/* Delivery Methods Hub */}
-            <div className="space-y-6 bg-slate-50/50 dark:bg-brand-primary/5 p-8 rounded-4xl border border-slate-100 dark:border-slate-800">
+            <div className="space-y-6 bg-black/20 p-8 rounded-4xl border border-white/10 shadow-inner">
                <div>
-                  <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] block">Logistics Hub Protocols</label>
-                  <p className="text-[10px] text-slate-400 dark:text-slate-600 font-bold mt-1 uppercase">Select at least one secure exchange protocol</p>
+                  <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] block">Logistics Hub Protocols</label>
+                  <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase">Select at least one secure exchange protocol</p>
                </div>
                <div className="flex flex-wrap gap-4">
                    {[DeliveryMethod.MEETUP, DeliveryMethod.PICKUP, DeliveryMethod.HOSTEL, DeliveryMethod.DIGITAL, DeliveryMethod.COURIER_HUB].map((method) => (
@@ -309,8 +309,8 @@ const CreateProduct: React.FC = () => {
                       onClick={() => toggleDelivery(method)}
                       className={`px-6 py-4 rounded-[24px] border transition-all flex items-center gap-3 ${
                         selectedDeliveries.includes(method)
-                          ? 'border-brand-primary bg-brand-surface dark:bg-brand-primary/20 text-brand-primary dark:text-blue-400 shadow-lg'
-                          : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800 text-slate-400'
+                          ? 'border-[#F5A623] bg-[#F5A623]/20 text-[#F5A623] shadow-lg'
+                          : 'border-white/10 bg-white/5 text-slate-400 hover:bg-white/10'
                       }`}
                     >
                       <i className={`fa-solid ${method === DeliveryMethod.MEETUP ? 'fa-people-arrows' : method === DeliveryMethod.PICKUP ? 'fa-building-columns' : method === DeliveryMethod.HOSTEL ? 'fa-bed' : method === DeliveryMethod.COURIER_HUB ? 'fa-truck-fast' : 'fa-cloud-arrow-down'}`}></i>
@@ -321,22 +321,22 @@ const CreateProduct: React.FC = () => {
             </div>
 
             {/* Images section */}
-            <div className="space-y-6 bg-slate-50/50 dark:bg-slate-900/50 p-8 rounded-4xl border border-slate-100 dark:border-slate-800">
+            <div className="space-y-6 bg-black/20 p-8 rounded-4xl border border-white/10 shadow-inner">
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] block">Product Images ({images.length}/5)</label>
-                  <p className="text-[10px] text-slate-400 dark:text-slate-600 font-bold mt-1 uppercase">JPG or PNG • Max 5MB per file</p>
+                  <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] block">Product Images ({images.length}/5)</label>
+                  <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase">JPG or PNG • Max 5MB per file</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
                 {imagePreviews.map((url, i) => (
-                  <div key={i} className="relative aspect-square rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm group">
+                  <div key={i} className="relative aspect-square rounded-3xl overflow-hidden border border-white/20 shadow-sm group">
                     <img src={url} className="w-full h-full object-cover" alt="Preview" />
                     <button
                       type="button"
                       aria-label="Remove image"
                       onClick={() => removeImage(i)}
-                      className="absolute top-2 right-2 w-8 h-8 bg-rose-500 text-white rounded-xl shadow-lg flex items-center justify-center scale-0 group-hover:scale-100 transition-transform"
+                      className="absolute top-2 right-2 w-8 h-8 bg-rose-500/80 backdrop-blur-md text-white rounded-xl shadow-lg flex items-center justify-center scale-0 group-hover:scale-100 transition-transform hover:bg-rose-500"
                     >
                       <i className="fa-solid fa-trash-can text-sm"></i>
                     </button>
@@ -344,34 +344,34 @@ const CreateProduct: React.FC = () => {
                 ))}
                 
                 {images.length < 5 && (
-                  <label className="aspect-square flex flex-col items-center justify-center border-3 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl bg-white dark:bg-slate-800 hover:bg-brand-surface dark:hover:bg-slate-700 hover:border-blue-300 dark:hover:border-brand-primary transition-all cursor-pointer group shadow-sm">
-                    <div className="w-12 h-12 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition duration-300">
-                      <i className="fa-solid fa-camera text-slate-300 dark:text-slate-600 text-xl"></i>
+                  <label className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-white/20 rounded-3xl bg-white/5 hover:bg-white/10 transition-all cursor-pointer group shadow-sm">
+                    <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition duration-300">
+                      <i className="fa-solid fa-camera text-slate-300 text-xl"></i>
                     </div>
-                    <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Add Photo</span>
+                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Add Photo</span>
                     <input type="file" multiple accept="image/jpeg, image/png, image/jpg, image/webp" className="hidden" onChange={handleImageChange} />
                   </label>
                 )}
               </div>
-              <div className="flex items-center space-x-2 text-slate-400 dark:text-slate-600">
+              <div className="flex items-center space-x-2 text-slate-400">
                 <i className="fa-solid fa-circle-info text-xs"></i>
                 <p className="text-[10px] font-bold uppercase tracking-wider">Pro-tip: Clear shots from different angles sell faster.</p>
               </div>
             </div>
 
             {/* Submission buttons */}
-            <div className="flex flex-col sm:flex-row items-center gap-6 pt-10 border-t border-slate-100 dark:border-slate-800">
+            <div className="flex flex-col sm:flex-row items-center gap-6 pt-10 border-t border-white/10">
               <button
                 type="button"
                 onClick={() => navigate("/")}
-                className="w-full sm:w-auto px-12 py-5 font-black text-slate-400 dark:text-slate-500 hover:text-brand-ink dark:hover:text-white transition uppercase tracking-widest text-sm"
+                className="w-full sm:w-auto px-12 py-5 font-black text-slate-400 hover:text-white transition uppercase tracking-widest text-sm"
               >
                 Discard
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full sm:grow bg-brand-primary text-white py-5 rounded-[28px] font-black text-lg shadow-2xl shadow-blue-200 dark:shadow-none hover:bg-brand-primary transition transform active:scale-[0.98] disabled:opacity-50 uppercase tracking-widest"
+                className="w-full sm:grow btn-gold rounded-[28px] !py-5 !text-lg !tracking-widest"
               >
                 {loading ? 'Transmitting Asset...' : 'Publish to Marketplace'}
               </button>

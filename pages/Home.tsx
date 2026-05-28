@@ -58,91 +58,93 @@ const Home: React.FC = () => {
   const featuredProducts = filteredProducts.slice(0, 3);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-transparent pb-32 pt-28 text-brand-ink dark:text-slate-100">
-
-      <div className="container relative mx-auto max-w-7xl space-y-16 px-4 sm:px-6 lg:px-8">
-        <section className="grid items-center gap-12 rounded-[40px] border border-slate-100/60 bg-white/75 p-8 shadow-[0_32px_90px_-48px_rgba(15,23,42,0.12)] backdrop-blur-xl md:p-12 lg:grid-cols-[1.2fr_0.8fr] dark:border-slate-800 dark:bg-slate-900">
-          <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-brand-primary/20 bg-brand-primary/8 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.22em] text-brand-primary">
-              UI DLC marketplace
+    <div className="relative min-h-screen bg-transparent pb-16 text-white w-full">
+      <div className="w-full space-y-16">
+        <section className="grid items-center gap-12 rounded-[40px] glass-panel p-8 md:p-12 lg:grid-cols-[1.2fr_0.8fr] relative animate-slideUp">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-[#F5A623]/20 blur-3xl rounded-full animate-pulse-glow"></div>
+          <div className="absolute bottom-10 right-10 w-48 h-48 bg-[#00E5FF]/10 blur-3xl rounded-full animate-float"></div>
+          
+          <div className="space-y-8 relative z-10">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#F5A623] shadow-lg backdrop-blur-md">
+              <i className="fa-solid fa-bolt text-[#F5A623]"></i> UI DLC marketplace
             </div>
 
             <div className="space-y-4">
-              <h1 className="max-w-3xl text-4xl font-bold tracking-tight text-slate-950 md:text-6xl dark:text-white">
-                Buy and sell campus essentials with clarity and trust.
+              <h1 className="max-w-3xl text-4xl font-black tracking-tight text-white md:text-6xl drop-shadow-xl leading-[1.1]">
+                Buy and sell campus essentials with <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F5A623] to-yellow-200">clarity and trust.</span>
               </h1>
-              <p className="max-w-2xl text-base leading-8 text-slate-700 md:text-lg dark:text-slate-300">
-                A simple marketplace for University of Ibadan DLC students to
+              <p className="max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
+                A premium marketplace for University of Ibadan DLC students to
                 discover materials, connect with sellers, and manage
-                conversations in one place.
+                conversations securely.
               </p>
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex flex-col gap-4 sm:flex-row pt-4">
               <Link
                 to={user ? "/sell" : "/register"}
-                className="inline-flex items-center justify-center rounded-2xl bg-brand-primary px-6 py-4 text-sm font-medium text-white shadow-lg shadow-[#003366]/10 transition hover:brightness-110 active:scale-[0.98]"
+                className="btn-gold"
               >
-                {user ? "List an item" : "Create account"}
+                {user ? "List an asset" : "Enter Marketplace"} <i className="fa-solid fa-arrow-right ml-2"></i>
               </Link>
               <Link
                 to="/messages"
-                className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-6 py-4 text-sm font-medium text-slate-700 transition hover:border-teal-200 hover:text-teal-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-teal-950/50 dark:hover:text-teal-400"
+                className="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/5 px-6 py-4 text-[13px] font-black uppercase tracking-[0.15em] text-white transition hover:bg-white/10 backdrop-blur-md"
               >
                 Open chat
               </Link>
               {user?.role === UserRole.ADMIN && (
                 <Link
                   to="/admin"
-                  className="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 px-6 py-4 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                  className="inline-flex items-center justify-center rounded-2xl border border-rose-500/30 bg-rose-500/10 px-6 py-4 text-[13px] font-black uppercase tracking-[0.15em] text-rose-300 transition hover:bg-rose-500/20 backdrop-blur-md"
                 >
-                  Admin dashboard
+                  Admin Portal
                 </Link>
               )}
             </div>
 
-            <div className="grid gap-4 md:grid-cols-[1fr_auto]">
+            <div className="grid gap-4 md:grid-cols-[1fr_auto] mt-8 pt-8 border-t border-white/10">
               <label className="relative block">
-                <span className="mb-2 block text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">
-                  Search products
+                <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                  Search assets
                 </span>
-                <i className="fa-solid fa-magnifying-glass pointer-events-none absolute left-5 top-[3.35rem] -translate-y-1/2 text-slate-400" />
+                <i className="fa-solid fa-magnifying-glass pointer-events-none absolute left-5 top-[3.35rem] -translate-y-1/2 text-white/50" />
                 <input
                   type="text"
+                  aria-label="Search by product name"
                   placeholder="Search by product name"
-                className="w-full rounded-[24px] border border-slate-200 bg-slate-50 py-4 pl-12 pr-4 text-base text-brand-ink outline-none transition placeholder:text-slate-400 focus:border-brand-secondary focus:bg-white focus:ring-4 focus:ring-teal-100 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-teal-900 dark:focus:ring-teal-950"
+                  className="w-full rounded-[20px] border border-white/10 bg-black/20 py-4 pl-12 pr-4 text-sm font-medium text-white outline-none transition placeholder:text-white/30 focus:border-[#F5A623]/50 focus:bg-black/40 focus:ring-4 focus:ring-[#F5A623]/10 backdrop-blur-md"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </label>
 
               <label className="relative block">
-                <span className="mb-2 block text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">
+                <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                   Learning Hub Filter
                 </span>
-                <i className="fa-solid fa-location-dot pointer-events-none absolute left-5 top-[3.35rem] -translate-y-1/2 text-slate-400" />
+                <i className="fa-solid fa-location-dot pointer-events-none absolute left-5 top-[3.35rem] -translate-y-1/2 text-white/50" />
                 <select
-                className="w-full appearance-none rounded-[24px] border border-slate-200 bg-slate-50 py-4 pl-12 pr-10 text-base text-brand-ink outline-none transition focus:border-brand-secondary focus:bg-white focus:ring-4 focus:ring-teal-100 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-teal-900 dark:focus:ring-teal-950"
+                  aria-label="Learning Hub Filter"
+                  title="Learning Hub Filter"
+                  className="w-full appearance-none rounded-[20px] border border-white/10 bg-black/20 py-4 pl-12 pr-10 text-sm font-medium text-white outline-none transition focus:border-[#F5A623]/50 focus:bg-black/40 focus:ring-4 focus:ring-[#F5A623]/10 backdrop-blur-md"
                   value={selectedHub}
                   onChange={(e) => setSelectedHub(e.target.value)}
                 >
-                  <option value="All Hubs">All Regional Hubs</option>
+                  <option value="All Hubs" className="text-black">All Regional Hubs</option>
                   {Object.values(LearningHub).map(hub => (
-                    <option key={hub} value={hub}>{hub}</option>
+                    <option key={hub} value={hub} className="text-black">{hub}</option>
                   ))}
                 </select>
-                <i className="fa-solid fa-chevron-down pointer-events-none absolute right-5 top-[3.35rem] -translate-y-1/2 text-xs text-slate-300" />
+                <i className="fa-solid fa-chevron-down pointer-events-none absolute right-5 top-[3.35rem] -translate-y-1/2 text-xs text-white/30" />
               </label>
 
-              <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-900">
-                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">
-                  Available now
+              <div className="rounded-[20px] border border-white/10 bg-white/5 p-5 backdrop-blur-md flex flex-col justify-center items-center">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F5A623]">
+                  Live Assets
                 </p>
-                <p className="mt-2 text-3xl font-bold tracking-tight text-brand-ink dark:text-white">
+                <p className="mt-1 text-4xl font-black tracking-tighter text-white drop-shadow-md">
                   {products.length}
-                </p>
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                  products listed by students
                 </p>
               </div>
             </div>
@@ -202,83 +204,104 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {/* Campus Noticeboard (Demand-Side Preview) */}
-        {!searchTerm && selectedCategory === "All" && requests.length > 0 && (
-          <section className="space-y-10 animate-fadeIn">
-            <div className="flex items-end justify-between gap-4 px-4 overflow-hidden">
-              <div className="space-y-4">
-                 <div className="inline-flex items-center gap-2 rounded-full border border-brand-primary/10 bg-slate-50 px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-brand-primary dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400 shadow-sm animate-pulse">
-                    <i className="fa-solid fa-bullhorn text-brand-secondary"></i> Localized Requirements
-                 </div>
-                 <h2 className="text-4xl font-black text-brand-primary dark:text-white uppercase tracking-tighter leading-none">
-                   Campus Noticeboard.
-                 </h2>
-                 <p className="text-[10px] text-slate-300 dark:text-slate-600 font-bold uppercase tracking-[0.4em] italic leading-none pl-1">
-                    Demand-Side Academic Activity Log
-                 </p>
+        {featuredProducts.length > 0 && !loading && !searchTerm && selectedCategory === "All" && (
+          <section className="space-y-8 animate-fadeIn">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#F5A623]">
+                  Curated Assets
+                </p>
+                <h2 className="mt-2 text-3xl font-black tracking-tight text-white leading-none">
+                  Featured Picks
+                </h2>
               </div>
-              <Link to="/requests" className="hidden sm:inline-flex items-center gap-2 text-brand-primary dark:text-teal-400 text-[10px] font-black uppercase tracking-widest hover:gap-4 transition-all">
-                Full Registry <i className="fa-solid fa-arrow-right-long"></i>
-              </Link>
+              <p className="hidden md:block text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">
+                Verified Hub Listings
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {requests.slice(0, 3).map((req, i) => (
-                <div key={i} className="bg-white/80 backdrop-blur-md border border-slate-100/60 dark:border-slate-800 p-8 rounded-[40px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_50px_-12px_rgba(0,51,102,0.12)] transition-all group flex flex-col justify-between container">
-                   <div className="space-y-4">
-                      <div className="flex justify-between items-start">
-                         <div className="w-10 h-10 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-brand-primary dark:text-teal-400 shadow-inner group-hover:scale-110 transition-transform">
-                            <i className="fa-solid fa-magnifying-glass text-xs"></i>
-                         </div>
-                         {req.budget > 0 && (
-                           <span className="text-brand-secondary font-black text-xs italic">₦{req.budget.toLocaleString()}</span>
-                         )}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {featuredProducts.map((product) => (
+                <div
+                  key={product.$id}
+                  className="glass-panel group relative flex flex-col rounded-3xl p-3 hover:-translate-y-2 transition-transform duration-300"
+                >
+                  <Link to={`/product/${product.$id}`} className="flex flex-col grow group/card">
+                    <div className="relative aspect-square overflow-hidden rounded-[20px] bg-black/20">
+                      <img
+                        src={product.imageUrls[0] || `https://ui-avatars.com/api/?name=${encodeURIComponent(product.name)}&background=003366&color=fff&size=500&bold=true`}
+                        alt={product.name}
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover/card:scale-105"
+                        onError={(e) => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=ERROR&background=rose&color=fff&size=500&bold=true`; }}
+                      />
+                      
+                      <div className="absolute top-3 left-3 flex flex-col gap-2">
+                         <span className="px-3 py-1.5 bg-black/50 backdrop-blur-md rounded-xl text-[10px] font-bold text-white shadow-sm">
+                            {product.category}
+                         </span>
                       </div>
-                      <h3 className="text-lg font-black text-brand-primary dark:text-white uppercase leading-tight group-hover:text-brand-secondary transition-colors line-clamp-1">{req.itemNeeded}</h3>
-                      <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium leading-relaxed italic line-clamp-2">{req.description}</p>
-                   </div>
-                   
-                   <div className="mt-8 pt-6 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between">
-                      <p className="text-[9px] font-black text-brand-primary dark:text-slate-400 uppercase tracking-tighter">By {req.userName.split(' ')[0]}</p>
-                      <Link to={`/messages?with=${req.userId}&product=request_${req.$id}`} className="text-brand-secondary dark:text-teal-400 text-[10px] font-bold uppercase tracking-widest hover:underline">I Have This</Link>
-                   </div>
+                    </div>
+
+                    <div className="flex grow flex-col px-3 py-4 space-y-2">
+                      <h3 className="text-lg font-bold tracking-tight text-white transition-colors group-hover/card:text-[#F5A623] capitalize line-clamp-1">
+                        {product.name}
+                      </h3>
+                      <p className="text-xs text-slate-400 line-clamp-2">
+                        {product.description}
+                      </p>
+                    </div>
+                  </Link>
+
+                  <div className="mt-auto px-3 pb-3 flex items-end justify-between">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                        Price
+                      </p>
+                      <p className="text-lg font-black text-[#F5A623]">
+                        ₦{product.price.toLocaleString()}
+                      </p>
+                    </div>
+                    <Link
+                      to={`/messages?with=${product.sellerId}&product=${product.$id}`}
+                      className="w-10 h-10 flex items-center justify-center bg-white/10 text-white rounded-xl hover:bg-[#F5A623] hover:text-[#003366] transition-colors"
+                      title="Quick Chat"
+                    >
+                      <i className="fa-solid fa-comment-dots"></i>
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>
           </section>
         )}
 
-        <section className="space-y-8">
+        <section className="space-y-6">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-            <div className="space-y-3">
-              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-teal-700 dark:text-teal-400">
-                Browse marketplace
+            <div className="space-y-2">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                Browse Marketplace
               </p>
-              <h2 className="text-3xl font-bold tracking-tight text-slate-950 md:text-4xl dark:text-white">
-                Find what you need faster.
+              <h2 className="text-3xl font-black tracking-tight text-white">
+                All Products
               </h2>
-              <p className="max-w-2xl text-sm leading-7 text-slate-600 dark:text-slate-300">
-                Categories and search are kept close to the product grid so
-                users can refine results without losing context.
-              </p>
             </div>
 
-            <div className="rounded-[24px] border border-slate-200 bg-white px-5 py-4 text-sm text-slate-600 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+            <div className="rounded-2xl bg-white/5 backdrop-blur-md px-5 py-3 text-sm text-slate-300">
               Showing{" "}
-              <span className="font-semibold text-brand-ink dark:text-white">
+              <span className="font-bold text-[#F5A623]">
                 {filteredProducts.length}
               </span>{" "}
               result{filteredProducts.length === 1 ? "" : "s"}
             </div>
           </div>
 
-          <div className="flex gap-3 overflow-x-auto rounded-[28px] border border-slate-100/60 bg-white/70 backdrop-blur-md p-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:border-slate-800 dark:bg-slate-900">
+          <div className="flex gap-2 overflow-x-auto rounded-2xl glass-panel p-2 scrollbar-hide">
             <button
               onClick={() => setSelectedCategory("All")}
-              className={`whitespace-nowrap rounded-2xl px-5 py-3 text-sm font-medium transition ${
+              className={`whitespace-nowrap rounded-xl px-5 py-2.5 text-sm font-bold transition-colors ${
                 selectedCategory === "All"
-                  ? "bg-brand-primary text-white"
-                  : "text-slate-600 hover:bg-slate-50 hover:text-brand-ink dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+                  ? "bg-[#F5A623] text-[#003366]"
+                  : "text-slate-300 hover:bg-white/10 hover:text-white"
               }`}
             >
               All
@@ -287,10 +310,10 @@ const Home: React.FC = () => {
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`whitespace-nowrap rounded-2xl px-5 py-3 text-sm font-medium transition ${
+                className={`whitespace-nowrap rounded-xl px-5 py-2.5 text-sm font-bold transition-colors ${
                   selectedCategory === category
-                    ? "bg-brand-secondary text-white"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-brand-ink dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
+                    ? "bg-[#F5A623] text-[#003366]"
+                    : "text-slate-300 hover:bg-white/10 hover:text-white"
                 }`}
               >
                 {category}
@@ -299,102 +322,13 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {featuredProducts.length > 0 && !loading && !searchTerm && selectedCategory === "All" && (
-          <section className="space-y-10">
-            <div className="flex items-end justify-between gap-4">
-              <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.3em] text-brand-secondary">
-                  Curated Assets
-                </p>
-                <h2 className="mt-4 text-4xl font-black tracking-tight text-brand-primary uppercase leading-none">
-                  Featured Picks.
-                </h2>
-              </div>
-              <p className="hidden md:block text-[10px] font-black text-slate-300 uppercase tracking-widest italic">
-                Verified Hub Listings
-              </p>
-            </div>
-
-            <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-              {featuredProducts.map((product) => (
-                <div
-                  key={product.$id}
-                  className="group relative flex flex-col rounded-[48px] border border-slate-100 bg-white p-4 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-teal-600/10 hover:shadow-2xl dark:border-slate-800 dark:bg-slate-900"
-                >
-                  {/* Navigation Layer */}
-                  <Link to={`/product/${product.$id}`} className="flex flex-col grow group/card">
-                    {/* Visual Node with Floating Badges */}
-                    <div className="relative aspect-square overflow-hidden rounded-[36px] bg-slate-50 dark:bg-slate-950">
-                      <img
-                        src={product.imageUrls[0] || `https://ui-avatars.com/api/?name=${encodeURIComponent(product.name)}&background=003366&color=fff&size=500&bold=true`}
-                        alt={product.name}
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover/card:scale-110"
-                        onError={(e) => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=ERROR&background=rose&color=fff&size=500&bold=true`; }}
-                      />
-                      
-                      {/* Badge Protocol Cluster */}
-                      <div className="absolute top-4 left-4 flex flex-col gap-2">
-                         <span className="px-5 py-2 bg-white rounded-full text-[9px] font-black text-brand-primary uppercase shadow-sm">
-                            {product.category}
-                         </span>
-                         <span className={`px-4 py-1.5 ${product.isNegotiable === false ? 'bg-slate-50 text-slate-400' : 'bg-brand-secondary text-white'} rounded-full text-[8px] font-black uppercase shadow-sm`}>
-                            {product.isNegotiable === false ? 'Fixed Price' : 'Negotiable'}
-                         </span>
-                      </div>
-                    </div>
-
-                    {/* Core Metadata Sector */}
-                    <div className="flex grow flex-col px-4 py-8 space-y-4">
-                      <div className="space-y-2">
-                        <h3 className="text-xl font-extrabold tracking-tight text-brand-primary transition-colors group-hover/card:text-brand-secondary dark:text-white capitalize">
-                          {product.name}
-                        </h3>
-                        <p className="text-[12px] font-medium leading-relaxed text-slate-400 line-clamp-2 italic">
-                          {product.description}
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-
-                    <div className="mt-auto pt-6 flex items-end justify-between border-t border-slate-50 dark:border-slate-800">
-                      <div className="space-y-1">
-                        <p className="text-[9px] font-black uppercase tracking-widest text-slate-300">
-                          Price
-                        </p>
-                        <p className="text-xl font-black text-brand-primary dark:text-teal-400">
-                          ₦{product.price.toLocaleString()}
-                        </p>
-                      </div>
-                      <div className="text-right space-y-1">
-                        <p className="text-[10px] font-black text-brand-primary uppercase leading-none">
-                          {product.sellerName.split(' ')[0]}
-                        </p>
-                        <p className="text-[8px] font-black text-slate-300 uppercase italic">
-                          {new Date(product.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-
-                    <Link
-                      to={`/messages?with=${product.sellerId}&product=${product.$id}`}
-                      className="w-full h-16 mt-4 flex items-center justify-center gap-4 bg-brand-primary text-white rounded-[24px] text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl transition-all hover:bg-brand-secondary scale-100 active:scale-95"
-                    >
-                      <i className="fa-solid fa-comments text-lg"></i>
-                      Quick Chat
-                    </Link>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
         <section className="space-y-8">
           {loading ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
               {[...Array(8)].map((_, index) => (
                 <div
                   key={index}
-                  className="aspect-[0.88] animate-pulse rounded-[32px] border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900"
+                  className="aspect-[0.88] animate-pulse rounded-3xl bg-white/5"
                 />
               ))}
             </div>
@@ -405,29 +339,71 @@ const Home: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="rounded-[36px] border border-dashed border-slate-300 bg-white px-6 py-20 text-center dark:border-slate-700 dark:bg-slate-900">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500">
+            <div className="glass-panel rounded-3xl px-6 py-20 text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white/5 text-white/50">
                 <i className="fa-solid fa-box-open text-xl"></i>
               </div>
-              <h3 className="mt-6 text-2xl font-bold tracking-tight text-brand-ink dark:text-white">
+              <h3 className="mt-6 text-xl font-bold text-white">
                 No products match this filter.
               </h3>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-slate-500 dark:text-slate-400">
-                Try a different keyword or switch categories to explore more
-                items in the marketplace.
+              <p className="mx-auto mt-2 max-w-md text-sm text-slate-400">
+                Try a different keyword or switch categories to explore more.
               </p>
               <button
                 onClick={() => {
                   setSearchTerm("");
                   setSelectedCategory("All");
                 }}
-                className="mt-6 inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-700 transition hover:border-teal-200 hover:text-teal-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-teal-950/50 dark:hover:text-teal-400"
+                className="mt-6 inline-flex items-center justify-center rounded-xl bg-white/10 px-5 py-3 text-sm font-bold text-white hover:bg-white/20 transition-colors"
               >
                 Reset filters
               </button>
             </div>
           )}
         </section>
+
+        {/* Campus Noticeboard (Moved to bottom) */}
+        {!searchTerm && selectedCategory === "All" && requests.length > 0 && (
+          <section className="space-y-8 pt-12 border-t border-white/10">
+            <div className="flex items-end justify-between gap-4">
+              <div className="space-y-2">
+                 <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">
+                    Demand-Side Activity
+                 </p>
+                 <h2 className="text-3xl font-black text-white tracking-tight">
+                   Campus Noticeboard
+                 </h2>
+              </div>
+              <Link to="/requests" className="hidden sm:inline-flex items-center gap-2 text-slate-300 text-xs font-bold hover:text-white transition-colors">
+                View All Requests <i className="fa-solid fa-arrow-right"></i>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {requests.slice(0, 3).map((req, i) => (
+                <div key={i} className="glass-panel p-6 rounded-3xl hover:bg-white/5 transition-colors flex flex-col justify-between">
+                   <div className="space-y-3">
+                      <div className="flex justify-between items-start">
+                         <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-[#F5A623]">
+                            <i className="fa-solid fa-bullhorn text-sm"></i>
+                         </div>
+                         {req.budget > 0 && (
+                           <span className="text-[#F5A623] font-bold text-sm">₦{req.budget.toLocaleString()}</span>
+                         )}
+                      </div>
+                      <h3 className="text-lg font-bold text-white leading-tight line-clamp-1">{req.itemNeeded}</h3>
+                      <p className="text-sm text-slate-400 line-clamp-2">{req.description}</p>
+                   </div>
+                   
+                   <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between">
+                      <p className="text-xs text-slate-500">By {req.userName.split(' ')[0]}</p>
+                      <Link to={`/messages?with=${req.userId}&product=request_${req.$id}`} className="text-[#F5A623] text-xs font-bold hover:underline">I Have This</Link>
+                   </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

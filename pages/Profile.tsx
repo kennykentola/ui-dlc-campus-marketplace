@@ -226,9 +226,9 @@ const Profile: React.FC = () => {
   ] as const;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-slate-100 flex flex-col font-sans animate-fadeIn">
+    <div className="fixed inset-0 z-[100] bg-gradient-to-br from-[#003366] to-[#08110c] flex flex-col font-sans animate-fadeIn text-white">
       {/* Top Header */}
-      <header className="bg-[#003366] text-white flex items-center justify-between px-6 py-4 shadow-md z-20 relative">
+      <header className="bg-black/40 backdrop-blur-xl border-b border-white/10 text-white flex items-center justify-between px-6 py-4 shadow-lg z-20 relative">
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center p-1 shadow-inner">
             <div className="w-full h-full bg-yellow-500 rounded flex items-center justify-center border-2 border-[#003366]">
@@ -246,7 +246,7 @@ const Profile: React.FC = () => {
 
       <div className="flex flex-1 overflow-hidden relative">
         {/* Left Sidebar */}
-        <aside className="w-72 bg-[#003366] text-white hidden lg:flex flex-col py-8 shadow-xl z-10 shrink-0 overflow-y-auto no-scrollbar">
+        <aside className="w-72 bg-black/20 backdrop-blur-md border-r border-white/10 text-white hidden lg:flex flex-col py-8 shadow-xl z-10 shrink-0 overflow-y-auto no-scrollbar">
           
           {/* USER PROFILE IN SIDEBAR */}
           <div className="px-6 flex flex-col items-center text-center border-b border-white/10 pb-6 mb-6">
@@ -306,7 +306,7 @@ const Profile: React.FC = () => {
         </aside>
 
         {/* Mobile Navigation (Tabs) */}
-        <div className="lg:hidden absolute top-0 left-0 w-full bg-[#003366] flex overflow-x-auto p-2 gap-2 shadow-md z-10 no-scrollbar">
+        <div className="lg:hidden absolute top-0 left-0 w-full bg-black/40 backdrop-blur-xl border-b border-white/10 flex overflow-x-auto p-2 gap-2 shadow-lg z-10 no-scrollbar">
            {tabs.map(t => (
               <button 
                 key={t.id}
@@ -319,13 +319,13 @@ const Profile: React.FC = () => {
         </div>
 
         {/* Main Content Area */}
-        <main className="flex-1 bg-slate-100 p-4 md:p-8 overflow-y-auto mt-12 lg:mt-0">
+        <main className="flex-1 bg-transparent p-4 md:p-8 overflow-y-auto mt-12 lg:mt-0 text-white">
           
           <div className="max-w-5xl mx-auto space-y-8 pb-20">
              
              {isEditing ? (
-               <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 animate-slideUp">
-                  <h2 className="text-xl font-bold text-[#003366] mb-6 border-b border-slate-100 pb-3">Edit Profile & Settings</h2>
+               <div className="glass-panel p-6 md:p-8 rounded-[40px] animate-slideUp">
+                  <h2 className="text-xl font-bold text-white mb-6 border-b border-white/10 pb-3">Edit Profile & Settings</h2>
                   
                   <form onSubmit={handleUpdateProfile} className="space-y-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
@@ -390,16 +390,16 @@ const Profile: React.FC = () => {
                   </form>
                </div>
              ) : (
-               <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 animate-slideUp">
+               <div className="glass-panel p-6 md:p-8 rounded-[40px] animate-slideUp">
                   
                   {/* Dynamic Tab Content rendering - adapted to match AdminDashboard styling */}
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
                      <div>
                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{activeTab === 'listings' ? 'Asset Registry Feed' : activeTab === 'reviews' ? 'Performance Metrics' : activeTab}</p>
-                        <h2 className="text-xl font-bold text-[#003366] capitalize">{activeTab} Details</h2>
+                        <h2 className="text-xl font-bold text-white capitalize">{activeTab} Details</h2>
                      </div>
                      {activeTab === 'listings' && (
-                        <Link to="/sell" className="px-4 py-2 bg-[#008080] text-white rounded-lg text-xs font-bold uppercase tracking-widest hover:brightness-110 shadow-sm transition-all flex items-center gap-2">
+                        <Link to="/sell" className="btn-gold !py-2 !px-4">
                            <i className="fa-solid fa-plus-circle"></i> List Asset
                         </Link>
                      )}
@@ -431,16 +431,16 @@ const Profile: React.FC = () => {
                      <div className="space-y-4">
                         {myReviews.length > 0 ? (
                            myReviews.map(r => (
-                              <div key={r.$id} className="p-6 bg-slate-50 border border-slate-100 rounded-2xl">
+                              <div key={r.$id} className="p-6 bg-black/20 border border-white/10 rounded-[24px]">
                                  <div className="flex items-center gap-2 mb-3">
-                                    {[...Array(5)].map((_,i) => <i key={i} className={`fa-solid fa-star text-xs ${i < r.rating ? "text-orange-400" : "text-slate-200"}`}></i>)}
+                                    {[...Array(5)].map((_,i) => <i key={i} className={`fa-solid fa-star text-xs ${i < r.rating ? "text-[#F5A623]" : "text-slate-600"}`}></i>)}
                                  </div>
-                                 <p className="text-slate-600 text-sm italic">"{r.comment}"</p>
+                                 <p className="text-slate-300 text-sm italic">"{r.comment}"</p>
                                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-4">Buyer ID: {r.buyerId.substring(0,8)}</p>
                               </div>
                            ))
                         ) : (
-                           <div className="rounded-[24px] border border-dashed border-slate-200 bg-slate-50 px-6 py-16 text-center">
+                           <div className="rounded-[24px] border border-dashed border-white/20 bg-black/10 px-6 py-16 text-center">
                               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No reviews logged yet.</p>
                            </div>
                         )}
@@ -454,7 +454,7 @@ const Profile: React.FC = () => {
                               {favorites.map(p => <ProductCard key={p.$id} product={p} />)}
                            </div>
                         ) : (
-                           <div className="rounded-[24px] border border-dashed border-slate-200 bg-slate-50 px-6 py-16 text-center">
+                           <div className="rounded-[24px] border border-dashed border-white/20 bg-black/10 px-6 py-16 text-center">
                               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Wishlist is empty.</p>
                            </div>
                         )}
@@ -465,29 +465,29 @@ const Profile: React.FC = () => {
                      <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm">
                            <thead>
-                              <tr className="border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                              <tr className="border-b border-white/10 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                                  <th className="pb-4 px-2">TX ID</th>
                                  <th className="pb-4 px-2">Role</th>
                                  <th className="pb-4 px-2">Status</th>
                                  <th className="pb-4 px-2 text-right">Actions</th>
                               </tr>
                            </thead>
-                           <tbody className="divide-y divide-slate-50">
+                           <tbody className="divide-y divide-white/10">
                               {transactions.map(tx => {
                                  const isSeller = tx.sellerId === user.userId;
                                  return (
-                                    <tr key={tx.$id} className="hover:bg-slate-50 transition-colors">
-                                       <td className="py-4 px-2 font-mono text-slate-500 text-xs">{tx.$id.substring(0,8)}</td>
+                                    <tr key={tx.$id} className="hover:bg-white/5 transition-colors border-b border-white/5">
+                                       <td className="py-4 px-2 font-mono text-slate-400 text-xs">{tx.$id.substring(0,8)}</td>
                                        <td className="py-4 px-2">
-                                          <span className={`px-2 py-1 rounded text-[10px] font-bold ${isSeller ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                                          <span className={`px-2 py-1 rounded text-[10px] font-bold ${isSeller ? 'bg-[#00E5FF]/20 text-[#00E5FF]' : 'bg-green-500/20 text-green-400'}`}>
                                              {isSeller ? 'SELLER' : 'BUYER'}
                                           </span>
                                        </td>
                                        <td className="py-4 px-2">
-                                          <span className="text-xs font-bold text-slate-600">{tx.status}</span>
+                                          <span className="text-xs font-bold text-slate-300">{tx.status}</span>
                                        </td>
                                        <td className="py-4 px-2 text-right">
-                                          <Link to={`/checkout/${tx.$id}`} className="text-[10px] font-bold text-[#003366] hover:underline uppercase tracking-widest">Details</Link>
+                                          <Link to={`/checkout/${tx.$id}`} className="text-[10px] font-bold text-[#F5A623] hover:underline uppercase tracking-widest">Details</Link>
                                        </td>
                                     </tr>
                                  )
