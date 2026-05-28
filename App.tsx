@@ -419,11 +419,7 @@ const App: React.FC = () => {
 
               <Route
                 path="/requests"
-                element={
-                  <ProtectedRoute>
-                    <Requests />
-                  </ProtectedRoute>
-                }
+                element={<Requests />}
               />
 
               <Route

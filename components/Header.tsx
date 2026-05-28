@@ -25,7 +25,7 @@ const Header: React.FC = () => {
 
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "Noticeboard", path: "/requests" },
+    { name: "Requests", path: "/requests" },
     { name: "Transactions", path: "/transactions", hasNotification: pendingTxCount > 0 },
     { name: "Chat", path: "/messages", hasNotification: unreadCount > 0 },
     { name: "Support", path: "/support" },
