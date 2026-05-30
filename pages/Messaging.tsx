@@ -106,21 +106,19 @@ const Messaging: React.FC = () => {
           }
         }
 
-        const convosWithDetails = await Promise.all(
+        const convosWithDetails = (await Promise.all(
           Array.from(uniqueConvos.entries()).map(async ([id, details]) => {
             try {
               const profile = await databases.getDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "profiles", id);
               return { user: profile as unknown as UserProfile, ...details };
             } catch (err) {
-              console.warn(`Profile not found for ID: ${id}`);
-              return { 
-                user: { $id: id, userId: id, name: "Deleted User", email: "", department: "", level: "", role: "STUDENT", matricNumber: "", sellerStatus: "UNVERIFIED" } as unknown as UserProfile, 
-                ...details 
-              };
+              console.warn(`Profile not found for ID: ${id}. Cleansed from inbox.`);
+              return null;
             }
           })
-        );
-        setConversations(convosWithDetails);
+        )).filter(Boolean);
+        
+        setConversations(convosWithDetails as any);
       } catch (error) { console.error(error); }
       finally { setLoading(false); }
     };
