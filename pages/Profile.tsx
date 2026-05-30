@@ -487,7 +487,7 @@ const Profile: React.FC = () => {
                                           <span className="text-xs font-bold text-slate-300">{tx.status}</span>
                                        </td>
                                        <td className="py-4 px-2 text-right">
-                                          <Link to={`/checkout/${tx.$id}`} className="text-[10px] font-bold text-[#F5A623] hover:underline uppercase tracking-widest">Details</Link>
+                                          <Link to={`/transactions`} className="text-[10px] font-bold text-[#F5A623] hover:underline uppercase tracking-widest">View Full Details</Link>
                                        </td>
                                     </tr>
                                  )

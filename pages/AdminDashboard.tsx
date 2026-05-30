@@ -5,10 +5,14 @@ import { databases } from '../lib/appwrite';
 import { Query } from 'appwrite';
 import { Link } from 'react-router-dom';
 
+const SUPER_ADMIN_EMAILS = ["sajiboro2@gmail.com", "peterkehindeademola@gmail.com"];
+
 const AdminDashboard: React.FC = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'products' | 'reports' | 'sellers' | 'network' | 'settings'>('network');
   
+  const isSuperAdmin = user?.email ? SUPER_ADMIN_EMAILS.includes(user.email) : false;
+
   const [products, setProducts] = useState<Product[]>([]);
   const [reports, setReports] = useState<any[]>([]);
   const [users, setUsers] = useState<UserProfile[]>([]);
@@ -17,6 +21,7 @@ const AdminDashboard: React.FC = () => {
   // Added functional states for specific actions
   const [resolvingReportId, setResolvingReportId] = useState<string | null>(null);
   const [updatingSellerId, setUpdatingSellerId] = useState<string | null>(null);
+  const [updatingRoleId, setUpdatingRoleId] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
 
   const fetchAdminData = async () => {
@@ -62,6 +67,28 @@ const AdminDashboard: React.FC = () => {
       alert("Failed to update seller status");
     } finally {
       setUpdatingSellerId(null);
+    }
+  };
+
+  const handleRoleUpdate = async (userToUpdate: UserProfile, newRole: UserRole) => {
+    if (!window.confirm(`Are you sure you want to make ${userToUpdate.name} a ${newRole}?`)) return;
+    try {
+      setUpdatingRoleId(userToUpdate.userId);
+      await databases.updateDocument(
+        import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        "profiles",
+        userToUpdate.$id!,
+        { role: newRole }
+      );
+      
+      // Update local state
+      setUsers(users.map(u => u.userId === userToUpdate.userId ? { ...u, role: newRole } : u));
+      alert(`User role updated successfully.`);
+    } catch (error) {
+      console.error("Error updating user role:", error);
+      alert("Failed to update user role");
+    } finally {
+      setUpdatingRoleId(null);
     }
   };
 
@@ -435,6 +462,15 @@ const AdminDashboard: React.FC = () => {
                                           <button onClick={() => setSelectedUser(u)} className="px-3 py-2 bg-slate-100 text-[#003366] rounded-lg text-xs font-bold hover:bg-slate-200 transition-colors">Details</button>
                                           {u.sellerStatus !== SellerStatus.VERIFIED && (
                                             <button onClick={() => handleSellerStatusUpdate(u, SellerStatus.VERIFIED)} disabled={updatingSellerId === u.userId} className="px-3 py-2 bg-[#003366] text-white rounded-lg text-xs font-bold hover:bg-[#004080] transition-colors disabled:opacity-50">Verify</button>
+                                          )}
+                                          {isSuperAdmin && u.email !== user?.email && (
+                                             <button 
+                                                onClick={() => handleRoleUpdate(u, u.role === UserRole.ADMIN ? UserRole.STUDENT : UserRole.ADMIN)} 
+                                                disabled={updatingRoleId === u.userId} 
+                                                className={`px-3 py-2 text-white rounded-lg text-xs font-bold transition-colors disabled:opacity-50 ${u.role === UserRole.ADMIN ? 'bg-rose-500 hover:bg-rose-600' : 'bg-amber-500 hover:bg-amber-600'}`}
+                                             >
+                                                {u.role === UserRole.ADMIN ? 'Revoke Admin' : 'Make Admin'}
+                                             </button>
                                           )}
                                        </td>
                                     </tr>

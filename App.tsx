@@ -251,6 +251,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       localStorage.setItem("current_user", JSON.stringify(profile));
     } catch (error: any) {
       console.error("Login error:", error);
+      
+      if (error.message?.includes("Failed to fetch") || error.message?.includes("Network request failed")) {
+        throw new Error("Server is currently waking up or offline. Please wait 60 seconds and try logging in again!");
+      }
+
       const missingAccountScope = error.message?.includes('missing scopes') && error.message?.includes('account');
       if (
         error.code === 401 ||
@@ -258,7 +263,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         error.message?.includes("missing scopes")
       ) {
         if (missingAccountScope) {
-          throw new Error("Login session was not created. Check your Appwrite platform URL, clear browser storage, and try again.");
+          throw new Error("Your browser is blocking the login session. Please allow 3rd-party cookies for localhost, or try another browser.");
         }
         throw new Error("Invalid email or password.");
       }

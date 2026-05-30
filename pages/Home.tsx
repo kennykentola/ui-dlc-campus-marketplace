@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
-import { Product, UserRole, LearningHub, BuyerRequest } from "../types";
+import { Product, UserRole, LearningHub, BuyerRequest, Transaction } from "../types";
 import { databases } from "../lib/appwrite";
 import { Query } from "appwrite";
 import ProductCard from "../components/ProductCard";
@@ -17,23 +17,42 @@ const Home: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedHub, setSelectedHub] = useState("All Hubs");
 
+  const [pastPurchases, setPastPurchases] = useState<Transaction[]>([]);
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await databases.listDocuments(
-          import.meta.env.VITE_APPWRITE_DATABASE_ID,
-          "products",
-          [Query.orderDesc("$createdAt"), Query.limit(100)]
-        );
-        setProducts(response.documents as unknown as Product[]);
+        const promises: Promise<any>[] = [
+          databases.listDocuments(
+            import.meta.env.VITE_APPWRITE_DATABASE_ID,
+            "products",
+            [Query.orderDesc("$createdAt"), Query.limit(100)]
+          ),
+          databases.listDocuments(
+            import.meta.env.VITE_APPWRITE_DATABASE_ID,
+            "requests",
+            [Query.orderDesc("createdAt"), Query.limit(3)]
+          )
+        ];
 
-        const reqResponse = await databases.listDocuments(
-          import.meta.env.VITE_APPWRITE_DATABASE_ID,
-          "requests",
-          [Query.orderDesc("createdAt"), Query.limit(3)]
-        );
-        setRequests(reqResponse.documents as unknown as BuyerRequest[]);
+        if (user) {
+          promises.push(
+            databases.listDocuments(
+              import.meta.env.VITE_APPWRITE_DATABASE_ID,
+              "transactions",
+              [Query.equal("buyerId", user.userId), Query.limit(10)]
+            )
+          );
+        }
+
+        const results = await Promise.all(promises);
+
+        setProducts(results[0].documents as unknown as Product[]);
+        setRequests(results[1].documents as unknown as BuyerRequest[]);
+        if (user && results[2]) {
+           setPastPurchases(results[2].documents as unknown as Transaction[]);
+        }
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -42,7 +61,7 @@ const Home: React.FC = () => {
     };
 
     fetchProducts();
-  }, []);
+  }, [user]);
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name
@@ -55,7 +74,65 @@ const Home: React.FC = () => {
     return matchesSearch && matchesCategory && matchesHub;
   });
 
-  const featuredProducts = filteredProducts.slice(0, 3);
+  const featuredProducts = filteredProducts.slice(0, 4);
+
+  const getRecommendations = () => {
+    if (!user || products.length === 0) return [];
+
+    const purchaseKeywords = new Set<string>();
+    pastPurchases.forEach(tx => {
+      if (tx.productName) {
+        tx.productName.toLowerCase().split(/\s+/).forEach(word => {
+          if (word.length > 3) purchaseKeywords.add(word);
+        });
+      }
+    });
+
+    const userDeptWords = user.department?.toLowerCase().split(/\s+/) || [];
+    const userLevelStr = user.level?.toLowerCase() || "";
+
+    const scoredProducts = products.map(product => {
+      let score = 0;
+      
+      // Exclude own products
+      if (product.sellerId === user.userId) return { product, score: -100 };
+
+      const nameLower = product.name.toLowerCase();
+      const descLower = (product.description || "").toLowerCase();
+
+      // Purchase History Match
+      purchaseKeywords.forEach(keyword => {
+         if (nameLower.includes(keyword) || descLower.includes(keyword)) {
+            score += 5;
+         }
+      });
+
+      // Department Match
+      userDeptWords.forEach(word => {
+         if (word.length > 3 && (nameLower.includes(word) || descLower.includes(word))) {
+            score += 3;
+         }
+      });
+
+      // Level Match
+      if (userLevelStr && (nameLower.includes(userLevelStr) || descLower.includes(userLevelStr))) {
+         score += 2;
+      }
+
+      return { product, score };
+    });
+
+    const recommended = scoredProducts
+      .filter(p => p.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 4)
+      .map(p => p.product);
+
+    return recommended.length > 0 ? recommended : [];
+  };
+
+  const recommendations = getRecommendations();
+  const displayFeatured = user && recommendations.length > 0 ? recommendations : featuredProducts;
 
   return (
     <div className="relative min-h-screen bg-transparent pb-16 text-white w-full">
@@ -204,24 +281,24 @@ const Home: React.FC = () => {
           </div>
         </section>
 
-        {featuredProducts.length > 0 && !loading && !searchTerm && selectedCategory === "All" && (
+        {displayFeatured.length > 0 && !loading && !searchTerm && selectedCategory === "All" && (
           <section className="space-y-8 animate-fadeIn">
             <div className="flex items-end justify-between gap-4">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-[#F5A623]">
-                  Curated Assets
+                  {user && recommendations.length > 0 ? "For You" : "Curated Assets"}
                 </p>
                 <h2 className="mt-2 text-3xl font-black tracking-tight text-white leading-none">
-                  Featured Picks
+                  {user && recommendations.length > 0 ? "Recommended for You" : "Featured Picks"}
                 </h2>
               </div>
               <p className="hidden md:block text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">
-                Verified Hub Listings
+                {user && recommendations.length > 0 ? "Based on activity & department" : "Verified Hub Listings"}
               </p>
             </div>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {featuredProducts.map((product) => (
+              {displayFeatured.map((product) => (
                 <div
                   key={product.$id}
                   className="glass-panel group relative flex flex-col rounded-3xl p-3 hover:-translate-y-2 transition-transform duration-300"

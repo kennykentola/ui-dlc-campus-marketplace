@@ -1,0 +1,18 @@
+name: Appwrite Keep-Alive Ping
+
+on:
+  schedule:
+    # Runs at 00:00 every 5 days
+    - cron: '0 0 */5 * *'
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions tab
+
+jobs:
+  ping-appwrite:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Appwrite Database Endpoint
+        run: |
+          curl -X GET "https://fra.cloud.appwrite.io/v1/databases/main-db/collections/profiles/documents?queries[]=limit(1)" \
+               -H "X-Appwrite-Project: uidlc-marketplace" \
+               -H "Content-Type: application/json"
+          echo "Appwrite pinged successfully to prevent 7-day pause."
