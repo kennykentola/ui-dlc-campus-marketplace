@@ -1,13 +1,28 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Product } from "../types";
 
 interface ProductCardProps {
   product: Product;
   onDelete?: () => Promise<void>;
+  onUpdateImage?: (productId: string, file: File) => Promise<void>;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete, onUpdateImage }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0] && onUpdateImage) {
+      setIsUpdating(true);
+      try {
+        await onUpdateImage(product.$id, e.target.files[0]);
+      } finally {
+        setIsUpdating(false);
+      }
+    }
+  };
+
   return (
     <div className="glass-panel overflow-hidden flex flex-col group relative rounded-[28px] hover:-translate-y-1 transition-all duration-300">
       
@@ -20,6 +35,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete }) => {
           <span className="sr-only">Delete Product</span>
           <i className="fa-solid fa-trash-can text-xs" aria-hidden="true"></i>
         </button>
+      )}
+
+      {/* Update Image button */}
+      {onUpdateImage && (
+        <>
+          <button 
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); fileInputRef.current?.click(); }}
+            disabled={isUpdating}
+            className={`absolute top-3 ${onDelete ? 'right-14' : 'right-3'} z-30 w-8 h-8 bg-slate-900/40 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-slate-800 transition-colors border border-white/20`} title="Update Picture"
+          >
+            <span className="sr-only">Update Picture</span>
+            <i className={`fa-solid ${isUpdating ? 'fa-spinner fa-spin' : 'fa-camera'} text-xs`} aria-hidden="true"></i>
+          </button>
+          <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} aria-label="Upload product image" title="Upload product image" />
+        </>
       )}
 
       {/* Image Area */}

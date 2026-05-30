@@ -214,6 +214,43 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleUnblockUser = async (targetUserId: string) => {
+    if (!user) return;
+    try {
+      const newBlockedList = (user.blockedUserIds || []).filter(id => id !== targetUserId);
+      await databases.updateDocument(
+        import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        "profiles",
+        user.$id || user.userId,
+        { blockedUserIds: newBlockedList }
+      );
+      await refreshUser();
+    } catch (error) {
+      alert("Failed to unblock user.");
+    }
+  };
+
+  const handleUpdateProductImage = async (productId: string, file: File) => {
+    try {
+      const safeFile = new File([file], `product_${productId}_update.jpg`, { type: file.type || 'image/jpeg' });
+      const response = await storage.createFile(import.meta.env.VITE_APPWRITE_BUCKET_ID, ID.unique(), safeFile);
+      const fileUrl = storage.getFileView(import.meta.env.VITE_APPWRITE_BUCKET_ID, response.$id).toString();
+      
+      await databases.updateDocument(
+        import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        "products",
+        productId,
+        { imageUrls: [fileUrl] } // Replacing the primary image
+      );
+      
+      // Refresh the products list to show new image
+      loadData();
+    } catch (error) {
+      console.error(error);
+      alert("Failed to update product picture.");
+    }
+  };
+
   if (!user) return null;
 
   const tabs = [
@@ -409,7 +446,7 @@ const Profile: React.FC = () => {
                      <div className="space-y-6">
                         {myProducts.length > 0 ? (
                            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-                              {myProducts.map(p => <ProductCard key={p.$id} product={p} onDelete={async () => {
+                              {myProducts.map(p => <ProductCard key={p.$id} product={p} onUpdateImage={handleUpdateProductImage} onDelete={async () => {
                                  if(window.confirm("Delete this listing permanently?")) {
                                     try {
                                        await databases.deleteDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "products", p.$id);
@@ -495,6 +532,32 @@ const Profile: React.FC = () => {
                               {transactions.length === 0 && <tr><td colSpan={4} className="py-12 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">No transactions logged.</td></tr>}
                            </tbody>
                         </table>
+                     </div>
+                  )}
+
+                  {activeTab === 'blocked' && (
+                     <div className="space-y-4">
+                        {blockedUsers.length > 0 ? (
+                           blockedUsers.map(bUser => (
+                              <div key={bUser.userId} className="p-6 bg-black/20 border border-white/10 rounded-[24px] flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                 <div className="flex items-center gap-4">
+                                    <img src={bUser.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(bUser.name)}&background=003366&color=fff`} className="w-12 h-12 rounded-2xl object-cover border border-white/10" alt="Avatar" />
+                                    <div>
+                                       <h3 className="text-sm font-bold text-white uppercase tracking-wider">{bUser.name}</h3>
+                                       <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">{bUser.department} • {bUser.level}L</p>
+                                    </div>
+                                 </div>
+                                 <button onClick={() => handleUnblockUser(bUser.userId)} className="px-6 py-3 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-colors">
+                                    Unblock
+                                 </button>
+                              </div>
+                           ))
+                        ) : (
+                           <div className="rounded-[24px] border border-dashed border-white/20 bg-black/10 px-6 py-16 text-center">
+                              <i className="fa-solid fa-shield-halved text-4xl text-slate-500 mb-4"></i>
+                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No blocked users.</p>
+                           </div>
+                        )}
                      </div>
                   )}
 

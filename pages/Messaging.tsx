@@ -8,7 +8,7 @@ import { Message, UserProfile } from "../types";
 const POPULAR_EMOJIS = ["👋", "🔥", "🤝", "💰", "🎓", "📚", "✅", "❌", "💯", "🚀", "😂", "😭", "😍", "🤔", "👍", "👎", "❤️", "💔", "🎉", "🎊", "🚗", "💜", "❤️", "👖", "🧵", "🎁", "🎈", "🎊", "🎉", "🎗️", "🕶️", "👕", "🧢", "💄", "💄", "🏀", "🏈", "🥎", "🎯", "🔔", "🎧", "🎤", "📢", "🪕", "🎹", "📻", "🔨", "🔒", "🔓", "🔑", "🗝️", "🛖", "🧱", "⚙️", "💊", "🧲", "🪜", "🔗", "♂️", "📞", "☎️", "📱", "💣", "💾", "🔌", "🎥", "📸", "📹", "🔍", "📖", "📕", "📗", "📘", "📚", "💴", "💵", "💶", "💷", "🏧", "✏️", "🖌️", "🖋️", "📂", "🗂️", "📈", "🗓️", "✂️", "🕰️", "🍿", "🍞", "🥪", "🍚", "🍰"];
 
 const Messaging: React.FC = () => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const sellerId = searchParams.get("with") || searchParams.get("seller");
@@ -269,6 +269,28 @@ const Messaging: React.FC = () => {
     window.dispatchEvent(new CustomEvent('start-app-call', { detail: { receiverId: chattingWith.userId } }));
   };
 
+  const handleToggleBlock = async () => {
+    if (!user || !chattingWith) return;
+    try {
+      const isBlocked = user.blockedUserIds?.includes(chattingWith.userId);
+      const newBlockedList = isBlocked 
+        ? (user.blockedUserIds || []).filter(id => id !== chattingWith.userId)
+        : [...(user.blockedUserIds || []), chattingWith.userId];
+
+      // Assuming user.$id is the document ID for the profiles collection
+      await databases.updateDocument(
+        import.meta.env.VITE_APPWRITE_DATABASE_ID,
+        "profiles",
+        user.$id || user.userId,
+        { blockedUserIds: newBlockedList }
+      );
+      await refreshUser();
+    } catch (error) {
+      console.error(error);
+      alert("Failed to update block status.");
+    }
+  };
+
   const deleteMessage = async (msgId: string) => {
     try {
       await databases.deleteDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "messages", msgId);
@@ -395,6 +417,10 @@ const Messaging: React.FC = () => {
                   </div>
                 )}
 
+                <button onClick={handleToggleBlock} aria-label="Block user" className={`w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-xl md:rounded-2xl transition-all shadow-sm active:scale-95 group border-0 ${user?.blockedUserIds?.includes(chattingWith.userId) ? 'bg-rose-500 text-white' : 'bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white'}`}>
+                  <i className="fa-solid fa-shield-halved text-sm md:text-xl group-hover:scale-110 transition-transform" aria-hidden="true"></i>
+                </button>
+
                 <button onClick={initiateCall} aria-label="Call user" className="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center bg-[#F5A623]/20 text-[#F5A623] rounded-xl md:rounded-2xl hover:bg-[#F5A623] hover:text-[#003366] transition-all shadow-sm active:scale-95 group border-0">
                   <i className="fa-solid fa-phone text-sm md:text-xl group-hover:rotate-12 transition-transform" aria-hidden="true"></i>
                 </button>
@@ -462,53 +488,66 @@ const Messaging: React.FC = () => {
             </div>
 
             <div className="relative bg-black/20 p-4 md:p-10 shrink-0 border-0">
-              {showEmojiPicker && (
-                <div className="absolute bottom-full mb-4 left-4 md:left-10 p-4 md:p-6 glass-panel border-0 rounded-[24px] md:rounded-[36px] grid grid-cols-5 gap-2 md:gap-3 w-[220px] md:w-[280px] h-[300px] overflow-y-auto z-50 animate-slideUp no-scrollbar scroll-smooth">
-                  {POPULAR_EMOJIS.map(emoji => <button key={emoji} onClick={() => addEmoji(emoji)} className="w-8 h-8 md:w-12 md:h-12 text-lg md:text-2xl hover:scale-125 transition-transform flex items-center justify-center">{emoji}</button>)}
+              {user?.blockedUserIds?.includes(chattingWith.userId) ? (
+                <div className="w-full text-center py-6 glass-panel rounded-2xl border-rose-500/30 bg-rose-500/10">
+                  <p className="text-sm font-bold text-rose-300 uppercase tracking-widest">
+                    You have blocked this user. Unblock to send messages.
+                  </p>
+                  <button onClick={handleToggleBlock} className="mt-3 text-xs text-white underline hover:text-rose-200">
+                    Unblock Now
+                  </button>
                 </div>
-              )}
-              <div className="flex items-center gap-3 md:gap-10 grow max-w-full">
-                <div className="flex gap-4 md:gap-8 text-slate-300 text-xl md:text-3xl shrink-0">
-                  <i className={`fa-regular fa-face-smile cursor-pointer ${showEmojiPicker ? "text-brand-primary" : "hover:text-[#003360]"} transition-colors`} onClick={() => setShowEmojiPicker(!showEmojiPicker)}></i>
-                  <i className={`fa-solid fa-paperclip cursor-pointer ${uploadingFile ? "animate-spin text-brand-primary" : "hover:text-[#003360]"} transition-colors`} onClick={() => fileInputRef.current?.click()}></i>
-                  <input type="file" className="hidden" aria-label="Upload file" title="Upload file" ref={fileInputRef} onChange={handleFileUpload} />
-                  <input type="file" className="hidden" aria-label="Upload wallpaper" title="Upload wallpaper" ref={wallpaperInputRef} accept="image/*" onChange={handleWallpaperUpload} />
-                </div>
-
-                <div className="grow flex items-center gap-3 md:gap-6">
-                  {isRecording ? (
-                    <div className="grow flex items-center justify-between bg-rose-500/20 rounded-[20px] md:rounded-[32px] px-4 md:px-8 py-3 md:py-5 animate-pulse relative border-0">
-                      <div className="flex items-center gap-2 md:gap-4 shrink-0">
-                        <span className="w-2 h-2 md:w-3 md:h-3 bg-rose-500 rounded-full animate-ping"></span>
-                        <span className="text-[8px] md:text-[11px] font-black uppercase tracking-widest text-rose-400 truncate">Recording: {formatDuration(recordingDuration)}</span>
-                      </div>
-                      <button onClick={stopRecording} className="text-[8px] md:text-xs font-black uppercase tracking-widest text-rose-400 underline shrink-0 ml-2">Send</button>
-                    </div>
-                  ) : (
-                    <div className="grow relative flex items-center">
-                      <form onSubmit={sendMessage} className="grow">
-                        <input
-                          type="text"
-                          className="w-full bg-white/10 border border-white/20 rounded-[24px] md:rounded-[40px] pl-6 pr-14 md:pl-10 md:pr-24 py-4 md:py-7 text-xs md:text-sm font-bold !text-white outline-none focus:bg-white/20 focus:border-white/40 transition-all placeholder:text-white/50 shadow-inner"
-                          placeholder="Message..."
-                          value={newMessage}
-                          onChange={(e) => setNewMessage(e.target.value)}
-                        />
-                        {newMessage.trim() && (
-                          <button type="submit" aria-label="Send message" className="absolute right-1.5 md:right-3 top-1/2 -translate-y-1/2 w-10 h-10 md:w-16 md:h-16 flex items-center justify-center rounded-xl md:rounded-[30px] btn-gold shadow-xl transition-all scale-105 active:scale-95 border-0">
-                            <i className="fa-solid fa-paper-plane text-[10px] md:text-xl" aria-hidden="true"></i>
-                          </button>
-                        )}
-                      </form>
-                      {!newMessage.trim() && (
-                        <button onClick={startRecording} aria-label="Record voice message" className="absolute right-1.5 md:right-3 top-1/2 -translate-y-1/2 w-10 h-10 md:w-16 md:h-16 flex items-center justify-center bg-white/10 text-[#F5A623] rounded-xl md:rounded-[30px] hover:bg-white/20 transition-all shadow-md active:scale-90 border-0">
-                          <i className="fa-solid fa-microphone text-xs md:text-xl" aria-hidden="true"></i>
-                        </button>
-                      )}
+              ) : (
+                <>
+                  {showEmojiPicker && (
+                    <div className="absolute bottom-full mb-4 left-4 md:left-10 p-4 md:p-6 glass-panel border-0 rounded-[24px] md:rounded-[36px] grid grid-cols-5 gap-2 md:gap-3 w-[220px] md:w-[280px] h-[300px] overflow-y-auto z-50 animate-slideUp no-scrollbar scroll-smooth">
+                      {POPULAR_EMOJIS.map(emoji => <button key={emoji} onClick={() => addEmoji(emoji)} className="w-8 h-8 md:w-12 md:h-12 text-lg md:text-2xl hover:scale-125 transition-transform flex items-center justify-center">{emoji}</button>)}
                     </div>
                   )}
-                </div>
-              </div>
+                  <div className="flex items-center gap-3 md:gap-10 grow max-w-full">
+                    <div className="flex gap-4 md:gap-8 text-slate-300 text-xl md:text-3xl shrink-0">
+                      <i className={`fa-regular fa-face-smile cursor-pointer ${showEmojiPicker ? "text-brand-primary" : "hover:text-[#003360]"} transition-colors`} onClick={() => setShowEmojiPicker(!showEmojiPicker)}></i>
+                      <i className={`fa-solid fa-paperclip cursor-pointer ${uploadingFile ? "animate-spin text-brand-primary" : "hover:text-[#003360]"} transition-colors`} onClick={() => fileInputRef.current?.click()}></i>
+                      <input type="file" className="hidden" aria-label="Upload file" title="Upload file" ref={fileInputRef} onChange={handleFileUpload} />
+                      <input type="file" className="hidden" aria-label="Upload wallpaper" title="Upload wallpaper" ref={wallpaperInputRef} accept="image/*" onChange={handleWallpaperUpload} />
+                    </div>
+
+                    <div className="grow flex items-center gap-3 md:gap-6">
+                      {isRecording ? (
+                        <div className="grow flex items-center justify-between bg-rose-500/20 rounded-[20px] md:rounded-[32px] px-4 md:px-8 py-3 md:py-5 animate-pulse relative border-0">
+                          <div className="flex items-center gap-2 md:gap-4 shrink-0">
+                            <span className="w-2 h-2 md:w-3 md:h-3 bg-rose-500 rounded-full animate-ping"></span>
+                            <span className="text-[8px] md:text-[11px] font-black uppercase tracking-widest text-rose-400 truncate">Recording: {formatDuration(recordingDuration)}</span>
+                          </div>
+                          <button onClick={stopRecording} className="text-[8px] md:text-xs font-black uppercase tracking-widest text-rose-400 underline shrink-0 ml-2">Send</button>
+                        </div>
+                      ) : (
+                        <div className="grow relative flex items-center">
+                          <form onSubmit={sendMessage} className="grow">
+                            <input
+                              type="text"
+                              className="w-full bg-white/10 border border-white/20 rounded-[24px] md:rounded-[40px] pl-6 pr-14 md:pl-10 md:pr-24 py-4 md:py-7 text-xs md:text-sm font-bold !text-white outline-none focus:bg-white/20 focus:border-white/40 transition-all placeholder:text-white/50 shadow-inner"
+                              placeholder="Message..."
+                              value={newMessage}
+                              onChange={(e) => setNewMessage(e.target.value)}
+                            />
+                            {newMessage.trim() && (
+                              <button type="submit" aria-label="Send message" className="absolute right-1.5 md:right-3 top-1/2 -translate-y-1/2 w-10 h-10 md:w-16 md:h-16 flex items-center justify-center rounded-xl md:rounded-[30px] btn-gold shadow-xl transition-all scale-105 active:scale-95 border-0">
+                                <i className="fa-solid fa-paper-plane text-[10px] md:text-xl" aria-hidden="true"></i>
+                              </button>
+                            )}
+                          </form>
+                          {!newMessage.trim() && (
+                            <button onClick={startRecording} aria-label="Record voice message" className="absolute right-1.5 md:right-3 top-1/2 -translate-y-1/2 w-10 h-10 md:w-16 md:h-16 flex items-center justify-center bg-white/10 text-[#F5A623] rounded-xl md:rounded-[30px] hover:bg-white/20 transition-all shadow-md active:scale-90 border-0">
+                              <i className="fa-solid fa-microphone text-xs md:text-xl" aria-hidden="true"></i>
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </>
         ) : (
