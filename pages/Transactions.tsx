@@ -38,10 +38,32 @@ const Transactions: React.FC = () => {
 
   const confirmPayment = async (txId: string) => {
     try {
-      await databases.updateDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "transactions", txId, {
-        status: TransactionStatus.PAYMENT_CONFIRMED,
-        updatedAt: new Date().toISOString()
-      });
+      const tx = await databases.getDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "transactions", txId);
+      const product = await databases.getDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "products", tx.productId);
+      
+      if (product.digitalFileUrl) {
+        // Digital delivery: auto-complete and send file
+        await databases.updateDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "transactions", txId, {
+          status: TransactionStatus.COMPLETED,
+          updatedAt: new Date().toISOString()
+        });
+        const conversationId = [tx.sellerId, tx.buyerId].sort().join("-");
+        await databases.createDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "messages", ID.unique(), {
+           conversationId,
+           senderId: tx.sellerId,
+           receiverId: tx.buyerId,
+           text: `[System Escrow Release] Payment confirmed. Here is your securely delivered digital asset: ${product.name}`,
+           fileUrl: product.digitalFileUrl,
+           fileName: product.digitalFileName || 'Secure_Digital_Asset',
+           createdAt: new Date().toISOString()
+        });
+      } else {
+        // Physical delivery: just confirm payment
+        await databases.updateDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "transactions", txId, {
+          status: TransactionStatus.PAYMENT_CONFIRMED,
+          updatedAt: new Date().toISOString()
+        });
+      }
       loadTransactions();
     } catch (e) { alert("Status update failed."); }
   };
@@ -52,24 +74,6 @@ const Transactions: React.FC = () => {
         status: TransactionStatus.COMPLETED,
         updatedAt: new Date().toISOString()
       });
-
-      // Handle digital delivery if applicable
-      const tx = await databases.getDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "transactions", txId);
-      const product = await databases.getDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "products", tx.productId);
-      
-      if (product.digitalFileUrl) {
-         const conversationId = [tx.sellerId, tx.buyerId].sort().join("-");
-         await databases.createDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "messages", ID.unique(), {
-            conversationId,
-            senderId: tx.sellerId,
-            receiverId: tx.buyerId,
-            text: `[System Escrow Release] Payment confirmed. Here is your securely delivered digital asset: ${product.name}`,
-            fileUrl: product.digitalFileUrl,
-            fileName: product.digitalFileName || 'Secure_Digital_Asset',
-            createdAt: new Date().toISOString()
-         });
-      }
-
       loadTransactions();
     } catch (e) { alert("Status update failed."); }
   };
