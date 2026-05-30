@@ -110,6 +110,8 @@ export interface Product {
   learningHub?: LearningHub;
   isExamWeekSafe?: boolean;
   isSharedLogistics?: boolean;
+  digitalFileUrl?: string;
+  digitalFileName?: string;
 }
 
 export interface Transaction {
@@ -127,6 +129,8 @@ export interface Transaction {
   createdAt: string;
   updatedAt: string;
   disputeReason?: string;
+  digitalFileUrl?: string;
+  digitalFileName?: string;
 }
 
 export interface BuyerRequest {

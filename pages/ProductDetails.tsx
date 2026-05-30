@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Product, UserProfile, Review, DeliveryMethod, ListingType, Transaction, TransactionStatus } from "../types";
@@ -155,14 +155,15 @@ const ProductDetails: React.FC = () => {
                 <div className="absolute top-6 right-6 flex flex-col gap-3">
                   <button
                     onClick={toggleFavorite}
+                    aria-label="Toggle Favorite" title="Toggle Favorite"
                     className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shadow-2xl active:scale-90 border-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur ${isFavorite ? 'text-rose-500 border-rose-100' : 'text-slate-400 dark:text-slate-500 border-white dark:border-slate-700'} hover:text-rose-500`}
                   >
                     <i className={`${isFavorite ? 'fa-solid' : 'fa-regular'} fa-heart text-2xl`}></i>
                   </button>
-                  <button className="w-14 h-14 bg-white/90 dark:bg-slate-800/90 backdrop-blur text-slate-400 dark:text-slate-500 rounded-2xl flex items-center justify-center transition-all shadow-2xl hover:text-brand-primary dark:hover:text-blue-400 border-2 border-white dark:border-slate-700 active:scale-90">
+                  <button aria-label="Share Product" title="Share Product" className="w-14 h-14 bg-white/90 dark:bg-slate-800/90 backdrop-blur text-slate-400 dark:text-slate-500 rounded-2xl flex items-center justify-center transition-all shadow-2xl hover:text-brand-primary dark:hover:text-blue-400 border-2 border-white dark:border-slate-700 active:scale-90">
                     <i className="fa-solid fa-share-nodes text-2xl"></i>
                   </button>
-                  <button className="w-14 h-14 bg-white/90 dark:bg-slate-800/90 backdrop-blur text-slate-400 dark:text-slate-500 rounded-2xl flex items-center justify-center transition-all shadow-2xl hover:text-rose-600 border-2 border-white dark:border-slate-700 active:scale-90">
+                  <button aria-label="Report Product" title="Report Product" className="w-14 h-14 bg-white/90 dark:bg-slate-800/90 backdrop-blur text-slate-400 dark:text-slate-500 rounded-2xl flex items-center justify-center transition-all shadow-2xl hover:text-rose-600 border-2 border-white dark:border-slate-700 active:scale-90">
                     <i className="fa-solid fa-flag text-2xl"></i>
                   </button>
                 </div>
@@ -170,7 +171,7 @@ const ProductDetails: React.FC = () => {
                 {product.imageUrls.length > 1 && (
                   <div className="absolute bottom-6 left-6 right-6 flex gap-2 overflow-x-auto no-scrollbar py-2">
                     {product.imageUrls.map((url, i) => (
-                      <button key={i} onClick={() => setActiveImage(i)} className={`shrink-0 w-16 h-12 rounded-xl border-2 transition-all overflow-hidden ${activeImage === i ? 'border-brand-primary scale-105 shadow-lg' : 'border-white/50 opacity-60'}`}>
+                      <button key={i} onClick={() => setActiveImage(i)} aria-label={`View image ${i + 1}`} title={`View image ${i + 1}`} className={`shrink-0 w-16 h-12 rounded-xl border-2 transition-all overflow-hidden ${activeImage === i ? 'border-brand-primary scale-105 shadow-lg' : 'border-white/50 opacity-60'}`}>
                         <img src={url} className="w-full h-full object-cover" alt="Thumb" />
                       </button>
                     ))}
@@ -211,6 +212,11 @@ const ProductDetails: React.FC = () => {
                   <span className="inline-block px-4 py-1.5 bg-brand-primary text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-indigo-100">
                     {product.category}
                   </span>
+                  {product.digitalFileUrl && (
+                    <span className="px-4 py-1.5 bg-[#F5A623] text-[#003366] text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-[#F5A623]/30 flex items-center gap-2">
+                      <i className="fa-solid fa-lock text-[11px]"></i> DIGITAL PAYWALL
+                    </span>
+                  )}
                   <span className={`px-4 py-1.5 ${product.isNegotiable ? 'bg-emerald-500' : 'bg-slate-400'} text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg ${product.isNegotiable ? 'shadow-emerald-100' : ''}`}>
                     {product.isNegotiable ? 'NEGOTIABLE' : 'FIXED PRICE'}
                   </span>
@@ -339,7 +345,7 @@ const ProductDetails: React.FC = () => {
                   <h3 className="text-xs font-black text-brand-primary dark:text-white uppercase tracking-widest mb-6">Archive New Feedback</h3>
                   <div className="flex gap-4">
                     {[1, 2, 3, 4, 5].map(s => (
-                      <button key={s} type="button" onClick={() => setRating(s)} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${rating >= s ? 'bg-brand-primary text-indigo-500' : 'bg-white dark:bg-slate-700 text-slate-200'}`}>
+                      <button key={s} type="button" aria-label={`Rate ${s} stars`} title={`Rate ${s} stars`} onClick={() => setRating(s)} className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all ${rating >= s ? 'bg-brand-primary text-indigo-500' : 'bg-white dark:bg-slate-700 text-slate-200'}`}>
                         <i className="fa-solid fa-star"></i>
                       </button>
                     ))}

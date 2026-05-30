@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../App";
-import { SellerStatus, ListingType, DeliveryMethod, TransactionType, LearningHub } from "../types";
+import { SellerStatus, ListingType, DeliveryMethod, TransactionType, LearningHub, ProductStatus } from "../types";
 import { databases, storage } from "../lib/appwrite";
 import { ID } from "appwrite";
 import { CATEGORIES } from "../constants";
@@ -27,6 +27,7 @@ const CreateProduct: React.FC = () => {
   const [learningHub, setLearningHub] = useState<LearningHub>(LearningHub.IBADAN);
   const [isExamWeekSafe, setIsExamWeekSafe] = useState(false);
   const [isSharedLogistics, setIsSharedLogistics] = useState(false);
+  const [digitalFile, setDigitalFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (!user) navigate("/login");
@@ -79,6 +80,19 @@ const CreateProduct: React.FC = () => {
         })
       );
 
+      let digitalFileUrl = "";
+      let digitalFileName = "";
+      if (digitalFile && (listingType === ListingType.COURSE_MATERIAL || listingType === ListingType.TEXTBOOK)) {
+        const safeDigitalFile = new File([digitalFile], `payload_${ID.unique()}_${digitalFile.name}`, { type: digitalFile.type });
+        const res = await storage.createFile(
+          import.meta.env.VITE_APPWRITE_BUCKET_ID,
+          ID.unique(),
+          safeDigitalFile
+        );
+        digitalFileUrl = storage.getFileView(import.meta.env.VITE_APPWRITE_BUCKET_ID, res.$id).toString();
+        digitalFileName = digitalFile.name;
+      }
+
       await databases.createDocument(
         import.meta.env.VITE_APPWRITE_DATABASE_ID,
         "products",
@@ -101,7 +115,10 @@ const CreateProduct: React.FC = () => {
           learningHub,
           isExamWeekSafe,
           isSharedLogistics,
-          isFlagged: false
+          isFlagged: false,
+          status: ProductStatus.APPROVED,
+          digitalFileUrl: digitalFileUrl || undefined,
+          digitalFileName: digitalFileName || undefined
         }
       );
 
@@ -166,6 +183,28 @@ const CreateProduct: React.FC = () => {
                 </div>
               </div>
 
+              <div className="space-y-4">
+                <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] ml-1">Listing Type</label>
+                <div className="relative">
+                  <select
+                    aria-label="Listing Type"
+                    required
+                    className="w-full bg-black/20 border border-white/10 rounded-2xl px-6 py-4 font-bold text-white focus:outline-none focus:ring-4 focus:ring-[#F5A623]/20 transition cursor-pointer appearance-none shadow-inner [&>option]:bg-[#003366]"
+                    value={listingType}
+                    onChange={(e) => setListingType(e.target.value as ListingType)}
+                  >
+                    {Object.values(ListingType).map(lt => (
+                      <option key={lt} value={lt}>{lt}</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    <i className="fa-solid fa-chevron-down"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <label className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] ml-1">Transaction Type</label>
                 <div className="flex bg-black/20 rounded-2xl p-1.5 border border-white/10 shadow-inner flex-wrap gap-1">
@@ -294,6 +333,46 @@ const CreateProduct: React.FC = () => {
                 />
               </div>
             </div>
+
+            {(listingType === ListingType.COURSE_MATERIAL || listingType === ListingType.TEXTBOOK) && (
+              <div className="space-y-6 bg-[#003366]/40 p-8 rounded-4xl border border-[#F5A623]/30 shadow-inner">
+                <div>
+                  <label className="text-[10px] font-black text-[#F5A623] uppercase tracking-[0.2em] block">Digital Payload (Paywall)</label>
+                  <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase">Upload PDF or ZIP. It will be locked until the buyer pays.</p>
+                </div>
+                
+                {digitalFile ? (
+                  <div className="flex items-center justify-between bg-black/20 p-4 rounded-2xl border border-white/10">
+                    <div className="flex items-center gap-3">
+                      <i className="fa-solid fa-file-pdf text-[#F5A623] text-2xl"></i>
+                      <div>
+                        <p className="text-sm font-bold text-white truncate">{digitalFile.name}</p>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase">{(digitalFile.size / (1024*1024)).toFixed(2)} MB</p>
+                      </div>
+                    </div>
+                    <button type="button" aria-label="Remove digital file" title="Remove digital file" onClick={() => setDigitalFile(null)} className="text-rose-400 hover:text-rose-300 p-2">
+                      <i className="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#F5A623]/30 rounded-3xl bg-white/5 hover:bg-white/10 transition-all cursor-pointer shadow-sm py-10">
+                    <div className="w-12 h-12 bg-[#F5A623]/20 rounded-full flex items-center justify-center mb-3">
+                      <i className="fa-solid fa-upload text-[#F5A623] text-xl"></i>
+                    </div>
+                    <span className="text-[10px] font-black text-[#F5A623] uppercase tracking-widest">Select Digital File</span>
+                    <input type="file" accept=".pdf,.zip,.rar" className="hidden" onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        if (e.target.files[0].size > 20 * 1024 * 1024) {
+                          alert("File exceeds 20MB limit.");
+                        } else {
+                          setDigitalFile(e.target.files[0]);
+                        }
+                      }
+                    }} />
+                  </label>
+                )}
+              </div>
+            )}
 
             {/* Delivery Methods Hub */}
             <div className="space-y-6 bg-black/20 p-8 rounded-4xl border border-white/10 shadow-inner">

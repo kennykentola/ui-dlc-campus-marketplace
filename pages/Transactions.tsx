@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../App";
 import { Transaction, TransactionStatus } from "../types";
 import { databases } from "../lib/appwrite";
-import { Query } from "appwrite";
+import { Query, ID } from "appwrite";
 
 const Transactions: React.FC = () => {
   const { user } = useAuth();
@@ -52,6 +52,24 @@ const Transactions: React.FC = () => {
         status: TransactionStatus.COMPLETED,
         updatedAt: new Date().toISOString()
       });
+
+      // Handle digital delivery if applicable
+      const tx = await databases.getDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "transactions", txId);
+      const product = await databases.getDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "products", tx.productId);
+      
+      if (product.digitalFileUrl) {
+         const conversationId = [tx.sellerId, tx.buyerId].sort().join("-");
+         await databases.createDocument(import.meta.env.VITE_APPWRITE_DATABASE_ID, "messages", ID.unique(), {
+            conversationId,
+            senderId: tx.sellerId,
+            receiverId: tx.buyerId,
+            text: `[System Escrow Release] Payment confirmed. Here is your securely delivered digital asset: ${product.name}`,
+            fileUrl: product.digitalFileUrl,
+            fileName: product.digitalFileName || 'Secure_Digital_Asset',
+            createdAt: new Date().toISOString()
+         });
+      }
+
       loadTransactions();
     } catch (e) { alert("Status update failed."); }
   };
@@ -165,6 +183,11 @@ const Transactions: React.FC = () => {
                               )}
                               {activeTab === 'buying' && tx.status === TransactionStatus.PAYMENT_CONFIRMED && (
                                 <button onClick={() => completetx(tx.$id)} className="px-6 py-4 bg-brand-primary text-white rounded-[20px] font-black text-[9px] uppercase tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all">Asset Received</button>
+                              )}
+                              {activeTab === 'buying' && tx.status === TransactionStatus.COMPLETED && tx.digitalFileUrl && (
+                                <button onClick={() => window.open(tx.digitalFileUrl, '_blank')} className="px-6 py-4 bg-[#F5A623] text-[#003366] rounded-[20px] font-black text-[9px] uppercase tracking-widest shadow-xl shadow-[#F5A623]/30 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                                  <i className="fa-solid fa-cloud-arrow-down"></i> Download Digital File
+                                </button>
                               )}
 
                               {tx.status === TransactionStatus.PAYMENT_SENT && (

@@ -85,6 +85,8 @@ const Checkout: React.FC = () => {
            amount: product.price,
            status: TransactionStatus.PAYMENT_SENT,
            paymentProofUrl: url,
+           digitalFileUrl: product.digitalFileUrl,
+           digitalFileName: product.digitalFileName,
            createdAt: new Date().toISOString(),
            updatedAt: new Date().toISOString()
         }
