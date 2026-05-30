@@ -338,19 +338,19 @@ const Profile: React.FC = () => {
                         </div>
                         <div className="space-y-2">
                            <label htmlFor="edit-name" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Full Name</label>
-                           <input id="edit-name" type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 text-sm font-medium text-slate-700 focus:outline-none focus:border-brand-primary transition-colors" value={editForm.name || ""} onChange={e => setEditForm({...editForm, name: e.target.value})} required />
+                           <input id="edit-name" type="text" className="w-full bg-slate-300 border border-slate-400 rounded-xl px-5 py-4 text-sm font-medium text-black placeholder-slate-600 focus:outline-none focus:border-brand-primary transition-colors" value={editForm.name || ""} onChange={e => setEditForm({...editForm, name: e.target.value})} required />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                            <div className="space-y-2">
                               <label htmlFor="edit-dept" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Department</label>
-                              <select id="edit-dept" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 text-sm font-medium text-slate-700 focus:outline-none focus:border-brand-primary" value={editForm.department || ""} onChange={e => setEditForm({...editForm, department: e.target.value})} required>
+                              <select id="edit-dept" className="w-full bg-slate-300 border border-slate-400 rounded-xl px-5 py-4 text-sm font-medium text-black placeholder-slate-600 focus:outline-none focus:border-brand-primary" value={editForm.department || ""} onChange={e => setEditForm({...editForm, department: e.target.value})} required>
                                  <option value="" disabled>Select Dept</option>
                                  {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
                               </select>
                            </div>
                            <div className="space-y-2">
                               <label htmlFor="edit-level" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Level</label>
-                              <select id="edit-level" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 text-sm font-medium text-slate-700 focus:outline-none focus:border-brand-primary" value={editForm.level || ""} onChange={e => setEditForm({...editForm, level: e.target.value})} required>
+                              <select id="edit-level" className="w-full bg-slate-300 border border-slate-400 rounded-xl px-5 py-4 text-sm font-medium text-black placeholder-slate-600 focus:outline-none focus:border-brand-primary" value={editForm.level || ""} onChange={e => setEditForm({...editForm, level: e.target.value})} required>
                                  <option value="" disabled>Select Level</option>
                                  {LEVELS.map(l => <option key={l} value={l}>{l}L</option>)}
                               </select>
@@ -358,7 +358,7 @@ const Profile: React.FC = () => {
                         </div>
                         <div className="space-y-2">
                            <label htmlFor="edit-phone" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Active Phone Number</label>
-                           <input id="edit-phone" type="tel" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 text-sm font-medium text-slate-700 focus:outline-none focus:border-brand-primary" value={editForm.phoneNumber || ""} onChange={e => setEditForm({...editForm, phoneNumber: e.target.value})} required placeholder="080..." />
+                           <input id="edit-phone" type="tel" className="w-full bg-slate-300 border border-slate-400 rounded-xl px-5 py-4 text-sm font-medium text-black placeholder-slate-600 focus:outline-none focus:border-brand-primary" value={editForm.phoneNumber || ""} onChange={e => setEditForm({...editForm, phoneNumber: e.target.value})} required placeholder="080..." />
                         </div>
                       </div>
 
@@ -370,15 +370,15 @@ const Profile: React.FC = () => {
                         </div>
                         <div className="space-y-2">
                            <label htmlFor="edit-bank" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Bank Name</label>
-                           <input id="edit-bank" type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 text-sm font-medium text-slate-700 focus:outline-none focus:border-brand-primary" value={editForm.bankName || ""} onChange={e => setEditForm({...editForm, bankName: e.target.value})} placeholder="e.g. Guarantee Trust Bank" />
+                           <input id="edit-bank" type="text" className="w-full bg-slate-300 border border-slate-400 rounded-xl px-5 py-4 text-sm font-medium text-black placeholder-slate-600 focus:outline-none focus:border-brand-primary" value={editForm.bankName || ""} onChange={e => setEditForm({...editForm, bankName: e.target.value})} placeholder="e.g. Guarantee Trust Bank" />
                         </div>
                         <div className="space-y-2">
                            <label htmlFor="edit-acc-num" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Account Number</label>
-                           <input id="edit-acc-num" type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 text-sm font-medium text-slate-700 focus:outline-none focus:border-brand-primary" value={editForm.accountNumber || ""} onChange={e => setEditForm({...editForm, accountNumber: e.target.value})} placeholder="10 digit number" />
+                           <input id="edit-acc-num" type="text" className="w-full bg-slate-300 border border-slate-400 rounded-xl px-5 py-4 text-sm font-medium text-black placeholder-slate-600 focus:outline-none focus:border-brand-primary" value={editForm.accountNumber || ""} onChange={e => setEditForm({...editForm, accountNumber: e.target.value})} placeholder="10 digit number" />
                         </div>
                         <div className="space-y-2">
                            <label htmlFor="edit-acc-name" className="text-xs font-bold text-slate-400 uppercase tracking-widest">Account Name</label>
-                           <input id="edit-acc-name" type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 text-sm font-medium text-slate-700 focus:outline-none focus:border-brand-primary" value={editForm.accountName || ""} onChange={e => setEditForm({...editForm, accountName: e.target.value})} placeholder="Exact name on account" />
+                           <input id="edit-acc-name" type="text" className="w-full bg-slate-300 border border-slate-400 rounded-xl px-5 py-4 text-sm font-medium text-black placeholder-slate-600 focus:outline-none focus:border-brand-primary" value={editForm.accountName || ""} onChange={e => setEditForm({...editForm, accountName: e.target.value})} placeholder="Exact name on account" />
                         </div>
                       </div>
                     </div>

@@ -23,14 +23,15 @@ const AdminDashboard: React.FC = () => {
   const [updatingSellerId, setUpdatingSellerId] = useState<string | null>(null);
   const [updatingRoleId, setUpdatingRoleId] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
+  const [userSearchTerm, setUserSearchTerm] = useState("");
 
   const fetchAdminData = async () => {
     try {
       setLoading(true);
       const [productsRes, reportsRes, usersRes] = await Promise.all([
-        databases.listDocuments(import.meta.env.VITE_APPWRITE_DATABASE_ID, "products", [Query.orderDesc("$createdAt")]),
-        databases.listDocuments(import.meta.env.VITE_APPWRITE_DATABASE_ID, "reports", [Query.orderDesc("$createdAt")]),
-        databases.listDocuments(import.meta.env.VITE_APPWRITE_DATABASE_ID, "profiles", [Query.orderDesc("$createdAt")])
+        databases.listDocuments(import.meta.env.VITE_APPWRITE_DATABASE_ID, "products", [Query.orderDesc("$createdAt"), Query.limit(100)]),
+        databases.listDocuments(import.meta.env.VITE_APPWRITE_DATABASE_ID, "reports", [Query.orderDesc("$createdAt"), Query.limit(100)]),
+        databases.listDocuments(import.meta.env.VITE_APPWRITE_DATABASE_ID, "profiles", [Query.orderDesc("$createdAt"), Query.limit(100)])
       ]);
 
       setProducts(productsRes.documents as unknown as Product[]);
@@ -427,7 +428,16 @@ const AdminDashboard: React.FC = () => {
 
                   {activeTab === 'sellers' && (
                      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <h2 className="text-xl font-bold text-[#003366] mb-6 border-b border-slate-100 pb-3">User Management & Verification</h2>
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-slate-100 pb-3">
+                           <h2 className="text-xl font-bold text-[#003366]">User Management & Verification</h2>
+                           <input 
+                              type="text" 
+                              placeholder="Search by name or email..." 
+                              value={userSearchTerm}
+                              onChange={(e) => setUserSearchTerm(e.target.value)}
+                              className="px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm w-full md:w-64 focus:outline-none focus:border-[#003366]"
+                           />
+                        </div>
                         <div className="overflow-x-auto">
                            <table className="w-full text-left">
                               <thead>
@@ -439,7 +449,7 @@ const AdminDashboard: React.FC = () => {
                                  </tr>
                               </thead>
                               <tbody className="divide-y divide-slate-50">
-                                 {users.map(u => (
+                                 {users.filter(u => u.name.toLowerCase().includes(userSearchTerm.toLowerCase()) || u.email.toLowerCase().includes(userSearchTerm.toLowerCase())).map(u => (
                                     <tr key={u.userId} className="hover:bg-slate-50 transition-colors">
                                        <td className="py-4">
                                           <div className="flex items-center gap-4">
