@@ -491,7 +491,7 @@ const Messaging: React.FC = () => {
                       <form onSubmit={sendMessage} className="grow">
                         <input
                           type="text"
-                          className="w-full bg-black/20 rounded-[24px] md:rounded-[40px] pl-6 pr-14 md:pl-10 md:pr-24 py-4 md:py-7 text-xs md:text-sm font-medium text-white outline-none focus:bg-black/40 transition-all placeholder:text-slate-400 shadow-inner border-0"
+                          className="w-full bg-white/10 border border-white/20 rounded-[24px] md:rounded-[40px] pl-6 pr-14 md:pl-10 md:pr-24 py-4 md:py-7 text-xs md:text-sm font-bold !text-white outline-none focus:bg-white/20 focus:border-white/40 transition-all placeholder:text-white/50 shadow-inner"
                           placeholder="Message..."
                           value={newMessage}
                           onChange={(e) => setNewMessage(e.target.value)}
